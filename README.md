@@ -1,6 +1,6 @@
 # top.js
 <div align="center">
-   <img width=710px src="/qcoreteam/topjs/blob/master/assets/images/topjs2.png?raw=true">
+   <img width=710px src="/assets/images/topjs2.png?raw=true">
 </div>
 nodejs版的zend framework框架
 
