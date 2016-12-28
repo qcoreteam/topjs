@@ -3,3 +3,8 @@
 package.json
 node_modules/
 build/
+sftp-config.json
+diff
+log
+npm-debug.log
+lib/
