@@ -2,7 +2,7 @@
 **/.DS_Store
 package.json
 node_modules/
-build/
+dist/
 sftp-config.json
 diff
 log
