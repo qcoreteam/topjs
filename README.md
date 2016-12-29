@@ -24,11 +24,11 @@ nodejs版的zend framework框架
 # 开发组成员 
 ```PS: 排名不分先后```</br>
 zzu_softboy <zzu_softboy@163.com></br>
-Tony              phptony@126.com
+Tony              phptony@126.com</br>
 Rick        <yusuflee1988@gmail.com></br>
 demonkit    yydemonkit@gmail.com</br>
-zacking       zacking57@gmail.com
-Andy          qihuainter@126.com
+zacking       zacking57@gmail.com</br>
+Andy          qihuainter@126.com</br>
 ...</br>
 等待您的加入
 
