@@ -17,13 +17,22 @@ nodejs版的zend framework框架
 
 ...
 
+# 快速入门
+
+
+
 # 开发组成员 
 ```PS: 排名不分先后```</br>
 zzu_softboy <zzu_softboy@163.com></br>
+Tony              phptony@126.com
 Rick        <yusuflee1988@gmail.com></br>
 demonkit    yydemonkit@gmail.com</br>
+zacking       zacking57@gmail.com
+Andy          qihuainter@126.com
 ...</br>
 等待您的加入
+
+# 合作伙伴
 
 
 # 软件许可证
