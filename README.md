@@ -11,11 +11,18 @@ nodejs版的zend framework框架
 
 # 特性
 
-# 开发组成员
-zzu_softboy <zzu_softboy@163.com>
+1. 完善的类系统，按照名称空间组织核心代码
+2. 完善的mvc开发流程支持
+3. 内置进程管理器，借鉴pm2进程管理
 
 ...
 
+# 开发组成员 
+```PS: 排名不分先后```</br>
+zzu_softboy <zzu_softboy@163.com></br>
+Rick        <yusuflee1988@gmail.com></br>
+demonkit    yydemonkit@gmail.com</br>
+...</br>
 等待您的加入
 
 
