@@ -1,4 +1,4 @@
-/**
+/*
  * TopJs Framework (http://www.topjs.org/)
  *
  * @link      http://github.com/qcoreteam/topjs for the canonical source repository

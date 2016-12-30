@@ -8,16 +8,16 @@
 let assert = require('chai').assert;
 let StandardAutoloader = require('../../lib/loader/StandardAutoloader');
 
-describe('StandardAutoloader测试用例', function() {
-   it("测试参数设置", function(){
-      let loader = new StandardAutoloader();
-      // assert.notEqual(1, 1, "这两个值必须不相等");
-      assert.equal(StandardAutoloader.LOAD_PREFIX, 'prefix');
-      assert.equal('ok', loader.autoload());
+describe('loader/StandardAutoloader测试用例', function() {
+   let loader;
+   beforeEach(function(){
+      loader = new StandardAutoloader();
    });
-   it("测试返回值", function(){
-      let loader = new StandardAutoloader();
-      // assert.notEqual(1, 1, "这两个值必须不相等");
-      assert.equal('ok1', loader.autoload());
+   it("测试normalizeDirectory", function(){
+      assert.equal(loader.normalizeDirectory("/some/path"), '/some/path/');
+   });
+   it("测试transformClassNameToFilename", function(){
+      let filename = loader.transformClassNameToFilename('TopJs.loader.AutoloaderFactory', 'root/');
+      assert.equal(filename, "root/TopJs/loader/AutoloaderFactory.js");
    });
 });

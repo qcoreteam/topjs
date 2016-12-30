@@ -5,6 +5,10 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+
+import {is_object, in_array} from '../kernel/internal/Funcs';
+import {sep as dir_separator} from 'path';
+
 /**
  * 标准自动加载器
  */
@@ -15,7 +19,7 @@ class StandardAutoloader
     * @static
     * @type {string}
     */
-   static NS_SEPARATOR = '\\';
+   static NS_SEPARATOR = '.';
    /**
     * @readonly
     * @static
@@ -65,17 +69,66 @@ class StandardAutoloader
     * @type {boolean}
     */
    fallbackAutoloaderFlag = false;
-   
+
+   /**
+    * @param {Object} options
+    */
    constructor(options = null)
    {
       if(null !== options){
          this.setOptions(options);
       }
    }
-
+   
+   /**
+    * 设置自动加载相关参数
+    * 
+    * 可以同时配置"namespace"和"prefix"配置对，使用的结构如下:
+    * 
+    * ```javascript
+    * {
+    *    namespace : {
+    *       TopJs : "/path/to/topjs/library",
+    *       Vender : "/path/to/other/vender/library"
+    *    },
+    *    prefixes : {
+    *       JsLib_ : "/path/to/JsLib/library"
+    *    },
+    *    fallback_autoloader => true
+    * }
+    * ```
+    * 
+    * @param {Object} options
+    * @return {StandardAutoloader}
+    */
    setOptions(options)
    {
-      
+      for(let key in options){
+         let pairs = options[key];
+         switch(key){
+            case StandardAutoloader.AUTO_REGISTER_TOPJS:
+               if(value){
+                  this.registerNamespace('TopJs', __dirname);
+               }
+               break;
+            case StandardAutoloader.LOAD_NS:
+               if(is_object(pairs)) {
+                  this.registerNamespaces(pairs);
+               }
+               break;
+            case StandardAutoloader.LOAD_PREFIX:
+               if(is_object(pairs)){
+                  this.registerPrefixes(pairs);
+               }
+               break;
+            case StandardAutoloader.ACT_AS_FALLBACK:
+               this.setFallbackAutoloader(pairs);
+               break;
+            default:
+               //ignore
+         }
+      }
+      return this;
    }
 
    setFallbackAutoloader(flag)
@@ -92,27 +145,23 @@ class StandardAutoloader
 
    registerNamespace(namespace, directory)
    {
-
    }
 
    registerNamespaces(namespaces)
    {
-
    }
 
    registerPrefix(prefix, directory)
    {
-
    }
 
    registerPrefixes(prefixes)
    {
-
    }
 
    autoload()
    {
-      return 'ok1';
+      return "a";
    }
 
    register()
@@ -120,19 +169,50 @@ class StandardAutoloader
 
    }
 
+   /**
+    * 将类的名称映射成文件路径
+    * 
+    * @param {string} cls
+    * @param {string} direcotry
+    */
    transformClassNameToFilename(cls, direcotry)
    {
-
+      // $class may contain a namespace portion, in  which case we need
+      // to preserve any underscores in that portion.
+      let regex = /(.+\.)?([^\.]+$)/;
+      let matches = cls.match(regex);
+      let clsName = matches[2] === undefined ? '' : matches[2];
+      let namespace = matches[1] === undefined ? '' : matches[1];
+      return direcotry + namespace.replace(new RegExp(`\\${StandardAutoloader.NS_SEPARATOR}`, 'g'), dir_separator) +
+         clsName.replace(StandardAutoloader.PREFIX_SEPARATOR, dir_separator, clsName) +
+         '.js'
    }
 
    loadClass(cls, type)
    {
-
+      if(!in_array(type, [StandardAutoloader.LOAD_NS, StandardAutoloader.LOAD_PREFIX, StandardAutoloader.ACT_AS_FALLBACK])){
+         throw new Error("arg type error, not support");
+      }
+      
    }
 
+   /**
+    * 格式化加载目录，主要就是在路径的末尾加上路径分隔符
+    *
+    * @protected
+    * @param {string} directory
+    * @return {string}
+    */
    normalizeDirectory(directory)
    {
-      
+      let len = directory.length;
+      let last = directory.charAt(len - 1);
+      if(in_array(last, ["/", "\\"])){
+         directory[len - 1] = dir_separator;
+         return directory;
+      }
+      directory += dir_separator;
+      return directory;
    }
 }
 //直接将加载器导出
