@@ -6,7 +6,7 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-import {is_object, in_array} from '../kernel/internal/Funcs';
+import {is_object, in_array, rtrim, is_string} from '../kernel/internal/Funcs';
 import {sep as dir_separator} from 'path';
 
 /**
@@ -145,6 +145,7 @@ class StandardAutoloader
 
    registerNamespace(namespace, directory)
    {
+      namespace = rtrim(namespace, StandardAutoloader.NS_SEPARATOR);
    }
 
    registerNamespaces(namespaces)
@@ -153,6 +154,7 @@ class StandardAutoloader
 
    registerPrefix(prefix, directory)
    {
+      
    }
 
    registerPrefixes(prefixes)
@@ -161,12 +163,10 @@ class StandardAutoloader
 
    autoload()
    {
-      return "a";
    }
 
    register()
    {
-
    }
 
    /**
