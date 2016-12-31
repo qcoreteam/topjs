@@ -36,4 +36,15 @@ describe("kernel/internal/Funcs测试用例", function(){
       let str = Funcs.regex_escape(" test str.[(^*+})");
       assert.equal(str, " test str\\.\\[\\(\\^\\*\\+\\}\\)");
    });
+
+   it("测试change_str_at", function(){
+      let str = Funcs.change_str_at("i am softboy", 20, 'xx');
+      assert.equal(str, "i am softboy");
+      str = Funcs.change_str_at("i am softboy", -1, 'xx');
+      assert.equal(str, "i am softboy");
+      str = Funcs.change_str_at("i am softboy", 4, 'xx');
+      assert.equal(str, "i amxxsoftboy");
+      str = Funcs.change_str_at("为中华崛起而努力！", 4, 'xx');
+      assert.equal(str, "为中华崛xx而努力！");
+   });
 });

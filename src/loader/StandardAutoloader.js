@@ -6,7 +6,7 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-import {is_object, in_array, rtrim, is_string} from '../kernel/internal/Funcs';
+import {is_object, in_array, rtrim, is_string, change_str_at} from '../kernel/internal/Funcs';
 import {sep as dir_separator} from 'path';
 
 /**
@@ -54,9 +54,9 @@ class StandardAutoloader
     * 名称空间到类的文件夹之间的映射
     * 
     * @protected
-    * @type {string[]}
+    * @type {Map[]}
     */
-   namespaces = [];
+   namespaces = new Map();
    /**
     * 前缀和文件夹之间的映射
     * 
@@ -143,9 +143,18 @@ class StandardAutoloader
       return this.fallbackAutoloaderFlag;
    }
 
+   /**
+    * 注册一个名称空间到对应文件夹的映射项
+    * 
+    * @param {string} namespace
+    * @param {string} directory
+    * @returns {StandardAutoloader}
+    */
    registerNamespace(namespace, directory)
    {
       namespace = rtrim(namespace, StandardAutoloader.NS_SEPARATOR);
+      this.namespaces.set(namespace, this.normalizeDirectory(directory));
+      return this;
    }
 
    registerNamespaces(namespaces)
@@ -208,8 +217,7 @@ class StandardAutoloader
       let len = directory.length;
       let last = directory.charAt(len - 1);
       if(in_array(last, ["/", "\\"])){
-         directory[len - 1] = dir_separator;
-         return directory;
+         return change_str_at(directory, len - 1, dir_separator);
       }
       directory += dir_separator;
       return directory;

@@ -13,11 +13,28 @@ describe('loader/StandardAutoloader测试用例', function() {
    beforeEach(function(){
       loader = new StandardAutoloader();
    });
+   
    it("测试normalizeDirectory", function(){
       assert.equal(loader.normalizeDirectory("/some/path"), '/some/path/');
    });
+   
    it("测试transformClassNameToFilename", function(){
       let filename = loader.transformClassNameToFilename('TopJs.loader.AutoloaderFactory', 'root/');
       assert.equal(filename, "root/TopJs/loader/AutoloaderFactory.js");
    });
+   
+   it("测试normalizeDirectory", function(){
+      let filename = loader.normalizeDirectory("root/subdir//");
+      assert.equal(filename, "root/subdir//");
+      filename = loader.normalizeDirectory("root/subdir/\\");
+      assert.equal(filename, "root/subdir//");
+      filename = loader.normalizeDirectory("root/subdir");
+      assert.equal(filename, "root/subdir/");
+   });
+
+   // it("测试registerNamespace", function(){
+   //    loader.registerNamespace('TopJs', 'root/subdir/');
+   //    // assert.equal(filename, "root/TopJs/loader/AutoloaderFactory.js");
+   // });
+   
 });

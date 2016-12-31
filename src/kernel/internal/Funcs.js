@@ -93,3 +93,11 @@ export function regex_escape(regex)
    return regex.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
 }
 
+export function change_str_at(str, pos, subStr)
+{
+   if(pos < 0 || pos > str.length - 1){
+      return str;
+   }
+   return str.substring(0, pos) + subStr + str.substring(pos + 1);
+}
+
