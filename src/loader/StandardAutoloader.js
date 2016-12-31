@@ -157,8 +157,21 @@ class StandardAutoloader
       return this;
    }
 
+   /**
+    * 一次性注册多个名称空间到文件目录的映射
+    * 
+    * @param namespaces
+    * @returns {StandardAutoloader}
+    */
    registerNamespaces(namespaces)
    {
+      if(!is_object(namespaces)){
+         throw new Error('arg namespaces must be object');
+      }
+      for(let [namespace, direcotry] of Object.entries(namespaces)){
+         this.registerNamespace(namespace, direcotry);
+      }
+      return this;
    }
 
    registerPrefix(prefix, directory)

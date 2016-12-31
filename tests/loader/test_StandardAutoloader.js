@@ -32,9 +32,20 @@ describe('loader/StandardAutoloader测试用例', function() {
       assert.equal(filename, "root/subdir/");
    });
 
-   // it("测试registerNamespace", function(){
-   //    loader.registerNamespace('TopJs', 'root/subdir/');
-   //    // assert.equal(filename, "root/TopJs/loader/AutoloaderFactory.js");
-   // });
+   it("测试registerNamespace", function(){
+      loader.registerNamespace("TopJs", "root/subdir/");
+      assert.equal(loader.namespaces.size, 1);
+      assert.equal(loader.namespaces.get('TopJs'), "root/subdir/");
+   });
+
+   it("测试registerNamespaces", function(){
+      loader.registerNamespaces({
+         TopJs: "root/subdir/",
+         Vender: "root/venderdir/"
+      });
+      assert.equal(loader.namespaces.size, 2);
+      assert.equal(loader.namespaces.get('TopJs'), "root/subdir/");
+      assert.equal(loader.namespaces.get('Vender'), "root/venderdir/");
+   });
    
 });
