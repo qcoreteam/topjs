@@ -47,5 +47,39 @@ describe('loader/StandardAutoloader测试用例', function() {
       assert.equal(loader.namespaces.get('TopJs'), "root/subdir/");
       assert.equal(loader.namespaces.get('Vender'), "root/venderdir/");
    });
+
+   it("测试registerPrefix", function(){
+      loader.registerPrefix("TopJs", "root/subdir/");
+      assert.equal(loader.prefixes.size, 1);
+      assert.equal(loader.prefixes.get('TopJs_'), "root/subdir/");
+   });
+
+   it("测试registerPrefixs", function(){
+      loader.registerPrefixes({
+         TopJs: "root/subdir/",
+         Vender: "root/venderdir/"
+      });
+      assert.equal(loader.prefixes.size, 2);
+      assert.equal(loader.prefixes.get('TopJs_'), "root/subdir/");
+      assert.equal(loader.prefixes.get('Vender_'), "root/venderdir/");
+   });
+
+   it("测试loadClass", function(){
+      let base = process.cwd() + "/lib";
+      loader.registerNamespaces({
+         TopJs: base,
+         Vender: "root/venderdir/"
+      });
+      let Cls = loader.loadClass("TopJs.loader.StandardAutoloader", StandardAutoloader.LOAD_NS);
+      assert.equal(StandardAutoloader.ACT_AS_FALLBACK, "fallback_autoloader");
+   });
+
+   it("测试setOptions", function(){
+      loader.setOptions({
+         [StandardAutoloader.AUTO_REGISTER_TOPJS] : true
+      });
+      assert.equal(loader.namespaces.size, 1);
+      assert.equal(loader.namespaces.get('TopJs'), process.cwd()+"/lib/");
+   });
    
 });

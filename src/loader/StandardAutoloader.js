@@ -6,8 +6,9 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-import {is_object, in_array, rtrim, is_string, change_str_at} from '../kernel/internal/Funcs';
-import {sep as dir_separator} from 'path';
+import {is_object, in_array, rtrim, is_string, change_str_at, file_exist} from '../kernel/internal/Funcs';
+import {sep as dir_separator, dirname} from 'path';
+import {stat} from 'fs';
 
 /**
  * 标准自动加载器
@@ -31,13 +32,13 @@ class StandardAutoloader
     * @static
     * @type {string}
     */
-   static LOAD_NS = 'namespace';
+   static LOAD_NS = 'namespaces';
    /**
     * @readonly
     * @static
     * @type {string}
     */
-   static LOAD_PREFIX = 'prefix';
+   static LOAD_PREFIX = 'prefixes';
    /**
     * @readonly
     * @static
@@ -52,18 +53,18 @@ class StandardAutoloader
    static AUTO_REGISTER_TOPJS = 'autoregister_topjs';
    /**
     * 名称空间到类的文件夹之间的映射
-    * 
+    *
     * @protected
     * @type {Map[]}
     */
    namespaces = new Map();
    /**
     * 前缀和文件夹之间的映射
-    * 
+    *
     * @protected
-    * @type {string[]}
+    * @type {Map[]}
     */
-   prefixes = [];
+   prefixes = new Map();
    /**
     * @protected
     * @type {boolean}
@@ -79,12 +80,12 @@ class StandardAutoloader
          this.setOptions(options);
       }
    }
-   
+
    /**
     * 设置自动加载相关参数
-    * 
+    *
     * 可以同时配置"namespace"和"prefix"配置对，使用的结构如下:
-    * 
+    *
     * ```javascript
     * {
     *    namespace : {
@@ -97,7 +98,7 @@ class StandardAutoloader
     *    fallback_autoloader => true
     * }
     * ```
-    * 
+    *
     * @param {Object} options
     * @return {StandardAutoloader}
     */
@@ -107,8 +108,8 @@ class StandardAutoloader
          let pairs = options[key];
          switch(key){
             case StandardAutoloader.AUTO_REGISTER_TOPJS:
-               if(value){
-                  this.registerNamespace('TopJs', __dirname);
+               if(pairs){
+                  this.registerNamespace('TopJs', dirname(__dirname));
                }
                break;
             case StandardAutoloader.LOAD_NS:
@@ -125,7 +126,7 @@ class StandardAutoloader
                this.setFallbackAutoloader(pairs);
                break;
             default:
-               //ignore
+            //ignore
          }
       }
       return this;
@@ -145,7 +146,7 @@ class StandardAutoloader
 
    /**
     * 注册一个名称空间到对应文件夹的映射项
-    * 
+    *
     * @param {string} namespace
     * @param {string} directory
     * @returns {StandardAutoloader}
@@ -159,7 +160,7 @@ class StandardAutoloader
 
    /**
     * 一次性注册多个名称空间到文件目录的映射
-    * 
+    *
     * @param namespaces
     * @returns {StandardAutoloader}
     */
@@ -174,13 +175,29 @@ class StandardAutoloader
       return this;
    }
 
+   /**
+    * 注册一个前缀到对应文件夹的映射项
+    *
+    * @param {string} prefix
+    * @param {string} directory
+    * @returns {StandardAutoloader}
+    */
    registerPrefix(prefix, directory)
    {
-      
+      prefix = rtrim(prefix, StandardAutoloader.PREFIX_SEPARATOR) + StandardAutoloader.PREFIX_SEPARATOR;
+      this.prefixes.set(prefix, this.normalizeDirectory(directory));
+      return this;
    }
 
    registerPrefixes(prefixes)
    {
+      if(!is_object(prefixes)){
+         throw new Error('arg prefixes must be object');
+      }
+      for(let [prefix, directory] of Object.entries(prefixes)){
+         this.registerPrefix(prefix, directory);
+      }
+      return this;
    }
 
    autoload()
@@ -193,7 +210,7 @@ class StandardAutoloader
 
    /**
     * 将类的名称映射成文件路径
-    * 
+    *
     * @param {string} cls
     * @param {string} direcotry
     */
@@ -215,7 +232,28 @@ class StandardAutoloader
       if(!in_array(type, [StandardAutoloader.LOAD_NS, StandardAutoloader.LOAD_PREFIX, StandardAutoloader.ACT_AS_FALLBACK])){
          throw new Error("arg type error, not support");
       }
-      
+      // Fallback autoloading
+      //@todo 先观察一段时间如果没有需求的话就删除
+      if(type == StandardAutoloader.ACT_AS_FALLBACK){
+         let filename = this.transformClassNameToFilename(cls, "");
+         try{
+            let resolveName = require.resolve(filename);
+            return require(resolveName);
+         }catch(ex){
+            return false;
+         }
+      }
+      //使用名称空间和前缀进行加载
+      for(let [leader, path] of this[type].entries()){
+         if(cls.indexOf(leader) === 0){
+            let trimmedClass = cls.substr(leader.length + 1);
+            let filename = this.transformClassNameToFilename(trimmedClass, path);
+            if(file_exist(filename)){
+               return require(filename);
+            }
+         }
+      }
+      return false;
    }
 
    /**

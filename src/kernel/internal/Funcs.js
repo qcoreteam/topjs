@@ -5,6 +5,7 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+const fs = require("fs");
 
 let objectPrototype = Object.prototype;
 let arrayPrototype = Array.prototype;
@@ -101,3 +102,12 @@ export function change_str_at(str, pos, subStr)
    return str.substring(0, pos) + subStr + str.substring(pos + 1);
 }
 
+export function file_exist(filename)
+{
+   try{
+      fs.statSync(filename);
+      return true;
+   }catch (ex){
+      return false;
+   }
+}
