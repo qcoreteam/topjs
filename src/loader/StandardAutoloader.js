@@ -200,8 +200,35 @@ class StandardAutoloader
       return this;
    }
 
-   autoload()
+   /**
+    * 自动加载名称为cls的类文件
+    * 
+    * @param {string} cls
+    * @return {string|boolean}
+    */
+   autoload(cls)
    {
+      let isFallback = this.isFallbackAutoloader();
+      if(-1 !== cls.indexOf(StandardAutoloader.NS_SEPARATOR)){
+         if(this.loadClass(cls, StandardAutoloader.LOAD_NS)){
+            return cls;
+         }else if(isFallback){
+            return this.loadClass(cls, StandardAutoloader.ACT_AS_FALLBACK);
+         }
+         return false;
+      }
+      if(-1 !== cls.indexOf(cls, StandardAutoloader.LOAD_PREFIX)){
+         if(this.loadClass(cls, StandardAutoloader.LOAD_PREFIX)){
+            return cls;
+         }else if(isFallback){
+            return this.loadClass(cls, StandardAutoloader.ACT_AS_FALLBACK);
+         }
+         return false;
+      }
+      if(isFallback){
+         return this.loadClass(cls, StandardAutoloader.ACT_AS_FALLBACK);
+      }
+      return false;
    }
 
    register()
@@ -246,7 +273,11 @@ class StandardAutoloader
       //使用名称空间和前缀进行加载
       for(let [leader, path] of this[type].entries()){
          if(cls.indexOf(leader) === 0){
-            let trimmedClass = cls.substr(leader.length + 1);
+            let leaderLen = leader.length;
+            if(StandardAutoloader.LOAD_NS == type){
+               leaderLen++;
+            }
+            let trimmedClass = cls.substr(leaderLen);
             let filename = this.transformClassNameToFilename(trimmedClass, path);
             if(file_exist(filename)){
                return require(filename);
