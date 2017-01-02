@@ -7,10 +7,13 @@
  */
 let assert = require("chai").assert;
 
-const Entry = require("../lib/Entry");
+const StandardLoader = require("../lib/Entry").StandardLoader;
 
 describe("Entry入口测试", function(){
    it("测试暴露接口", function(){
-      
+      let loader = new StandardLoader({
+         [StandardLoader.AUTO_REGISTER_TOPJS] : true
+      });
+      loader.register();
    });
 });

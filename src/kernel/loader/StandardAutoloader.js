@@ -15,7 +15,7 @@ import path from "path"
 /**
  * 标准自动加载器
  */
-class StandardAutoloader
+export default class StandardAutoloader
 {
    /**
     * @readonly
@@ -354,5 +354,3 @@ class StandardAutoloader
    }
 
 }
-//直接将加载器导出
-module.exports = StandardAutoloader;
