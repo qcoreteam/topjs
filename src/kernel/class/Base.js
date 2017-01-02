@@ -5,3 +5,12 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+export class Base
+{
+   
+}
+
+export function mount(targetNamespace)
+{
+   
+}

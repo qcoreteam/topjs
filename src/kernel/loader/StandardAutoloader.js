@@ -215,7 +215,7 @@ class StandardAutoloader
    /**
     * 向系统注册当前的自动加载器
     */
-   register()
+   register(callback = function(){})
    {
       if(this.registered){
          //@todo 咱们在这里是抛出异常还是什么都不处理呢？
@@ -225,6 +225,7 @@ class StandardAutoloader
       for(let [ns, nsObj] of this.namespaces){
          global[ns] = this.createProxyForNamespace(nsObj);
       }
+      callback();
    }
 
    createProxyForNamespace(nsObj)
