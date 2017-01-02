@@ -28,19 +28,7 @@ class StandardAutoloader
     * @static
     * @type {string}
     */
-   static PREFIX_SEPARATOR = "_";
-   /**
-    * @readonly
-    * @static
-    * @type {string}
-    */
    static LOAD_NS = "namespaces";
-   /**
-    * @readonly
-    * @static
-    * @type {string}
-    */
-   static LOAD_PREFIX = "prefixes";
 
    /**
     * @readonly
@@ -55,6 +43,15 @@ class StandardAutoloader
     * @type {string} NAMESPACE_ACCESSOR_KEY
     */
    static NAMESPACE_ACCESSOR_KEY = "__NAMESPACE_ACCESSOR_KEY__";
+
+   /**
+    * 当autoloader注册完成之后调用的回调函数
+    * 
+    * @static
+    * @type {Function[]}
+    */
+   static afterRegisteredCallbacks = [];
+   
    /**
     * 名称空间到类的文件夹之间的映射
     *
@@ -69,11 +66,6 @@ class StandardAutoloader
     * @type {Map[]}
     */
    prefixes = new Map();
-   /**
-    * @protected
-    * @type {boolean}
-    */
-   fallbackAutoloaderFlag = false;
 
    /**
     * 是否已经注册过，一个loader只能注册一次
@@ -141,6 +133,13 @@ class StandardAutoloader
          }
       }
       return this;
+   }
+   
+   static addAfterRegisteredCallback(callback)
+   {
+      if(callback != null && typeof callback == 'function'){
+         StandardAutoloader.afterRegisteredCallbacks.push(callback);
+      }
    }
 
    /**
@@ -215,7 +214,7 @@ class StandardAutoloader
    /**
     * 向系统注册当前的自动加载器
     */
-   register(callback = function(){})
+   register()
    {
       if(this.registered){
          //@todo 咱们在这里是抛出异常还是什么都不处理呢？
@@ -225,7 +224,11 @@ class StandardAutoloader
       for(let [ns, nsObj] of this.namespaces){
          global[ns] = this.createProxyForNamespace(nsObj);
       }
-      callback();
+      if(StandardAutoloader.afterRegisteredCallbacks.length > 0){
+         for(let callback of StandardAutoloader.afterRegisteredCallbacks){
+            callback();
+         }
+      }
    }
 
    createProxyForNamespace(nsObj)

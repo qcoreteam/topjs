@@ -13,21 +13,23 @@
 import {sep as dir_separator} from "path";
 import * as TopJs from "./kernel/TopJs"
 import {mount as cls_system_mounter} from "./kernel/class/ClassManager"
+import {StandardAutoloader}  from "./kernel/loader/StandardAutoloader"
 
 let topJsLibDir = process.cwd() + dir_separator + "lib";
 let gvars = {
    TOPJS_LIB_DIR : topJsLibDir
 };
 
-export function get_topjs_global_vars()
+function get_topjs_global_vars()
 {
    return gvars;
 }
 
-export function init()
-{
+StandardAutoloader.addAfterRegisteredCallback(function(){
    //给全局名称孔家挂载比较重要的函数
    TopJs.mount(TopJs);
    //初始化类系统
    cls_system_mounter(TopJs);
-}
+});
+
+module.exports
