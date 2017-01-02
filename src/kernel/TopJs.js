@@ -29,19 +29,6 @@ function call_override_parent()
    return method.$owner$.prototype[method.$name$].apply(this, arguments);
 }
 
-function apply(object, cfg, defaults)
-{
-   if(defaults){
-      apply(object, defaults);
-   }
-   if(object && cfg && typeof cfg === 'object'){
-      for(let key in cfg){
-         object[key] = cfg[key];
-      }
-   }
-   return object;
-}
-
 function add_instance_overrides(target, owner, overrides)
 {
    for(let [name, value] of Object.entries(overrides)){
@@ -91,7 +78,18 @@ export function mount(TopJs)
    };
 
    TopJs.$startTime = TopJs.ticks();
-   TopJs.apply = apply;
+   TopJs.apply = function(object, cfg, defaults)
+   {
+      if(defaults){
+         TopJs.apply(object, defaults);
+      }
+      if(object && cfg && typeof cfg === 'object'){
+         for(let key in cfg){
+            object[key] = cfg[key];
+         }
+      }
+      return object;
+   };
    /**
     * @class TopJs
     */
@@ -392,7 +390,7 @@ export function mount(TopJs)
             let owner = target.self;
             let privates;
             if(owner && owner.$isClass$){
-               // 由 TopJs.define'd 类
+               // 由 TopJs.define's 类
                privates = overrides.privates;
                if(privates){
                   overrides = TopJs.apply({}, overrides);

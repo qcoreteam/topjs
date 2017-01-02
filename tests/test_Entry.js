@@ -8,10 +8,6 @@
 let assert = require("chai").assert;
 
 const StandardLoader = require("../lib/Entry").StandardLoader;
-// console.log(typeof [])
-// console.log(typeof {})
-// console.log(typeof function(){})
-// console.log(Object.prototype.toString.call(function(){}))
 
 describe("Entry入口测试", function(){
    it("测试暴露接口", function(){
