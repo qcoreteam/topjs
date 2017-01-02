@@ -1,3 +1,4 @@
+"use strict";
 /*
  * TopJs Framework (http://www.topjs.org/)
  *
@@ -265,8 +266,9 @@ export default class StandardAutoloader
                let keyType = typeof key;
                let builtInKeys = Object.getOwnPropertyNames(Object.getPrototypeOf(target));
                builtInKeys.push('inspect');// for console.log
-               if("symbol" == keyType || in_array(key, builtInKeys)){
-                  return Reflect.get(target, key);
+               let v = Reflect.get(target, key);
+               if(v || "symbol" == keyType || in_array(key, builtInKeys)){
+                  return v
                }
                let child = nsObj.getChild(key);
                if(child instanceof Namespace){
@@ -352,5 +354,4 @@ export default class StandardAutoloader
       }
       return dir + clsName+'.js'
    }
-
 }

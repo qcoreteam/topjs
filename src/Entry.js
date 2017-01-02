@@ -16,17 +16,15 @@ import {mount as cls_system_mounter} from "./kernel/class/ClassManager"
 import StandardAutoloader from "./kernel/loader/StandardAutoloader"
 
 let topJsLibDir = process.cwd() + dir_separator + "lib";
-let gvars = {
-   TOPJS_LIB_DIR : topJsLibDir
-};
 
 StandardAutoloader.addAfterRegisteredCallback(function(){
+   //一些比较重要的全局名称空间常量
+   TopJs.TOPJS_LIB_DIR = topJsLibDir;
+   TopJs.global = global;
    //给全局名称空间挂载比较重要的函数
    TopJsFuncs.mount(TopJs);
-   
    //初始化类系统
    cls_system_mounter(TopJs);
-   
 });
 
 module.exports.StandardLoader = StandardAutoloader;

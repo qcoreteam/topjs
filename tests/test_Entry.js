@@ -15,5 +15,6 @@ describe("Entry入口测试", function(){
          [StandardLoader.AUTO_REGISTER_TOPJS] : true
       });
       loader.register();
+      assert.isFunction(StandardLoader);
    });
 });
