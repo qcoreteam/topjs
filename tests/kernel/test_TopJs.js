@@ -400,7 +400,57 @@ describe("TopJs名称空间函数测试",function(){
       });
       
       it("空对象不是数组", function(){
-         assert.equal(TopJs.isArray({}, false));
+         assert.equal(TopJs.isArray({}), false);
+      });
+   });
+   
+   describe("TopJs.isBoolean", function(){
+      it("空数组不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean([]), false);
+      });
+      
+      it("有值得数组不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean([1, 2, 3]), false);
+      });
+      
+      it("true是布尔类型", function(){
+         assert.equal(TopJs.isBoolean(true), true);
+      });
+      
+      it("false是布尔类型", function(){
+         assert.equal(TopJs.isBoolean(false), true);
+      });
+      
+      it("字符串不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean("asdasdq3eqweq"), false)
+      });
+      
+      it("空字符串不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean(""), false)
+      });
+      
+      it("1不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean(0), false);
+      });
+      
+      it("0不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean(1), false);
+      });
+      
+      it("null不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean(null), false);
+      });
+      
+      it("undefined不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean(undefined), false);
+      });
+      
+      it("date类型不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean(new Date()));
+      });
+      
+      it("空对象不是布尔类型", function(){
+         assert.equal(TopJs.isBoolean({}));
       });
    });
 });
