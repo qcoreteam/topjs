@@ -17,6 +17,34 @@ export function mount(TopJs)
     * @class TopJs
     */
    TopJs.apply(TopJs,{
-      
+      /**
+       * 在指定的作用域上面执行传入的回调函数，当传入的是一个纯函数的时候，让该函数在指定的作用域下
+       * 执行，如果传入的函数是字符串，那么我们在传入的作用域对象下寻找是否有这个方法，有就执行。
+       * 如果什么都不传，那么我们忽略这个调用。
+       * 
+       * ```javascript
+       * //下面几个调用时等价的
+       * 
+       * let fn = this.fn;
+       * 
+       * TopJs.callback(fn, this, [arg1, arg2]);
+       * TopJs.callback("fn", this, [arg1, arg2]);
+       * 
+       * ```
+       * 
+       * @memberOf TopJs
+       * @param {Function|String} callback 一个函数引用或者一个作用域下的方法名称
+       * @param {Object} scope 第一个参数指定的callback的执行作用域，如果第一个参数为字符串，那么必须在这个作用域下
+       * 存在名字为callback所指字符串的方法,如果scope为null那么callback将在defaultScope指定的作用域下执行
+       * @param {Array} args 传给callback的参数
+       * @param {Number} defer callback延迟调用的毫秒数
+       * @param {Object} caller 如果没有显示的提供scope，那么callback调用时将用caller参数进行解析方法
+       * @param {Object} defaultScope 默认的作用域，最后的容错对象
+       * @return {Mixed|undefined} 返回callback的返回值，如果指定defer或者callback不是一个函数则返回undefined
+       */
+      callback(callback, scope, args, defer, caller, defaultScope)
+      {
+         
+      }
    });
 }

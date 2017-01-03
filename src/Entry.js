@@ -13,6 +13,12 @@
 import {sep as dir_separator} from "path";
 import * as TopJsFuncs from "./kernel/TopJs";
 import * as TopJsUtil from "./kernel/Util";
+import * as LangArray from "./kernel/lang/Array";
+import * as LangFunction from "./kernel/lang/Function";
+import * as LangObject from "./kernel/lang/Object";
+import * as LangNumber from "./kernel/lang/Number";
+import * as LangString from "./kernel/lang/String";
+
 import {mount as cls_system_mounter} from "./kernel/class/ClassManager";
 import StandardAutoloader from "./kernel/loader/StandardAutoloader";
 
@@ -24,6 +30,12 @@ StandardAutoloader.addAfterRegisteredCallback(function(){
    TopJs.global = global;
    //给全局名称空间挂载比较重要的函数
    TopJsFuncs.mount(TopJs);
+   //初始化对语言的扩展
+   LangArray.mount(TopJs);
+   LangFunction.mount(TopJs);
+   LangObject.mount(TopJs);
+   LangNumber.mount(TopJs);
+   LangString.mount(TopJs);
    TopJsUtil.mount(TopJs);
    //初始化类系统
    cls_system_mounter(TopJs);
