@@ -16,6 +16,7 @@ let emptyFn = function(){};
 let privateFn = function(){};
 const objProto = Object.prototype;
 const toString = objProto.toString;
+const iterableRe = /\[object\s*(?:Array|Arguments|\w*Collection|\w*List)\]/;
 
 //设置几个特殊的标记，以便分辨这几类函数
 emptyFn.$nullFn$ = emptyFn.$emptyFn$ = privateFn.$privacy$ = true;
@@ -78,18 +79,27 @@ export function mount(TopJs)
    };
 
    TopJs.$startTime = TopJs.ticks();
-   TopJs.apply = function(object, cfg, defaults)
+   /**
+    * 有条件的将config的字段复制到object中
+    *
+    * @memberOf TopJs
+    * @param {Object} object
+    * @param {Object} config
+    * @param {Object} defaults 默认复制对象
+    */
+   TopJs.apply = function(object, config, defaults)
    {
       if(defaults){
          TopJs.apply(object, defaults);
       }
-      if(object && cfg && typeof cfg === 'object'){
-         for(let key in cfg){
-            object[key] = cfg[key];
+      if(object && config && typeof config === 'object'){
+         for(let key in config){
+            object[key] = config[key];
          }
       }
       return object;
    };
+   
    /**
     * @class TopJs
     */
@@ -282,6 +292,27 @@ export function mount(TopJs)
       isDefined(value)
       {
          return typeof value !== "undefined";
+      },
+
+      /**
+       * 探测传入的值是否可遍历
+       * 
+       * @param {Object} value
+       * @return {Boolean}
+       */
+      isIterable(value)
+      {
+         if(!value || typeof value.length !== "number" || typeof value === "string" || 
+            TopJs.isFunction(value)){
+            return false;
+         }
+         if(!value.propertyIsEnumerable){
+            return !!value.item;
+         }
+         if(value.hasOwnProperty("length") && !value.propertyIsEnumerable("length")){
+            return true;
+         }
+         return iterableRe.test(toString.call(value));
       },
 
       /**

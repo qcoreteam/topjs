@@ -11,9 +11,10 @@
  * 我们在这个里面初始化一些内部的类，挂载一些快捷函数到TopJs名称空间上面
  */
 import {sep as dir_separator} from "path";
-import * as TopJsFuncs from "./kernel/TopJs"
-import {mount as cls_system_mounter} from "./kernel/class/ClassManager"
-import StandardAutoloader from "./kernel/loader/StandardAutoloader"
+import * as TopJsFuncs from "./kernel/TopJs";
+import * as TopJsUtil from "./kernel/Util";
+import {mount as cls_system_mounter} from "./kernel/class/ClassManager";
+import StandardAutoloader from "./kernel/loader/StandardAutoloader";
 
 let topJsLibDir = process.cwd() + dir_separator + "lib";
 
@@ -23,6 +24,7 @@ StandardAutoloader.addAfterRegisteredCallback(function(){
    TopJs.global = global;
    //给全局名称空间挂载比较重要的函数
    TopJsFuncs.mount(TopJs);
+   TopJsUtil.mount(TopJs);
    //初始化类系统
    cls_system_mounter(TopJs);
 });

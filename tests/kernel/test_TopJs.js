@@ -169,4 +169,120 @@ describe("TopJs名称空间函数测试",function(){
          assert.equal(obj.toString, "topjs");
       });
    });
+   
+   describe("TopJs.emptyFn",function(){
+      it("返回undefined", function(){
+         assert.isUndefined(TopJs.emptyFn());
+      });
+      it("就算传参数返回也是undefined", function(){
+         assert.isUndefined(TopJs.emptyFn("arg1", "arg2"));
+      });
+   });
+   
+   
+   describe("TopJs.applyIf", function(){
+      let obj;
+      it("目标对象为空，返回所有被复制的属性", function(){
+         obj = TopJs.applyIf({}, {
+            prop1: "prop1",
+            prop2: "prop2"
+         });
+         assert.deepEqual(obj, {
+            prop1: "prop1",
+            prop2: "prop2"
+         });
+      });
+      
+      it("不能覆盖目标对象已有的属性", function(){
+         obj = TopJs.applyIf({
+            prop1: "prop1"
+         },{
+            prop1: "prop2"
+         });
+         assert.equal(obj.prop1, "prop1");
+      });
+      
+      it("混合复制的时候，不能覆盖目标对象的属性", function(){
+         obj = TopJs.applyIf({
+            prop1: "prop1",
+            prop2: "prop2",
+            prop3: "prop3"
+         }, {
+            prop2: "prop4",
+            prop3: "xxx",
+            prop4: "haha"
+         });
+         assert.deepEqual(obj,{
+            prop1: "prop1",
+            prop2: "prop2",
+            prop3: "prop3",
+            prop4: "haha"
+         });
+      });
+      
+      it("应该改变对象的引用", function(){
+         obj = {};
+         TopJs.applyIf(obj, {
+            prop1: "prop1"
+         },{
+            prop1: "xxxx"
+         });
+         assert.equal(obj.prop1, "prop1");
+      });
+      
+      it("如果第一个参数为null，返回null", function(){
+         assert.isNull(TopJs.applyIf(null, {
+            prop1: "prop1"
+         }));
+      });
+      
+      it("返回第一个参数，如果第二个参数没有提供", function(){
+         obj = {
+            prop1: "prop1"
+         };
+         assert.deepEqual(TopJs.applyIf(obj), obj);
+      });
+   });
+   
+   describe("TopJs.ensureValue", function(){
+      let value;
+      let defaultValue;
+      describe("空字符串不为空", function(){
+         it("返回空字符串", function(){
+            assert.equal(TopJs.ensureValue("", "arg2", true), "")
+         });
+         
+         it("返回第一个参数值", function(){
+            assert.equal(TopJs.ensureValue("arg1", "arg2", true), "arg1");
+         });
+         
+         it("第一个参数undefined就返回默认值", function(){
+            assert.equal(TopJs.ensureValue(undefined, "arg2", true), "arg2")
+         });
+         
+         it("0不为空，返回它", function(){
+            assert.equal(TopJs.ensureValue(0, "arg2", true), 0)
+         });
+      });
+      
+      describe("空字符串不为空", function(){
+         it("返回空字符串", function(){
+            assert.equal(TopJs.ensureValue("", "arg2"), "arg2")
+         });
+
+         it("返回第一个参数值", function(){
+            assert.equal(TopJs.ensureValue("arg1", "arg2"), "arg1");
+         });
+
+         it("第一个参数undefined就返回默认值", function(){
+            assert.equal(TopJs.ensureValue(undefined, "arg2"), "arg2")
+         });
+
+         it("0不为空，返回它", function(){
+            assert.equal(TopJs.ensureValue(0, "arg2"), 0)
+         });
+      });
+   });
+   
+   
 });
