@@ -284,5 +284,123 @@ describe("TopJs名称空间函数测试",function(){
       });
    });
    
+   describe("TopJs.isIterable", function(){
+      let LengthyClass = function(){};
+      let ClassWithItem = function(){};
+      let LengthyItemClass = function(){};
+      LengthyClass.prototype.length = 1;
+      ClassWithItem.prototype.item = function(){};
+      LengthyItemClass.prototype.length = 1;
+      LengthyItemClass.prototype.item = function(){};
+      
+      it("函数的argumets对象可遍历", function(){
+         assert.equal(TopJs.isIterable(arguments), true);
+      });
+      
+      it("数组是可遍历", function(){
+         assert.equal(TopJs.isIterable([]), true);
+      });
+      
+      it("有数据的数据也是可遍历", function(){
+         assert.equal(TopJs.isIterable([1, 2, 3, 4]), true);
+      });
+      
+      it("布尔值false不可遍历", function(){
+         assert.equal(TopJs.isIterable(false), false);
+      });
+      
+      it("布尔值true不可遍历", function(){
+         assert.equal(TopJs.isIterable(true), false);
+      });
+
+      it("字符串不可遍历", function(){
+         assert.equal(TopJs.isIterable("a string value"), false);
+      });
+      
+      it("空字符串不可遍历", function(){
+         assert.equal(TopJs.isIterable(""), false);
+      });
+      
+      it("null不可遍历", function(){
+         assert.equal(TopJs.isIterable(null), false);
+      });
+      
+      it("undefined不可遍历", function(){
+         assert.equal(TopJs.isIterable(undefined), false);
+      });
+      
+      it("date不可遍历", function(){
+         assert.equal(TopJs.isIterable(new Date()), false);
+      });
+      
+      it("空对象不可遍历", function(){
+         assert.equal(TopJs.isIterable({}), false);
+      });
+      
+      it("函数不可遍历", function(){
+         assert.equal(TopJs.isIterable(function(){}), false);
+      });
+      
+      it("具有length属相的对象不可遍历", function(){
+         assert.equal(TopJs.isIterable({length: 1}), false);
+      });
+      
+      it("具有item属性的对象不可遍历", function(){
+         assert.equal(TopJs.isIterable({item: function(){}}), false);
+      });
+      
+      it("原型具有length属性的对象不可遍历", function(){
+         assert.equal(TopJs.isIterable(new LengthyClass()), false);
+      });
+      
+      it("原型具有item属性的对象不可遍历", function(){
+         assert.equal(TopJs.isIterable(new ClassWithItem()), false);
+      });
+      
+      it("原型具有item和length属性的对象不可遍历", function(){
+         assert.equal(TopJs.isIterable(new LengthyItemClass()), false);
+      })
+   });
    
+   describe("TopJs.isArray", function(){
+      it("空数组返回true", function(){
+         assert.equal(TopJs.isArray([]), true);
+      });
+      
+      it("有内容的数组返回true", function(){
+         assert.equal(TopJs.isArray([1, 2, 3, 4]), true);
+      });
+      
+      it("布尔值true不是数组", function(){
+         assert.equal(TopJs.isArray(true), false);
+      });
+
+      it("布尔值false不是数组", function(){
+         assert.equal(TopJs.isArray(false), false);
+      });
+
+      it("数值类型不是数组", function(){
+         assert.equal(TopJs.isArray(1), false);
+      });
+
+      it("字符串类型不是数组", function(){
+         assert.equal(TopJs.isArray("asdasda"), false);
+      });
+
+      it("null不是数组", function(){
+         assert.equal(TopJs.isArray(null), false);
+      });
+
+      it("undefined不是数组", function(){
+         assert.equal(TopJs.isArray(undefined), false);
+      });
+      
+      it("date类型不是数组", function(){
+         assert.equal(TopJs.isArray(new Date()), false);
+      });
+      
+      it("空对象不是数组", function(){
+         assert.equal(TopJs.isArray({}, false));
+      });
+   });
 });
