@@ -460,14 +460,14 @@ export function mount(TopJs)
             let i = item.length;
             clone = [];
             while(i--){
-               clone[i] = Ext.clone(item[i]);
+               clone[i] = TopJs.clone(item[i]);
             }
          }
          // Object
          else if("[object Object]" === type && item.constructor === Object){
             clone = {};
             for(let key in item){
-               clone[key] = Ext.clone(item[key]);
+               clone[key] = TopJs.clone(item[key]);
             }
          }
          return clone || item;

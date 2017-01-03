@@ -662,4 +662,437 @@ describe("TopJs名称空间函数测试",function(){
          assert.equal(TopJs.isFunction(undefined), false);
       });
    });
+   
+   describe("TopJs.isNumber", function(){
+      it("0是number类型", function(){
+         assert.equal(TopJs.isNumber(0), true);
+      });
+
+      it("正数是number类型", function(){
+         assert.equal(TopJs.isNumber(666), true);
+      });
+
+      it("负数是number类型", function(){
+         assert.equal(TopJs.isNumber(-666), true);
+      });
+
+      it("浮点数是number类型", function(){
+         assert.equal(TopJs.isNumber(2.14), true);
+      });
+
+      it("负的浮点数是number类型", function(){
+         assert.equal(TopJs.isNumber(-5.12), true);
+      });
+      
+      it("最大数是number类型", function(){
+         assert.equal(TopJs.isNumber(Number.MAX_VALUE), true);
+      });
+      
+      it("最小数是number类型", function(){
+         assert.equal(TopJs.isNumber(Number.MIN_VALUE), true);
+      });
+      
+      it("Math.PI是number类型", function(){
+         assert.equal(TopJs.isNumber(Math.PI), true);
+      });
+      
+      it("Number构造函数的对象是number类型", function(){
+         assert.equal(TopJs.isNumber(Number(1.23)), true);
+      });
+      
+      it("NaN不是number类型", function(){
+         assert.equal(TopJs.isNumber(Number.NaN), false);
+      });
+      
+      it("Number.POSITIVE_INFINITY不是number类型", function(){
+         assert.equal(TopJs.isNumber(Number.POSITIVE_INFINITY), false);
+      });
+      
+      it("Number.NEGATIVE_INFINITY不是number类型", function(){
+         assert.equal(TopJs.isNumber(Number.NEGATIVE_INFINITY), false);
+      });
+      
+      it("空数组不是number类型", function(){
+         assert.equal(TopJs.isNumber([]), false);
+      });
+
+      it("有值得数组不是number类型", function(){
+         assert.equal(TopJs.isNumber([666, 666, 666]), false);
+      });
+      
+      it("true不是number类型", function(){
+         assert.equal(TopJs.isNumber(true), false);
+      });
+
+      it("false不是number类型", function(){
+         assert.equal(TopJs.isNumber(false), false);
+      });
+      
+      it("字符串不是nubmer类型", function(){
+         assert.equal(TopJs.isNumber("a string value"), false);
+      });
+      
+      it("空字符串不是number类型", function(){
+         assert.equal(TopJs.isNumber(""), false);
+      });
+      
+      it("数字字符串不是number类型", function(){
+         assert.equal(TopJs.isNumber("666"), false);
+      });
+      
+      it("null不是number类型", function(){
+         assert.equal(TopJs.isNumber(null), false);
+      });
+      
+      it("undefined不是number类型", function(){
+         assert.equal(TopJs.isNumber(undefined), false);
+      });
+      
+      it("date类型不是number类型", function(){
+         assert.equal(TopJs.isNumber(new Date()), false);
+      });
+      
+      it("空对象不是number类型", function(){
+         assert.equal(TopJs.isNumber({}), false);
+      });
+   });
+
+   describe("TopJs.isNumeric", function(){
+      it("0是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(0), true);
+      });
+      
+      it("正数是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(666), true);
+      });
+      
+      it("负数是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(-666), true);
+      });
+      
+      it("负浮点数是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(-3.25), true);
+      });
+      
+      it("正浮点数是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(3.234), true);
+      });
+      
+      it("Number.MAX_VALUE是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(Number.MAX_VALUE), true);
+      });
+      
+      it("Number.MIN_VALUE是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(Number.MIN_VALUE), true);
+      });
+      
+      it("Math.PI是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(Math.PI), true);
+      });
+      
+      it("Number()构造函数返回的对象是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(Number('6.66')), true);
+      });
+      
+      it("Number.NaN不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(Number.NaN), false);
+      });
+      
+      it("Number.POSITIVE_INFINITY不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(Number.POSITIVE_INFINITY), false);
+      });
+
+      it("Number.NEGATIVE_INFINITY不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(Number.NEGATIVE_INFINITY), false);
+      });
+      
+      it("空数组不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric([]), false);
+      });
+      
+      it("有值得数组不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric([666, 666, 666]), false);
+      });
+      
+      it("true不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(true), false);
+      });
+
+      it("false不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(false), false);
+      });
+      
+      it("字符串不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric("a string value"), false);
+      });
+
+      it("空字符串不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(""), false);
+      });
+      
+      it("字符串数字不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric("12.12"), true);
+      });
+      
+      it("null不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(null), false);
+      });
+
+      it("null不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(null), false);
+      });
+      
+      it("undefiend不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric(undefined), false);
+      });
+
+      it("空对象不是Numeric类型", function(){
+         assert.equal(TopJs.isNumeric({}), false);
+      });
+   });
+   
+   describe("TopJs.isObject", function(){
+      it("空数组不是对象类型", function(){
+         assert.equal(TopJs.isObject([]), false);
+      });
+      
+      it("有值的数组不是对象类型", function(){
+         assert.equal(TopJs.isObject([666, 666, 666]), false);
+      });
+      
+      it("true不是对象类型", function(){
+         assert.equal(TopJs.isObject(true), false);
+      });
+      
+      it("false不是对象类型", function(){
+         assert.equal(TopJs.isObject(false), false);
+      });
+      
+      it("字符串不是对象类型", function(){
+         assert.equal(TopJs.isObject("a string value"), false);
+      });
+      
+      it("空字符串不是对象类型", function(){
+         assert.equal(TopJs.isObject(""), false);
+      });
+
+      it("number常量不是对象类型", function(){
+         assert.equal(TopJs.isObject(1), false);
+      });
+      
+      it("null不是对象类型", function(){
+         assert.equal(TopJs.isObject(null), false);
+      });
+
+      it("undefined不是对象类型", function(){
+         assert.equal(TopJs.isObject(undefined), false);
+      });
+      
+      it("date不是对象类型", function(){
+         assert.equal(TopJs.isObject(new Date()), false);
+      });
+      
+      it("常量对象是对象类型", function ()
+      {
+         assert.equal(TopJs.isObject({}), true);
+      });
+      
+      it("带有属性的常量对象是对象类型", function(){
+         assert.equal(TopJs.isObject({
+            prop1: "prop1",
+            prop2: "prop2"
+         }), true);
+      });
+      
+      it("普通的实例化的对象是对象类型", function(){
+         let Cls = function(){};
+         assert.equal(TopJs.isObject(new Cls()), true);
+      });
+      
+      it("new Object()是对象类型", function(){
+         assert.equal(TopJs.isObject(new Object()), true);
+      });
+   });
+   
+   describe("TopJs.isPrimitive", function(){
+      it("整数是原生类型", function(){
+         assert.equal(TopJs.isPrimitive(666), true);
+      });
+      
+      it("负整数是原生类型", function(){
+         assert.equal(TopJs.isPrimitive(-666), true);
+      });
+      
+      it("浮点是原生类型", function ()
+      {
+         assert.equal(TopJs.isPrimitive(3.666), true);
+      });
+
+      it("负浮点是原生类型", function ()
+      {
+         assert.equal(TopJs.isPrimitive(-3.666), true);
+      });
+
+      it("Number.MAX_VALUE是原生类型", function() {
+         assert.equal(TopJs.isPrimitive(Number.MAX_VALUE), true);
+      });
+
+      it("Math.PI是原生类型", function(){
+         assert.equal(TopJs.isPrimitive(Math.PI), true);
+      });
+
+      it("空字符串是原始类型", function(){
+         assert.equal(TopJs.isPrimitive(""), true);
+      });
+
+      it("字符串是原始类型", function(){
+         assert.equal(TopJs.isPrimitive("a string value"), true);
+      });
+
+      it("true是原生类型", function(){
+         assert.equal(TopJs.isPrimitive(true), true);
+      });
+
+      it("false是原生类型", function(){
+         assert.equal(TopJs.isPrimitive(false), true);
+      });
+      
+      it("null是原生类型", function(){
+         assert.equal(TopJs.isPrimitive(null), false);
+      });
+
+      it("undefined是原生类型", function(){
+         assert.equal(TopJs.isPrimitive(undefined), false);
+      });
+      
+      it("常量对象不是原生类型", function(){
+         assert.equal(TopJs.isPrimitive({}), false);
+      });
+      
+      it("是实例话的类实例不是原生类型", function(){
+         let Cls = function(){};
+         assert.equal(TopJs.isPrimitive(new Cls()), false);
+      });
+      
+      it("数组不是原生类型", function(){
+         assert.equal(TopJs.isPrimitive([]), false);
+      });
+   });
+
+   describe("TopJs.isString", function() {
+      
+      it("空字符串是字符串类型", function(){
+         assert.equal(TopJs.isString(""), true);
+      });
+
+      it("字符串是字符串类型", function(){
+         assert.equal(TopJs.isString("a string value"), true);
+      });
+      
+      it("通过传入字符串到String()构造函数返回值是字符串类型", function(){
+         assert.equal(TopJs.isString(String("a string value")), true);
+      });
+
+      it("通过传入空字符串String()构造函数返回值是字符串类型", function(){
+         assert.equal(TopJs.isString(String("")), true);
+      });
+      
+      it("number不是字符串类型", function(){
+         assert.equal(TopJs.isString(666), false);
+      });
+      
+      it("true不是字符串类型", function(){
+         assert.equal(TopJs.isString(true), false);
+      });
+
+      it("null不是字符串类型", function(){
+         assert.equal(TopJs.isString(null), false);
+      });
+
+      it("undefined不是字符串类型", function(){
+         assert.equal(TopJs.isString(undefined), false);
+      });
+
+      it("数组不是字符串类型", function(){
+         assert.equal(TopJs.isString([]), false);
+      });
+
+      it("常量对象不是字符串类型", function(){
+         assert.equal(TopJs.isString({}), false);
+      });
+      
+   });
+   
+   describe("TopJs.clone", function(){
+      let clone = null;
+      beforeEach(function(){
+         clone = null;
+      });
+      it("克隆一个数组", function(){
+         let array = [234, 32, '22', [666, 6, "3"]];
+         clone = TopJs.clone(array);
+         assert.deepEqual(clone, array);
+         assert.equal(array === clone, false);
+      });
+      
+      it("克隆一个对象", function ()
+      {
+         let obj = {
+            prop1: 1,
+            fn: function(){
+               return 666;
+            }
+         };
+         clone = TopJs.clone(obj);
+         assert.deepEqual(clone, obj);
+         assert.equal(obj === clone, false);
+      });
+      
+      it("克隆一个date类型", function(){
+         let date = new Date();
+         clone = TopJs.clone(date);
+         assert.deepEqual(clone, date);
+         assert.equal(date === clone, false);
+      });
+      
+      it("克隆null直接返回null", function ()
+      {
+         assert.isNull(TopJs.clone(null));
+      });
+
+      it("克隆undefined直接返回undefined", function ()
+      {
+         assert.isUndefined(TopJs.clone(undefined));
+      });
+      
+      it("不克隆可遍历的字段", function(){
+         assert.equal(TopJs.clone({}).hasOwnProperty('toString'), false);
+      });
+      
+      it("克隆显示指定的字段，哪怕是可遍历的", function(){
+         assert.equal(TopJs.clone({toString: true}).hasOwnProperty('toString'), true);
+         assert.equal(TopJs.clone({toString: true}).hasOwnProperty('valueOf'), false);
+      });
+   });
+   
+   describe("TopJs.override", function(){
+      describe("操作原生的类型", function(){
+         it("覆盖原来的方法，并且将方法加到原型上", function(){
+            let Cls = function(){};
+            let fn1 = function(){};
+            let fn2 = function(){};
+            let fn3 = function(){};
+            let fn4 = function(){};
+            Cls.prototype.method1 = fn1;
+            Cls.prototype.method2 = fn2;
+            TopJs.override(Cls, {
+               method2: fn3,
+               method3: fn4
+            });
+            assert.equal(Cls.prototype.method1, fn1);
+            assert.equal(Cls.prototype.method2, fn3);
+            assert.equal(Cls.prototype.method3, fn4);
+         });
+      });
+   });
 });

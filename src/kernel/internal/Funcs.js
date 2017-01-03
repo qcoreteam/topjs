@@ -16,7 +16,7 @@ let rtrimRegex =  /[\x09\x0a\x0b\x0c\x0d\x20\xa0\u1680\u180e\u2000\u2001\u2002\u
 
 export function is_object(target)
 {
-   return toString.call(target) === "[[object Object]]"
+   return toString.call(target) === "[object Object]"
 }
 
 export function is_string(value)
