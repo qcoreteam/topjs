@@ -21,7 +21,8 @@ nodejs版的zend framework框架
 
 
 
-# 开发组成员 
+# 贡献成员 
+##开发团队
 ```PS: 排名不分先后```</br>
 zzu_softboy <zzu_softboy@163.com></br>
 Tony              <phptony@126.com></br>
@@ -31,6 +32,23 @@ Arvin        <huaifufeng@163.com></br>
 zacking       <zacking57@gmail.com></br>
 Andy          <qihuainter@126.com></br>
 ...</br>
+
+等待您的加入
+##安全团队
+```PS: 排名不分先后```</br>
+...</br>
+
+##测试团队
+```PS: 排名不分先后```</br>
+...</br>
+等待您的加入
+
+##设计团队
+```PS: 排名不分先后```</br>
+等待您的加入
+
+##文档团队
+```PS: 排名不分先后```</br>
 等待您的加入
 
 # 合作伙伴

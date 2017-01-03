@@ -446,11 +446,220 @@ describe("TopJs名称空间函数测试",function(){
       });
       
       it("date类型不是布尔类型", function(){
-         assert.equal(TopJs.isBoolean(new Date()));
+         assert.equal(TopJs.isBoolean(new Date()), false);
       });
       
       it("空对象不是布尔类型", function(){
-         assert.equal(TopJs.isBoolean({}));
+         assert.equal(TopJs.isBoolean({}), false);
+      });
+   });
+   
+   describe("TopJs.isDate", function (){
+      it("空数组不是date类型", function(){
+         assert.equal(TopJs.isDate([]), false);
+      });
+      
+      it("有值得数组不是date类型", function(){
+         assert.equal(TopJs.isDate([1, 2, 3]), false);
+      });
+      
+      it("true不是date类型", function(){
+         assert.equal(TopJs.isDate(true), false);
+      });
+      
+      it("false不是date类型", function(){
+         assert.equal(TopJs.isDate(false), false);
+      });
+      
+      it("字符串不是date类型", function(){
+         assert.equal(TopJs.isDate("a string value"), false);
+      });
+      
+      it("空字符串不是date类型", function()
+      {
+         assert.equal(TopJs.isDate(""), false);
+      });
+      
+      it("数值类型不是date类型", function(){
+         assert.equal(TopJs.isDate(1), false);
+      });
+      
+      it("null不是date类型", function ()
+      {
+         assert.equal(TopJs.isDate(null), false);
+      });
+      
+      it("undefined不是date类型", function(){
+         assert.equal(TopJs.isDate(undefined), false);
+      });
+      
+      it("new Date()是date类型", function(){
+         assert.equal(TopJs.isDate(new Date()), true);
+      });
+      
+      it("常量对象不是date类型", function ()
+      {
+         assert.equal(TopJs.isDate({}), false);
+      });
+   });
+   
+   describe("TopJs.isDefined", function(){
+      it("空数组已经定义", function(){
+         assert.equal(TopJs.isDefined([]), true);
+      });
+      
+      it("有值得数组已经定义", function(){
+         assert.equal(TopJs.isDefined([1, 2, 3, 4]), true)
+      });
+      
+      it("true已经定义", function(){
+         assert.equal(TopJs.isDefined(true), true);
+      });
+      
+      it("false已经定义", function(){
+         assert.equal(TopJs.isDefined(false), true);
+      });
+      
+      it("字符串已经定义", function(){
+         assert.equal(TopJs.isDefined("a string value"), true);
+      });
+      
+      it("空字符串已经定义", function(){
+         assert.equal(TopJs.isDefined("a string value"), true);
+      });
+      
+      it("数字常量已经定义", function(){
+         assert.equal(TopJs.isDefined(1), true);
+      });
+      
+      it("null已经定义", function(){
+         assert.equal(TopJs.isDefined(null), true);
+      });
+      
+      it("undefined已经定义", function(){
+         assert.equal(TopJs.isDefined(null), true);
+      });
+      
+      it("date对象已经定义", function(){
+         assert.equal(TopJs.isDefined(new Date()), true);
+      });
+      
+      it("空对象已经定义", function(){
+         assert.equal(TopJs.isDefined({}), true);
+      });
+   });
+   
+   describe("TopJs.isEmpty", function(){
+      it("空数组为空", function(){
+         assert.equal(TopJs.isEmpty([]), true);
+      });
+      
+      it("有值得数组不为空", function(){
+         assert.equal(TopJs.isEmpty([1, 2, 3]), false);
+      });
+      
+      it("true不为空", function(){
+         assert.equal(TopJs.isEmpty(true), false);
+      });
+
+      it("false不为空", function(){
+         assert.equal(TopJs.isEmpty(false), false);
+      });
+      
+      it("字符串不为空", function(){
+         assert.equal(TopJs.isEmpty("a string value"), false);
+      });
+      
+      it("空字符串为空", function(){
+         assert.equal(TopJs.isEmpty(""), true);
+      });
+
+      it("指定allowBlank参数空字符串不为空", function(){
+         assert.equal(TopJs.isEmpty("", true), false);
+      });
+      
+      it("数字常量不为空", function(){
+         assert.equal(TopJs.isEmpty(1), false);
+      });
+      
+      it("null为空", function(){
+         assert.equal(TopJs.isEmpty(null), true);
+      });
+      
+      it("undefined为空", function(){
+         assert.equal(TopJs.isEmpty(null), true);
+      });
+      
+      it("date类型不为空", function(){
+         assert.equal(TopJs.isEmpty(new Date()), false);
+      })
+   });
+   
+   describe("TopJs.isFunction", function(){
+      it("匿名函数是函数类型", function(){
+         assert.equal(TopJs.isFunction(function(){}), true);
+      });
+      
+      it("箭头函数是函数类型", function(){
+         assert.equal(TopJs.isFunction((x)=>x), true);
+      });
+      
+      it("静态方法是函数类型", function(){
+         assert.equal(TopJs.isFunction(TopJs.emptyFn), true);
+      });
+      
+      it("实例对象的方法是函数类型", function(){
+         let Cls = function(){};
+         Cls.prototype.getName = function(){};
+         let obj = new Cls();
+         assert.equal(TopJs.isFunction(obj.getName), true);
+      });
+      
+      it("常量对象的函数字段是函数类型", function(){
+         let obj = {
+            fn: function(){}
+         };
+         assert.equal(TopJs.isFunction(obj.fn), true);
+      });
+      
+      it("空数组不是函数类型", function(){
+         assert.equal(TopJs.isFunction([]), false);
+      });
+      
+      it("有值得数组不是函数类型", function(){
+         assert.equal(TopJs.isFunction([1, 2, 4]), false);
+      });
+      
+      it("false不是函数类型", function(){
+         assert.equal(TopJs.isFunction(false), false);
+      });
+      
+      it("true不是函数类型", function(){
+         assert.equal(TopJs.isFunction(true), false);
+      });
+      
+      it("字符串不是函数类型", function(){
+         assert.equal(TopJs.isFunction("a string value"), false);
+      });
+      
+      it("空字符串不是函数类型", function(){
+         assert.equal(TopJs.isFunction(""), false);
+      });
+      
+      it("数字常量不是函数类型", function(){
+         assert.equal(TopJs.isFunction(666), false);
+      });
+      
+      it("null不是函数类型", function(){
+         assert.equal(TopJs.isFunction(null), false);
+      });
+      
+      it("undefined不是函数类型", function(){
+         assert.equal(TopJs.isFunction(undefined), false);
+      });
+      
+      it("空对象不是函数类型", function(){
+         assert.equal(TopJs.isFunction(undefined), false);
       });
    });
 });

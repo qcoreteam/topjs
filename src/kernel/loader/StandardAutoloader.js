@@ -242,22 +242,18 @@ export default class StandardAutoloader
             {
                return Object.getOwnPropertyDescriptors(nsObj)
             },
-            
             getOwnPropertyNames() 
             {
                return nsObj.children.keys();
             },
-            
             keys()
             {
                return nsObj.children.keys();
             },
-            
             hasOwn(key) 
             {
                return nsObj.children.has(key);
             },
-            
             get(target, key)
             {
                if(StandardAutoloader.NAMESPACE_ACCESSOR_KEY == key){
