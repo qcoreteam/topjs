@@ -50,7 +50,12 @@ function add_instance_overrides(target, owner, overrides)
       target[name] = value;
    }
 }
-
+/**
+ * @namespace TopJs.Name
+ */
+/**
+ * @namespace TopJs.loader
+ */
 export function mount(TopJs)
 {
    /**
@@ -58,7 +63,7 @@ export function mount(TopJs)
     *
     * @type {Number} Milliseconds since UNIX epoch.
     * @method now
-    * @memberof TopJs
+    * @memberof TopJs.Name.Class
     */
    TopJs.now = Date.now || function()
       {
@@ -69,7 +74,7 @@ export function mount(TopJs)
     * 返回当前的时间戳，纳秒分辨率
     *
     * @type {Number}
-    * @method now
+    * @method ticks
     * @memberof TopJs
     */
    TopJs.ticks = function()
@@ -92,7 +97,7 @@ export function mount(TopJs)
       if(defaults){
          TopJs.apply(object, defaults);
       }
-      if(object && config && typeof config === 'object'){
+      if(object && config && typeof config === "object"){
          for(let key in config){
             object[key] = config[key];
          }
@@ -101,7 +106,7 @@ export function mount(TopJs)
    };
    
    /**
-    * @class TopJs
+    * @namespace TopJs
     */
    TopJs.apply(TopJs,{
       /**
@@ -135,6 +140,7 @@ export function mount(TopJs)
        * 有条件的将config的字段复制到object中
        *
        * @memberOf TopJs
+       * 
        * @param {Object} object
        * @param {Object} config
        */
@@ -155,7 +161,7 @@ export function mount(TopJs)
        * @param {Object} value 等待检查的函数
        * @return {Boolean}
        */
-      isArray : ('isArray' in Array) ? Array.isArray:
+      isArray : ("isArray" in Array) ? Array.isArray:
          function(value){
             return toString.call(value) === "[object Array]";
          },
@@ -200,7 +206,7 @@ export function mount(TopJs)
        */
       isFunction(value)
       {
-         return !!value && typeof value === 'function';
+         return !!value && typeof value === "function";
       },
 
       /**
@@ -219,7 +225,7 @@ export function mount(TopJs)
        * 返回`true`如果传入的对象是`numeric`类型
        * 
        * @memberOf TopJs
-       * @param {Object} value 例如：1, '1', '2.34'
+       * @param {Object} value 例如：1, `1`, `2.34`
        * @return {Boolean} 
        */
       isNumeric(value)
@@ -240,7 +246,7 @@ export function mount(TopJs)
       },
 
       /**
-       * 判断传入的对象是否为JavaScript 'primitive'，字符串, 数字和布尔类型
+       * 判断传入的对象是否为JavaScript `primitive`，字符串, 数字和布尔类型
        * 
        * @memberOf TopJs
        * @param {Object} value
@@ -266,7 +272,7 @@ export function mount(TopJs)
       
       /**
        * 判断传入的对象是否为空，判断为空的标准是
-       * 
+       * SB
        * - `null`
        * - `undefined`
        * - 空数组
@@ -383,7 +389,7 @@ export function mount(TopJs)
        * 对象的`override`方法将会调用 (参考 {@link TopJs.Base#override}) 把`overrides`
        * 当做参数传入
        * 
-       * 如果传入的`target`是函数，那么我们默认其为构造函数，`overrides'将使用{@link TopJs.apply}
+       * 如果传入的`target`是函数，那么我们默认其为构造函数，`overrides`将使用{@link TopJs.apply}
        * 添加到其的原型对象上
        * 
        * 如果目标的`target`的是通过{@link TopJs#define TopJs.define}定义的类的实例化的对象，那么

@@ -1,3 +1,9 @@
 {
-  
+  "plugins": ["plugins/markdown"],
+  "opts": {
+    "template": "node_modules/",
+    "encoding": "utf8",
+    "destination": "./dist/apidocs/",
+    "recurse": true                
+  }
 }

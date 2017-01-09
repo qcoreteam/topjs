@@ -23,7 +23,9 @@ import {mount as cls_system_mounter} from "./kernel/class/ClassManager";
 import StandardAutoloader from "./kernel/loader/StandardAutoloader";
 
 let topJsLibDir = process.cwd() + dir_separator + "lib";
-
+/**
+ * @namespace TopJs
+ */
 StandardAutoloader.addAfterRegisteredCallback(function(){
    //一些比较重要的全局名称空间常量
    TopJs.TOPJS_LIB_DIR = topJsLibDir;
@@ -42,3 +44,30 @@ StandardAutoloader.addAfterRegisteredCallback(function(){
 });
 
 module.exports.StandardLoader = StandardAutoloader;
+/**
+ * @namespace A
+ */
+/**
+ * @memberOf A
+ */
+let name = "";
+
+/**
+ * @namespace A.B
+ */
+/**
+ * @class
+ * @memberOf A.B
+ * @name Student
+ */
+let Student = {
+   
+};
+/**
+ * @memberOf A.B
+ */
+let version = "";
+/**
+ * @namespace A.B.C
+ */
+let xiuxiu = "";
