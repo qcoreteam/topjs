@@ -6,9 +6,8 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 let assert = require("chai").assert;
-let StandardAutoloader = require("../../../lib/kernel/loader/StandardAutoloader");
+let StandardAutoloader = require("../../../lib/kernel/loader/StandardAutoloader").default;
 let Namespace = require("../../../lib/kernel/loader/Namespace").default;
-
 describe('loader/StandardAutoloader测试用例', function() {
    let loader;
    beforeEach(function(){
@@ -82,7 +81,5 @@ describe('loader/StandardAutoloader测试用例', function() {
       loader.register();
       let ns = loader.getNamespace("TopJs.loader");
       assert.isNull(ns);
-      let obj = new TopJs.kernel.loader.StandardAutoloader();
-      assert.instanceOf(obj, StandardAutoloader);
    });
 });

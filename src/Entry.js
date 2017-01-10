@@ -44,30 +44,3 @@ StandardAutoloader.addAfterRegisteredCallback(function(){
 });
 
 module.exports.StandardLoader = StandardAutoloader;
-/**
- * @namespace A
- */
-/**
- * @memberOf A
- */
-let name = "";
-
-/**
- * @namespace A.B
- */
-/**
- * @class
- * @memberOf A.B
- * @name Student
- */
-let Student = {
-   
-};
-/**
- * @memberOf A.B
- */
-let version = "";
-/**
- * @namespace A.B.C
- */
-let xiuxiu = "";

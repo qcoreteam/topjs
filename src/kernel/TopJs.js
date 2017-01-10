@@ -50,20 +50,14 @@ function add_instance_overrides(target, owner, overrides)
       target[name] = value;
    }
 }
-/**
- * @namespace TopJs.Name
- */
-/**
- * @namespace TopJs.loader
- */
+
 export function mount(TopJs)
 {
    /**
     * 返回当前时间戳
     *
-    * @type {Number} Milliseconds since UNIX epoch.
     * @method now
-    * @memberof TopJs.Name.Class
+    * @memberof TopJs
     */
    TopJs.now = Date.now || function()
       {
@@ -110,7 +104,6 @@ export function mount(TopJs)
     */
    TopJs.apply(TopJs,{
       /**
-       * 可复用的私有方法的模板
        * ```javascript
        *
        * TopJs.define("MyClass", {
@@ -124,15 +117,13 @@ export function mount(TopJs)
        * ```
        *
        * @memberOf TopJs
-       * @property {Function} privateFn
-       */
+       * @property {Function} privateFn privateFn
+       */ 
       privateFn: privateFn,
 
       /**
-       * 可复用的空函数模板
-       *
        * @memberOf TopJs
-       * @property {Function} emptyFn
+       * @property {Function} emptyFn 可复用的空函数模板
        */
       emptyFn: emptyFn,
 
@@ -303,6 +294,7 @@ export function mount(TopJs)
       /**
        * 探测传入的值是否可遍历
        * 
+       * @memberOf TopJs
        * @param {Object} value
        * @return {Boolean}
        */
@@ -324,6 +316,7 @@ export function mount(TopJs)
       /**
        * 确保返回值，如果value不为空返回自己，否则返回defaultValue
        *
+       * @memberOf TopJs
        * @param {Object} value
        * @param {Object} defaultValuem
        * @param {Object} allowBlank 默认为false，当为true的时候，空字符串不为空
@@ -341,7 +334,7 @@ export function mount(TopJs)
        *  * `Object` 所有的具有`destroy`方法的都会被调用
        *
        * @memberOf TopJs
-       * @param {Mixed...} args 任意数量的对象和数组
+       * @param {...Mixed} args 任意数量的对象和数组
        */
       destroy()
       {
@@ -363,8 +356,8 @@ export function mount(TopJs)
        * 为`null`。
        * 
        * @memberOf TopJs
-       * @param {Object} object
-       * @param {String...} args 目标被删除的字段的名称
+       * @param {Object} object 将要删除的目标对象
+       * @param {...String} args 目标被删除的字段的名称
        * @return {Object}
        */
       destroyMembers(object)
@@ -410,7 +403,7 @@ export function mount(TopJs)
        * 
        * 如果`target`不是以上几种，那么`overrides`将使用{@link TopJs#apply}复制到`target`上
        * 
-       * 详情请参考 {@link TopJs#define TopJs.define}和{@link TopJs.Base#override}
+       * 详情请参考 {@link TopJs#define}和{@link TopJs.Base#override}
        * 
        * @memberOf TopJs
        * @param {Object} target 目标替换对象
@@ -479,6 +472,7 @@ export function mount(TopJs)
          return clone || item;
       }
    });
-   
 }
-   
+/**
+ * @namespace TopJs.kernel
+ */

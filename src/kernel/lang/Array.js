@@ -88,7 +88,7 @@ export function mount(TopJs)
        * 
        * @memberof TopJs.Array
        * @param {Array} array 目标操作的数组
-       * @param {Object...} items
+       * @param {...Object} items 传入的数组
        * @return {Array} 已经删除过指定的元素的项
        */
       remove(array, ...items)

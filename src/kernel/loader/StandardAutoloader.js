@@ -14,88 +14,103 @@ import Namespace from "./Namespace";
 import path from "path"
 
 /**
- * 标准自动加载器
+ * @namespace TopJs.kernel.loader
+ * @memberOf TopJs.kernel
  */
-export default class StandardAutoloader
+/**
+ * 标准自动加载器
+ * <font color="red">注意，这个类为底层自动加载类，一般只在入口文件进行实例化。</font>
+ * ```javascript
+ * 
+ *    let loader = new StandardLoader({
+ *       [StandardLoader.AUTO_REGISTER_TOPJS] : true
+ *    });
+ *    loader.register();
+ *    
+ * ```
+ * @name StandardAutoloader
+ * @memberOf TopJs.kernel.loader
+ * @constructor
+ * @param {Object} options
+ */
+export default function StandardAutoloader(options = null)
 {
+   if(null !== options){
+      this.setOptions(options);
+   }
+}
+
+Object.assign(StandardAutoloader,
+   /** @lends TopJs.kernel.loader.StandardAutoloader */
+   {
    /**
     * @readonly
     * @static
-    * @type {string}
+    * @property {string} NS_SEPARATOR 名称空间分隔符
     */
-   static NS_SEPARATOR = ".";
+   NS_SEPARATOR : ".",
    /**
     * @readonly
     * @static
-    * @type {string}
+    * @property {string} LOAD_NS 参数批量设置的时候名称空间项识别码常量
     */
-   static LOAD_NS = "namespaces";
+   LOAD_NS : "namespaces",
 
    /**
     * @readonly
     * @static
-    * @type {string}
+    * @property {string} AUTO_REGISTER_TOPJS 参数批量设置的时候是否自动注册`TopJs`框架路径识别码常量
     */
-   static AUTO_REGISTER_TOPJS = "autoregister_topjs";
+   AUTO_REGISTER_TOPJS : "autoregister_topjs",
 
    /**
     * @readonly
     * @static
-    * @type {string} NAMESPACE_ACCESSOR_KEY
+    * @property {string} NAMESPACE_ACCESSOR_KEY 对象代理访问时候获取名称空间对象的特殊键名
     */
-   static NAMESPACE_ACCESSOR_KEY = "__NAMESPACE_ACCESSOR_KEY__";
+   NAMESPACE_ACCESSOR_KEY : "__NAMESPACE_ACCESSOR_KEY__",
 
    /**
-    * 当autoloader注册完成之后调用的回调函数
-    * 
     * @static
-    * @type {Function[]}
+    * @property {Function[]} afterRegisteredCallbacks 当autoloader注册完成之后调用的回调函数
     */
-   static afterRegisteredCallbacks = [];
+   afterRegisteredCallbacks : [],
    
    /**
-    * 名称空间到类的文件夹之间的映射
-    *
-    * @protected
-    * @type {Map[]}
+    * @static
+    * @param {Function} callback 向`loader`注册一个回调函数，当`autoloader`完成注册之后调用
     */
-   namespaces = new Map();
-   /**
-    * 前缀和文件夹之间的映射
-    *
-    * @protected
-    * @type {Map[]}
-    */
-   prefixes = new Map();
-
-   /**
-    * 是否已经注册过，一个loader只能注册一次
-    *
-    * @protected
-    * @type {boolean}
-    */
-   registered = false;
-
-   /**
-    * proxy对象的缓存
-    * 
-    * @protected
-    * @type {Map}
-    */
-   proxyCache = new Map();
-   /**
-    * @param {Object} options
-    */
-   constructor(options = null)
+   addAfterRegisteredCallback(callback)
    {
-      if(null !== options){
-         this.setOptions(options);
+      if(callback != null && typeof callback == 'function'){
+         StandardAutoloader.afterRegisteredCallbacks.push(callback);
       }
    }
+});
+
+Object.assign(StandardAutoloader.prototype,
+   /** @lends TopJs.kernel.loader.StandardAutoloader.prototype */
+   {
+   /**
+    * @protected
+    * @property {Map[]} namespaces 名称空间到类的文件夹之间的映射
+    */
+   namespaces : new Map(),
 
    /**
-    * 设置自动加载相关参数
-    *
+    * @protected
+    * @property {boolean} registered 是否已经注册过，一个loader只能注册一次
+    */
+   registered : false,
+
+   /**
+    * @protected
+    * @property {Map} proxyCache proxy对象的缓存
+    */
+   proxyCache : new Map(),
+
+
+   /**
     * 可以同时配置"namespace"和"prefix"配置对，使用的结构如下:
     *
     * ```javascript
@@ -104,14 +119,10 @@ export default class StandardAutoloader
     *       TopJs : "/path/to/topjs/library",
     *       Vender : "/path/to/other/vender/library"
     *    },
-    *    prefixes : {
-    *       JsLib_ : "/path/to/JsLib/library"
-    *    },
     *    fallback_autoloader => true
     * }
     * ```
-    *
-    * @param {Object} options
+    * @param {Object} options 设置自动加载相关参数
     * @return {StandardAutoloader}
     */
    setOptions(options)
@@ -134,14 +145,7 @@ export default class StandardAutoloader
          }
       }
       return this;
-   }
-   
-   static addAfterRegisteredCallback(callback)
-   {
-      if(callback != null && typeof callback == 'function'){
-         StandardAutoloader.afterRegisteredCallbacks.push(callback);
-      }
-   }
+   },
 
    /**
     * 注册一个名称空间到对应文件夹的映射项
@@ -176,12 +180,19 @@ export default class StandardAutoloader
       }catch(err)
       {}
       return nsObj;
-   }
+   },
 
    /**
-    * 一次性注册多个名称空间到文件目录的映射
+    * 一次性注册多个名称空间到文件目录的映射, `namespace`参数结构如下：
+    * ```javascript
+    * {
+    *    namespace1: dir1,
+    *    namespace2: dir2,
+    *    ...
+    * }
+    * ```
     *
-    * @param namespaces
+    * @param {Object} namespaces 需要注册的名称空间类型
     * @returns {StandardAutoloader}
     */
    registerNamespaces(namespaces)
@@ -193,8 +204,14 @@ export default class StandardAutoloader
          this.registerNamespace(namespace, direcotry);
       }
       return this;
-   }
-   
+   },
+
+   /**
+    * 通过名称空间名称，获取底层名称空间对象引用
+    *
+    * @param {Object} name 名称空间的名称
+    * @returns {TopJs.kernel.loader.Namespace}
+    */
    getNamespace(name)
    {
       let parts = name.split(StandardAutoloader.NS_SEPARATOR);
@@ -210,10 +227,19 @@ export default class StandardAutoloader
          }
       }
       return ns;
-   }
-   
+   },
+
    /**
-    * 向系统注册当前的自动加载器
+    * 向系统注册当前的自动加载器,这次之后咱们就可以按照名称空间的方式进行实例化类了
+    * 
+    * 比如:
+    * 
+    * ```javascript
+    * 
+    * let obj = new TopJs.somenamepace.SomeCls();
+    * 
+    * 
+    * ```
     */
    register()
    {
@@ -230,19 +256,25 @@ export default class StandardAutoloader
             callback();
          }
       }
-   }
+   },
 
+   /**
+    * 向底层的对象的代理注册一个`get`拦截器,实现不存在的类自动加载
+    * 
+    * @private
+    * @param {TopJs.kernel.loader.Namespace} nsObj 原生的名称空间对象
+    */
    createProxyForNamespace(nsObj)
    {
       if(!this.proxyCache.has(nsObj)){
          let self = this;
          let proto = Object.getPrototypeOf(nsObj);
          this.proxyCache.set(nsObj, new Proxy(proto, {
-            getOwnPropertyDescriptors() 
+            getOwnPropertyDescriptors()
             {
                return Object.getOwnPropertyDescriptors(nsObj)
             },
-            getOwnPropertyNames() 
+            getOwnPropertyNames()
             {
                return nsObj.children.keys();
             },
@@ -250,7 +282,7 @@ export default class StandardAutoloader
             {
                return nsObj.children.keys();
             },
-            hasOwn(key) 
+            hasOwn(key)
             {
                return nsObj.children.has(key);
             },
@@ -310,13 +342,13 @@ export default class StandardAutoloader
          }));
       }
       return this.proxyCache.get(nsObj);
-   }
-   
+   },
+
    /**
     * 格式化加载目录，主要就是在路径的末尾加上路径分隔符
     *
     * @protected
-    * @param {string} directory
+    * @param {string} directory 需要进行处理的文件夹路径
     * @return {string}
     */
    normalizeDirectory(directory)
@@ -328,8 +360,15 @@ export default class StandardAutoloader
       }
       directory += dir_separator;
       return directory;
-   }
+   },
 
+   /**
+    * 将类的全名转换成名称空间对应的文件夹路径
+    *
+    * @param {string} fullClsName 带名称空间的类的名称
+    * @param {string} [dir=process.cwd()] 起点文件夹路径
+    * @returns {string}
+    */
    transformClassNameToFilenameByNamespace(fullClsName, dir = process.cwd())
    {
       let parts = fullClsName.split(".");
@@ -350,4 +389,4 @@ export default class StandardAutoloader
       }
       return dir + clsName+'.js'
    }
-}
+});

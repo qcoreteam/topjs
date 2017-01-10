@@ -34,13 +34,13 @@ export function mount(TopJs)
        * 
        * @memberOf TopJs
        * @param {Function|String} callback 一个函数引用或者一个作用域下的方法名称
-       * @param {Object} scope 第一个参数指定的callback的执行作用域，如果第一个参数为字符串，那么必须在这个作用域下
-       * 存在名字为callback所指字符串的方法,如果scope为null那么callback将在defaultScope指定的作用域下执行
-       * @param {Array} args 传给callback的参数
-       * @param {Number} defer callback延迟调用的毫秒数
-       * @param {Object} caller 如果没有显示的提供scope，那么callback调用时将用caller参数进行解析方法
+       * @param {Object} scope 第一个参数指定的`callback`的执行作用域，如果第一个参数为字符串，那么必须在这个作用域下
+       * 存在名字为`callback`所指字符串的方法,如果`scope`为`null`那么`callback`将在`defaultScope`指定的作用域下执行
+       * @param {Array} args 传给`callback`的参数
+       * @param {Number} defer `callback`延迟调用的毫秒数
+       * @param {Object} caller 如果没有显示的提供`scope`，那么`callback`调用时将用`caller`参数进行解析方法
        * @param {Object} defaultScope 默认的作用域，最后的容错对象
-       * @return {Mixed|undefined} 返回callback的返回值，如果指定defer或者callback不是一个函数则返回undefined
+       * @return {Mixed|undefined} 返回`callback`的返回值，如果指定`defer`或者`callback`不是一个函数则返回`undefined`
        */
       callback(callback, scope, args, defer, caller, defaultScope)
       {
