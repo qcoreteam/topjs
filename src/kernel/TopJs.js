@@ -82,8 +82,8 @@ export function mount(TopJs)
     * 有条件的将config的字段复制到object中
     *
     * @memberOf TopJs
-    * @param {Object} object
-    * @param {Object} config
+    * @param {Object} object 目标的对象
+    * @param {Object} config 指定的复制的对象
     * @param {Object} defaults 默认复制对象
     */
    TopJs.apply = function(object, config, defaults)
@@ -102,7 +102,7 @@ export function mount(TopJs)
    /**
     * @namespace TopJs
     */
-   TopJs.apply(TopJs,{
+   TopJs.apply(TopJs,/** @lends TopJs */{
       /**
        * ```javascript
        *
@@ -116,13 +116,11 @@ export function mount(TopJs)
        *
        * ```
        *
-       * @memberOf TopJs
        * @property {Function} privateFn privateFn
        */ 
       privateFn: privateFn,
 
       /**
-       * @memberOf TopJs
        * @property {Function} emptyFn 可复用的空函数模板
        */
       emptyFn: emptyFn,
@@ -130,10 +128,8 @@ export function mount(TopJs)
       /**
        * 有条件的将config的字段复制到object中
        *
-       * @memberOf TopJs
-       * 
-       * @param {Object} object
-       * @param {Object} config
+       * @param {Object} object 目标对象
+       * @param {Object} config 指定的复制的对象
        */
       applyIf(object, config)
       {
@@ -148,7 +144,7 @@ export function mount(TopJs)
       },
 
       /**
-       * @memberOf TopJs
+       * @method
        * @param {Object} value 等待检查的函数
        * @return {Boolean}
        */
@@ -159,9 +155,9 @@ export function mount(TopJs)
 
       /**
        * 判断传入的是否为对象
-       *
-       * @memberOf TopJs
-       * @param {Object} 等待测试的值
+       * 
+       * @method
+       * @param {Object} value 等待测试的值
        * @return {Boolean}
        */
       isObject: InternalFuncs.is_object,
@@ -171,7 +167,7 @@ export function mount(TopJs)
        * 
        * @private
        * @memberOf TopJs
-       * @param {Object} value
+       * @param {Object} value 等待测试的值
        * @return {Boolean}
        */
       isSimpleObject(value)
@@ -182,16 +178,15 @@ export function mount(TopJs)
       /**
        * 判断传入的是否为字符串
        *
-       * @memberOf TopJs
-       * @param {Object} 等待测试的值
+       * @method
+       * @param {Object} value 等待测试的值
        * @return {Boolean}
        */
       isString: InternalFuncs.is_string,
 
       /**
        * 判断传入的是否为函数
-       * 
-       * @memberOf TopJs
+       *
        * @param {Object} value 等待测试的值
        * @return {Boolean}
        */
@@ -202,10 +197,9 @@ export function mount(TopJs)
 
       /**
        * 如果传入的对象为number返回`true`，不是number或者无穷数返回`false`
-       * 
-       * @memberOf TopJs
-       * @param {Object} value
-       * @returns {boolean}
+       *
+       * @param {Object} value 等待测试的值
+       * @returns {Boolean}
        */
       isNumber(value)
       {
@@ -214,10 +208,9 @@ export function mount(TopJs)
 
       /**
        * 返回`true`如果传入的对象是`numeric`类型
-       * 
-       * @memberOf TopJs
+       *
        * @param {Object} value 例如：1, `1`, `2.34`
-       * @return {Boolean} 
+       * @return {Boolean}
        */
       isNumeric(value)
       {
@@ -226,9 +219,8 @@ export function mount(TopJs)
 
       /**
        * 返回`true`如果传入的对象是布尔型
-       * 
-       * @memberOf TopJs
-       * @param {Object} value
+       *
+       * @param {Object} value 等待测试的值
        * @return {Boolean}
        */
       isBoolean(value)
@@ -238,9 +230,8 @@ export function mount(TopJs)
 
       /**
        * 判断传入的对象是否为JavaScript `primitive`，字符串, 数字和布尔类型
-       * 
-       * @memberOf TopJs
-       * @param {Object} value
+       *
+       * @param {Object} value 等待测试的值
        * @return {Boolean}
        */
       isPrimitive(value)
@@ -251,8 +242,7 @@ export function mount(TopJs)
 
       /**
        * 判断传入的对象是否为日期类型
-       * 
-       * @memberOf TopJs
+       *
        * @param {Object} value 等待检查的对象
        * @return {Boolean}
        */
@@ -268,10 +258,9 @@ export function mount(TopJs)
        * - `undefined`
        * - 空数组
        * - 长度为零的字符串(除非参数`allowEmptyString`为`true`)
-       * 
-       * @memberOf TopJs
-       * @param {Object} value
-       * @param {Boolean} allowEmptyString 
+       *
+       * @param {Object} value 等待测试的值
+       * @param {Boolean} allowEmptyString 空字符是否不为空
        * @return {Boolean}
        */
       isEmpty(value, allowEmptyString = false)
@@ -281,9 +270,8 @@ export function mount(TopJs)
 
       /**
        * 判断传入的对象是否已经定义
-       * 
-       * @memberOf TopJs
-       * @param {Object} value
+       *
+       * @param {Object} value 等待测试的值
        * @return {Boolean}
        */
       isDefined(value)
@@ -293,9 +281,8 @@ export function mount(TopJs)
 
       /**
        * 探测传入的值是否可遍历
-       * 
-       * @memberOf TopJs
-       * @param {Object} value
+       *
+       * @param {Object} value 等待测试的值
        * @return {Boolean}
        */
       isIterable(value)
@@ -316,14 +303,13 @@ export function mount(TopJs)
       /**
        * 确保返回值，如果value不为空返回自己，否则返回defaultValue
        *
-       * @memberOf TopJs
-       * @param {Object} value
-       * @param {Object} defaultValuem
+       * @param {Object} value 
+       * @param {Object} defaultValue
        * @param {Object} allowBlank 默认为false，当为true的时候，空字符串不为空
        */
-      ensureValue(value, defaultValuem, allowBlank = false)
+      ensureValue(value, defaultValue, allowBlank = false)
       {
-         return TopJs.isEmpty(value, allowBlank) ? defaultValuem : value;
+         return TopJs.isEmpty(value, allowBlank) ? defaultValue : value;
       },
 
       /**
@@ -333,7 +319,6 @@ export function mount(TopJs)
        *  * `Array` 所有的元素递归的删除
        *  * `Object` 所有的具有`destroy`方法的都会被调用
        *
-       * @memberOf TopJs
        * @param {...Mixed} args 任意数量的对象和数组
        */
       destroy()
@@ -354,8 +339,7 @@ export function mount(TopJs)
       /**
        * 删除参数object中指定的字段，在这些字段上调用TopJs.destroy()函数，这些目标删除的字段最终被设置
        * 为`null`。
-       * 
-       * @memberOf TopJs
+       *
        * @param {Object} object 将要删除的目标对象
        * @param {...String} args 目标被删除的字段的名称
        * @return {Object}
@@ -404,8 +388,7 @@ export function mount(TopJs)
        * 如果`target`不是以上几种，那么`overrides`将使用{@link TopJs#apply}复制到`target`上
        * 
        * 详情请参考 {@link TopJs#define}和{@link TopJs.Base#override}
-       * 
-       * @memberOf TopJs
+       *
        * @param {Object} target 目标替换对象
        * @param {Object} overrides 替换时使用的值对象
        * @return {Object} 替换之后的对象
@@ -437,9 +420,8 @@ export function mount(TopJs)
 
       /**
        * 克隆一个指定的对象
-       * 
-       * @memberOf TopJs
-       * @param {Object} item
+       *
+       * @param {Object} item 等待克隆的值
        * @return {Object}
        */
       clone(item)
