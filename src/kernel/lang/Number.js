@@ -7,5 +7,12 @@
  */
 export function mount(TopJs)
 {
+   let NumberObject = Topjs.Number = {};
+   /**
+    * @class TopJs.Number
+    * @singleton
+    */
+   TopJs.apply(NumberObject, /** @lends TopJs.Number */{
 
+   });
 }
