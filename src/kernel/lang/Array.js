@@ -216,6 +216,17 @@ export function mount(TopJs)
       },
 
       /**
+       * 简单的克隆函数，函数不进行深度克隆，算是一个助记函数
+       * 
+       * @param {Array} array 等待克隆的数组
+       * @return {Array} 克隆的结果
+       */
+      clone: function(array)
+      {
+         return array.slice();
+      },
+
+      /**
        * 默认比较函数
        *
        * @method

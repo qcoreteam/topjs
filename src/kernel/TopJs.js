@@ -456,5 +456,8 @@ export function mount(TopJs)
    });
 }
 /**
+ * 这个名称空间是一些`TopJs`框架的底层实现，里面的函数和类定义不遵循`TopJs`的类规范
+ * 应用程序不需要直接继承里面的类和函数，直接通过`TopJs`名称空间使用就可以
+ * 
  * @namespace TopJs.kernel
  */
