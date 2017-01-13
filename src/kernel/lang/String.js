@@ -9,7 +9,7 @@ import {trim, ltrim, rtrim, is_string, change_str_at} from '../internal/Funcs';
 
 export function mount(TopJs)
 {
-   let StringObject = Topjs.String = {};
+   let StringObject = TopJs.String = {};
    let charToEntity = new Map();
    let entityToChar = new Map();
    let charToEntityRegex;
