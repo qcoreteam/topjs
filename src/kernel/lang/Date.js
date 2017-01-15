@@ -80,6 +80,21 @@ export function mount(TopJs)
     *        time      javascript毫秒时间戳                                                        1350024476440
     *        timestamp UNIX时间戳，跟(U)效果一样                                                    1350024866
     */
+   let utilDate;
+   let nativeDate = Date;
+   let stripEscapeRe = /(\\.)/g;
+   let hourInfoRe = /([gGhHisucUOPZ]|MS)/;
+   let dateInfoRe = /([djzmnYycU]|MS)/;
+   let slashRe = /\\/gi;
+   let numberTokenRe = /\{(\d+)\}/g;
+   let MSFormatRe = new RegExp('\\/Date\\(([-+])?(\\d+)(?:[+-]\\d{4})?\\)\\/');
+   let pad = TopJs.String.leftPad;
+   // Most of the date-formatting functions below are the excellent work of Baron Schwartz.
+   // (see http://www.xaprb.com/blog/2005/12/12/javascript-closures-for-runtime-efficiency/)
+   // They generate precompiled functions from format patterns instead of parsing and
+   // processing each pattern every time a date is formatted.
+   
+   
    TopJs.apply(DateObj, /** @lends TopJs.Date */{
       
    });
