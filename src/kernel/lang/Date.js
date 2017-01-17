@@ -673,7 +673,7 @@ export function mount(TopJs)
          C: function ()
          {
             // ISO-1601 -- browser format. UTC numerics with the 'Z' TZ id.
-            return 'm.toISOString()';
+            return "m.toISOString()";
          },
 
          U: "Math.round(m.getTime() / 1000)"
@@ -702,7 +702,7 @@ export function mount(TopJs)
        */
       getShortDayName(day)
       {
-         return utilDate.dayNames[day].substring(0, 3);
+         return dateObj.dayNames[day].substring(0, 3);
       },
       //</locale>
 
@@ -752,6 +752,40 @@ export function mount(TopJs)
       },
 
       /**
+       * 使用传入的`format`格式化字符串去解析获取一个`Date`日期类型变量
+       * 
+       * ```javascript
+       * //dt = Fri May 25 2007 (current date)
+       * let dt = new Date();
+       *
+       * //dt = Thu May 25 2006 (today&#39;s month/day in 2006)
+       * dt = TopJs.Date.parse("2006", "Y");
+       *
+       * //dt = Sun Jan 15 2006 (all date parts specified)
+       * dt = TopJs.Date.parse("2006-01-15", "Y-m-d");
+       *
+       * //dt = Sun Jan 15 2006 15:20:01
+       * dt = TopJs.Date.parse("2006-01-15 3:20:01 PM", "Y-m-d g:i:s A");
+       *
+       * // attempt to parse Sun Feb 29 2006 03:20:01 in strict mode
+       * dt = TopJs.Date.parse("2006-02-29 03:20:01", "Y-m-d H:i:s", true); // returns null
+       * ```
+       * 
+       * @param {String} input 原生的`date`字符串
+       * @param {String} format 格式化字符串
+       * @param {Boolean} [strict=false] 是否是否严格模式
+       * @return {Date} 生成的对象
+       */
+      parse(input, format, strict = false)
+      {
+         let p = dateObj.parseFunctions;
+         if(p[format] == null){
+            dateObj.createParser(format);
+         }
+         return p[format].call(dateObj, input, TopJs.isDefined(strict) ? strict : dateObj.useStrict);
+      },
+      
+      /**
        * 使用指定的格式符字符串格式给定的日期对象
        *
        * @param {Date} date 需要格式化的日期对象
@@ -769,6 +803,106 @@ export function mount(TopJs)
          }
          return formatFunctions[format].call(date) + '';
       },
+
+      /**
+       * @private
+       */
+      formatCodeToRegex(character, currentGroup)
+      {
+         let p = dateObj.parseCodes[character];
+         if (p) {
+            p = typeof p === "function" ? p() : p;
+            dateObj.parseCodes[character] = p;
+         }
+         return p ? TopJs.applyIf({
+            c: p.c ? xf(p.c, currentGroup || "{0}") : p.c
+            }, p) : {
+               g: 0,
+               c: null,
+               s: TopJs.String.escapeRegex(character)
+            };
+      },
+      
+      /**
+       * @private
+       */
+      createFormat(format)
+      {
+         let code = [];
+         let special = false;
+         let ch = '';
+         let len = format.length;
+         for(let i = 0; i < len; i++)
+         {
+            ch = format.charAt(i);
+            if(!special && ch === "\\"){
+               special = true;
+            }else if(special){
+               special = false;
+               code.push("'"+ TopJs.String.escape(ch)+"'")
+            }else{
+               if(ch === '\n'){
+                  code.push("'\\n'");
+               }else{
+                  code.push(dateObj.getFormatCode(ch));
+               }
+            }
+         }
+         dateObj.formatFunctions[format] = new Function("var m = this; return " + code.join('+'));
+      },
+
+      /**
+       * @private
+       */
+      getFormCode(character)
+      {
+         let f = dateObj.formatCodes[character];
+         if(f){
+            f = typeof f === "function" ? f() : f;
+            dateObj.formatCodes[character] = f;// 重新复制防止重复执行
+         }
+         // 不识别的code直接按照常量来识别
+         return f || ("'" + TopJs.String.escape(character) + "'");
+      },
+
+      /**
+       * @private
+       */
+      createParser(format)
+      {
+         let regexNum = dateObj.parseRegexes.length;
+         let currentGroup = 1;
+         let calc = [];
+         let regex = [];
+         let special = false;
+         let ch = '';
+         let len = format.length;
+         let atEnd = [];
+         for(let i = 0; i < len; i++){
+            ch = format.charAt(i);
+            if(!special && ch === "\\"){
+               special = true;
+            }else if(special){
+               special = false;
+               regex.push(TopJs.String.escape(ch));
+            }else{
+               obj = dateObj.formatCodeToRegex(ch, currentGroup);
+               currentGroup += obj.g;
+               regex.push(obj.s);
+               if(obj.g && obj.c){
+                  if(obj.calcAtEnd){
+                     atEnd.push(obj.c);
+                  }else{
+                     calc.push(obj.c);
+                  }
+               }
+            }
+         }
+         calc = calc.concat(atEnd);
+         dateObj.parseRegexes[regexNum] = new RegExp('^' + regex.join('') + '$', 'i');
+         dateObj.parseFunctions[format] = new Function("input", "strict", xf(code, regexNum, calc.join('')));
+      },
+
       /**
        * @private
        * @property {Object} parseCodes 解析代码元信息
