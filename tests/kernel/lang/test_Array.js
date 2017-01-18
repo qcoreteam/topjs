@@ -105,7 +105,84 @@ describe("TopJs.Array", function ()
                     assert.doesNotThrow(function(){
                         TopJs.Array.removeAt(myArray, -1);
                     });
-                })
+                });
+                it("返回原数组", function ()
+                {
+                    assert.equal(TopJs.Array.removeAt(myArray, -1), myArray);
+                });
+                it("不修改数组的长度", function ()
+                {
+                    TopJs.Array.removeAt(myArray, -1);
+                    assert.equal(myArray.length, 5);
+                });
+            });
+            describe("索引大于数组长度", function ()
+            {
+                it("不抛出异常", function ()
+                {
+                    assert.doesNotThrow(function(){
+                        TopJs.Array.removeAt(myArray, 100);
+                    });
+                });
+                it("返回原数组", function ()
+                {
+                    assert.equal(TopJs.Array.removeAt(myArray, 100), myArray);
+                });
+                it("不修改数组的长度", function ()
+                {
+                    TopJs.Array.removeAt(myArray, 100);
+                    assert.equal(myArray.length, 5);
+                });
+            });
+        });
+        describe("合法的数组索引", function ()
+        {
+            it("返回原数组", function ()
+            {
+                assert.equal(TopJs.Array.removeAt(myArray, 1), myArray);
+            });
+            it("删除第一个元素", function ()
+            {
+                TopJs.Array.removeAt(myArray, 0);
+                assert.deepEqual(myArray, [2, 3, 4, 5]);
+            });
+            it("删除最后一个元素", function ()
+            {
+                TopJs.Array.removeAt(myArray, 4);
+                assert.deepEqual(myArray, [1, 2, 3, 4]);
+            });
+            it("删除中间一个元素", function ()
+            {
+                TopJs.Array.removeAt(myArray, 2);
+                assert.deepEqual(myArray, [1, 2, 4, 5]);
+            });
+            describe("删除多个元素", function ()
+            {
+                it("默认删除一个元素", function ()
+                {
+                    TopJs.Array.removeAt(myArray, 0);
+                    assert.deepEqual(myArray, [2, 3, 4, 5]);
+                });
+                it("删除两个元素", function ()
+                {
+                    TopJs.Array.removeAt(myArray, 0, 2);
+                    assert.deepEqual(myArray, [3, 4, 5]);
+                });
+                it("删除所有的元素", function ()
+                {
+                    TopJs.Array.removeAt(myArray, 0, 5);
+                    assert.deepEqual(myArray, []);
+                });
+                it("删除指定元素到最最后一个元素", function ()
+                {
+                    TopJs.Array.removeAt(myArray, 1, 4);
+                    assert.deepEqual(myArray, [1]);
+                });
+                it("数量超过数组的长度", function ()
+                {
+                    TopJs.Array.removeAt(myArray, 2, 100);
+                    assert.deepEqual(myArray, [1, 2]);
+                });
             });
         });
     });
