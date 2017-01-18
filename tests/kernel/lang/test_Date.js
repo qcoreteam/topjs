@@ -5,7 +5,6 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
-let Mocha = require("mocha");
 let assert = require("chai").assert;
 
 const StandardLoader = require("../../../lib/Entry").StandardLoader;
