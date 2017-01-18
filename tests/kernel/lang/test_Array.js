@@ -186,4 +186,68 @@ describe("TopJs.Array", function ()
             });
         });
     });
+    
+    describe("TopJs.Array.clone", function ()
+    {
+        it("克隆空数组得到空数组", function ()
+        {
+            assert.deepEqual(TopJs.Array.clone([]), []);
+        });
+        it("克隆不空的数组", function ()
+        {
+            assert.deepEqual(TopJs.Array.clone([1, 2, 3]), [1, 2, 3]);
+        });
+        it("克隆得到的数组不是原数组", function ()
+        {
+            let arr = [1, 2, 3];
+            let cloneArr = TopJs.Array.clone(arr);
+            assert.notEqual(arr, cloneArr);
+        });
+        it("克隆是浅克隆", function ()
+        {
+            let obj = {};
+            let arr = [obj];
+            let cloned = TopJs.Array.clone(arr);
+            assert.equal(obj, cloned[0]);
+        });
+    });
+    describe("TopJs.Array.clean", function ()
+    {
+        it("清除空数组返回空数组", function()
+        {
+            assert.deepEqual(TopJs.Array.clean([]), []);
+        });
+        it("删除undefined值", function()
+        {
+            assert.deepEqual(TopJs.Array.clean([undefined]), []);
+        });
+        it("删除null值", function ()
+        {
+            assert.deepEqual(TopJs.Array.clean([null]), []);
+        });
+        it("移除空字符串", function ()
+        {
+            assert.deepEqual(TopJs.Array.clean([""]), []);
+        });
+        it("移除空数组", function()
+        {
+            assert.deepEqual(TopJs.Array.clean([[]]), []);
+        });
+        it("移除混合的空值", function ()
+        {
+            assert.deepEqual(TopJs.Array.clean([undefined, null, "", []]), []);
+        });
+        it("移除多此出现的空值", function ()
+        {
+            assert.deepEqual(TopJs.Array.clean([undefined,undefined, undefined, null, "", undefined, null, "", []]), []);
+        });
+        it("只移除空值", function ()
+        {
+            assert.deepEqual(TopJs.Array.clean([undefined,undefined, 1, null, "", undefined, null, "12", []]), [1, "12"]);
+        });
+        it("移除的时候保留顺序", function ()
+        {
+            assert.deepEqual(TopJs.Array.clean([1, undefined, 2, null, "3"]), [1, 2, "3"]);
+        });
+    })
 });
