@@ -199,7 +199,7 @@ export function mount(TopJs)
          if(Number.isFinite(value)){
             value = Number.parseFloat(value);
          }
-         return !Number.isNaN(value) ? value : defaultValue;
+         return (undefined !== value && !Number.isNaN(value)) ? value : defaultValue;
       },
 
       /**

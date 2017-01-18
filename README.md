@@ -1,6 +1,6 @@
 # top.js
 <div align="center">
-   <img width=710px src="https://raw.githubusercontent.com/qcoreteam/topjs/master/assets/images/topjs2.png">
+   <img width=710px src="https://raw.githubusercontent.com/qcoreteam/TopJs/master/assets/images/topjs2.png">
 </div>
 
 # 简介
