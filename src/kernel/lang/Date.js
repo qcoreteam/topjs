@@ -97,6 +97,9 @@ export function mount(TopJs)
    let me = this;
    let def = me.defaults;
    let dt, y, m, d, h, i, s, ms, o, O, z, zz, u, v, W, year, jan4, week1monday, daysInMonth, dayMatched;
+   let sn;
+   let hr;
+   let mn;
    let from = TopJs.Number.from;
    let results = String(input).match(me.parseRegexes[{0}]);// either null, or an array of matched strings
    if(results){
@@ -631,7 +634,7 @@ export function mount(TopJs)
         formatCodes: {
             d: "TopJs.String.leftPad(m.getDate(), 2, '0')",
             D: "TopJs.Date.getShortDayName(m.getDay())",//获取本地化的天的名字的简称
-            j: "TopJs.getDate()",
+            j: "m.getDate()",
             l: "TopJs.Date.dayNames[m.getDay()]",
             N: "(m.getDay() ? m.getDay() : 7)",
             S: "TopJs.Date.getSuffix(m)",
@@ -651,7 +654,7 @@ export function mount(TopJs)
             A: "(m.getHours() < 12 ? 'AM' : 'PM')",
             g: "((m.getHours() % 12) ? m.getHours() % 12 : 12)",
             G: "m.getHours()",
-            h: "TopJs.String.leftPad((m.getHours() % 12 ? m.getHours() % 12 : 12, 2, '0'))",
+            h: "TopJs.String.leftPad((m.getHours() % 12) ? m.getHours() % 12 : 12, 2, '0')",
             H: "TopJs.String.leftPad(m.getHours(), 2, '0')",
             i: "TopJs.String.leftPad(m.getMinutes(), 2, '0')",
             s: "TopJs.String.leftPad(m.getSeconds(), 2, '0')",
@@ -667,7 +670,7 @@ export function mount(TopJs)
                 let len = c.length;
                 for (let i = 0; i < len; i++) {
                     let element = c.charAt(i);
-                    code.push(e === "T" ? "'T'" : dateObj.getFormatCode(element));// 视T为字符常量
+                    code.push(element === "T" ? "'T'" : dateObj.getFormatCode(element));// 视T为字符常量
                 }
                 return code.join(" + ")
             },
@@ -855,7 +858,7 @@ export function mount(TopJs)
         /**
          * @private
          */
-        getFormCode(character)
+        getFormatCode(character)
         {
             let f = dateObj.formatCodes[character];
             if (f) {
@@ -1126,24 +1129,24 @@ export function mount(TopJs)
             O: {
                 g: 1,
                 c: `
-               o = results[{0}];
-               let sn = o.substring(0, 1);//符号
-               let hr = o.substring(1, 3) * 1 + Math.floor(o.substring(3, 5) / 60);//获取小时数
-               let mn = o.substring(3, 5) % 60;//获取分钟数
-               o = ((-12 <= (hr * 60 + mn) / 60) && ((hr * 60 + mn) / 60 <= 14)) ?
-               (sn + TopJs.String.leftPad(hr, 2, '0') + TopJs.String.leftPad(mn, 2, '0')) : null;// -12hrs <= GMT offset <= 14hrs\n`,
+                   o = results[{0}];
+                   sn = o.substring(0, 1);//符号
+                   hr = o.substring(1, 3) * 1 + Math.floor(o.substring(3, 5) / 60);//获取小时数
+                   mn = o.substring(3, 5) % 60;//获取分钟数
+                   o = ((-12 <= (hr * 60 + mn) / 60) && ((hr * 60 + mn) / 60 <= 14)) ?
+                   (sn + TopJs.String.leftPad(hr, 2, '0') + TopJs.String.leftPad(mn, 2, '0')) : null;// -12hrs <= GMT offset <= 14hrs\n`,
                 s: "([+-]\\d{4})"// GMT offset in hrs and mins
             },
 
             P: {
                 g: 1,
                 c: `
-               o = results[{0}];
-               let sn = o.substring(0, 1);//获取符号
-               let hr = o.substring(1, 3) * 1 + Math.floor(o.substring(4, 6) / 60); // 获取小时数
-               let mn = o.substring(4, 6) % 60;// 获取分钟数
-               o = ((-12 <= (hr * 60 + mn) / 60) && ((hr * 60 + mn) / 60 <= 14)) ?
-               (sn + TopJs.String.leftPad(hr, 2, '0') + TopJs.String.leftPad(mn, 2, '0')) : null;// -12hrs <= GMT offset <= 14hrs\n`,
+                   o = results[{0}];
+                   sn = o.substring(0, 1);//获取符号
+                   hr = o.substring(1, 3) * 1 + Math.floor(o.substring(4, 6) / 60); // 获取小时数
+                   mn = o.substring(4, 6) % 60;// 获取分钟数
+                   o = ((-12 <= (hr * 60 + mn) / 60) && ((hr * 60 + mn) / 60 <= 14)) ?
+                   (sn + TopJs.String.leftPad(hr, 2, '0') + TopJs.String.leftPad(mn, 2, '0')) : null;// -12hrs <= GMT offset <= 14hrs\n`,
                 s: "([+-]\\d{2}:\\d{2})" // GMT offset in hrs and mins (使用冒号分隔)
             },
 
@@ -1175,16 +1178,16 @@ export function mount(TopJs)
                     },
                     {
                         c: `if(results[8]){
-                        if(results[8] == 'Z'){
-                           zz = 0;// UTC
-                        }else if(results[8].indexOf(':') > -1){
-                           //时区偏移使用分号分隔
-                           ${dateObj.formatCodeToRegex('P', 8).c}
-                        }else{
-                           //时区偏移不使用分号分隔
-                           ${dateObj.formatCodeToRegex('O', 8).c}
-                        }
-                      }`
+                                if(results[8] == 'Z'){
+                                   zz = 0;// UTC
+                                }else if(results[8].indexOf(':') > -1){
+                                   //时区偏移使用分号分隔
+                                   ${dateObj.formatCodeToRegex('P', 8).c}
+                                }else{
+                                   //时区偏移不使用分号分隔
+                                   ${dateObj.formatCodeToRegex('O', 8).c}
+                                }
+                            }`
                     }
                 ];
                 for (let i = 0, l = arr.length; i < l; i++) {
@@ -1202,7 +1205,7 @@ export function mount(TopJs)
                         arr[3].s, ":", arr[4].s,// 小时和分钟，使用`:`分隔，前面必须有`T`或者空格
                         "(?::", arr[5].s, ")?", // seconds (可选)
                         "(?:(?:\\.|,)(\\d+))?", // 秒数的小数部分 (可选)
-                        "(Z|(?:[-+]\\d{2}(?::)?\\d))?", // "Z" (UTC) 或者 `-0530`(不带`:`UTC偏移)或者"+08:00"(带有`:`UTC偏移)
+                        "(Z|(?:[-+]\\d{2}(?::)?\\d{2}))?", // "Z" (UTC) 或者 `-0530`(不带`:`UTC偏移)或者"+08:00"(带有`:`UTC偏移)
                         ")?",
                         ")?",
                         ")?"
@@ -1251,12 +1254,12 @@ export function mount(TopJs)
          * let dt = new Date('9/17/2011');
          * console.log(TopJs.Date.getTimezone(dt));
          * ```
-         *
+         * @param {Date} date 用于获取时区的日期对象
          * @return {String} 时区的简称，"CST", "PDT", "EDT", "MPST" ...
          */
-        getTimezone()
+        getTimezone(date)
         {
-
+            return date.toString().replace(/^.* (?:\((.*)\))$/, "$1$2").replace(/[^A-Z]/g, "");
         },
 
         /**

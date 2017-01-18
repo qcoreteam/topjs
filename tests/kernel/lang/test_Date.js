@@ -10,13 +10,10 @@ let assert = require("chai").assert;
 
 const StandardLoader = require("../../../lib/Entry").StandardLoader;
 
-before(function ()
-{
-    let loader = new StandardLoader({
-        [StandardLoader.AUTO_REGISTER_TOPJS]: true
-    });
-    loader.register();
+let loader = new StandardLoader({
+    [StandardLoader.AUTO_REGISTER_TOPJS]: true
 });
+loader.register();
 
 describe("测试TopJs.Date", function ()
 {
@@ -393,6 +390,102 @@ describe("测试TopJs.Date", function ()
             expectedDate.setMilliseconds(0);
             assert.deepEqual(date, expectedDate);
         });
+
+        describe("ISO-8601", function ()
+        {
+            let TopJsDate = TopJs.Date;
+            describe("dates", function ()
+            {
+                describe("星期解析符`W`", function ()
+                {
+                    it("解析一年中第几个星期 `W`", function ()
+                    {
+                        assert.isNotNull(TopJsDate.parse("40", 'W'));
+                    });
+                    it("解析一年中第几个星期, 前置加0`W`", function ()
+                    {
+                        assert.isNotNull(TopJsDate.parse("03", 'W'));
+                    });
+                    it("解析一年中第几个星期, 前置不加0`W`不解析", function ()
+                    {
+                        assert.isNull(TopJsDate.parse("3", 'W'));
+                    });
+
+                    it("一年的第一个星期是周一开始`W`", function ()
+                    {
+                        assert.equal(TopJsDate.parse("01", 'W').getDay(), "1")
+                    });
+                });
+
+                describe("年解析符`o`", function ()
+                {
+                    it("按照描述符`o`进行解析", function ()
+                    {
+                        assert.isNotNull(TopJsDate.parse("2017", 'o'));
+                    });
+
+                    it("没有其他描述符的时候应该跟描述符`Y`一样", function ()
+                    {
+                        assert.deepEqual(TopJsDate.parse("2017", 'o'), TopJsDate.parse("2017", 'Y'));
+                    });
+
+                    it("跟解析符`W`配合的时候，如果第一个星期是上一年，那么返回上一年的年份", function ()
+                    {
+                        assert.equal(TopJsDate.parse("2008-01", "o-W").getFullYear(), "2007");
+                    });
+
+                    it("跟解析符`W`配合的时候，如果星期数不是是上一年，那么跟描述符`Y`一样", function ()
+                    {
+                        assert.equal(TopJsDate.parse("2008-23", "o-W").getFullYear(), "2008");
+                    });
+                });
+            });
+
+            describe("times", function ()
+            {
+                it("解析ISO的时间格式", function ()
+                {
+                    let date = TopJsDate.parse('2017-01-23T01:00:00', 'c');
+                    let expectedDate = new Date();
+                    expectedDate.setFullYear(2017);
+                    expectedDate.setMonth(0);
+                    expectedDate.setDate(23);
+                    expectedDate.setHours(1);
+                    expectedDate.setMinutes(0);
+                    expectedDate.setSeconds(0);
+                    expectedDate.setMilliseconds(0);
+                    assert.deepEqual(date, expectedDate);
+
+                    date = TopJsDate.parse('2017-01-13T15:00:00', 'c');
+                    expectedDate.setFullYear(2017);
+                    expectedDate.setMonth(0);
+                    expectedDate.setDate(13);
+                    expectedDate.setHours(15);
+                    expectedDate.setMinutes(0);
+                    expectedDate.setSeconds(0);
+                    expectedDate.setMilliseconds(0);
+                    assert.deepEqual(date, expectedDate);
+                });
+
+                describe("时区相关", function ()
+                {
+                    it("解析出来的时区应该跟直接指定一样", function ()
+                    {
+                        let date = TopJsDate.parse("2017-11-03T20:31:24+12:00", "c");
+                        let expectedDate = new Date("2017-11-03T20:31:24+12:00");
+                        assert.deepEqual(date, expectedDate);
+                    });
+
+                    it("不同的时区，就算时间一样也不相等", function ()
+                    {
+                        let date = TopJsDate.parse("2012-10-03T20:29:24+12:00", "c");
+                        let expectedDate = new Date("2012-10-03T20:29:24+13:00");
+                        assert.notDeepEqual(date, expectedDate);
+                    });
+                });
+            });
+        });
+
     });
 
     describe("测试一年中星期相关的解析符号", function ()
@@ -564,8 +657,8 @@ describe("测试TopJs.Date", function ()
             assert.equal(cloneDate.getMilliseconds(), 0);
         });
     });
-    
-    describe("TopJs.Date.add", function()
+
+    describe("TopJs.Date.add", function ()
     {
         let date = new Date(2016, 0, 1, 0, 0, 0, 0);
         it("各种单位的add测试", function ()
@@ -578,7 +671,7 @@ describe("测试TopJs.Date", function ()
             assert.deepEqual(TopJs.Date.add(date, TopJs.Date.MONTH, 1), new Date(2016, 1, 1, 0, 0, 0, 0));
             assert.deepEqual(TopJs.Date.add(date, TopJs.Date.YEAR, 1), new Date(2017, 0, 1, 0, 0, 0, 0));
         });
-        
+
         it("加月份的时候考虑月份最后一天", function ()
         {
             assert.deepEqual(TopJs.Date.add(new Date(2017, 0, 29), TopJs.Date.MONTH, 1), new Date(2017, 1, 28));
@@ -590,10 +683,262 @@ describe("测试TopJs.Date", function ()
             assert.deepEqual(TopJs.Date.add(new Date(2000, 0, 29), TopJs.Date.MONTH, 1), new Date(2000, 1, 29));
             assert.deepEqual(TopJs.Date.add(new Date(2000, 0, 30), TopJs.Date.MONTH, 1), new Date(2000, 1, 29));
         });
-        
+
         it("闰年跨年添加月份", function ()
         {
             assert.deepEqual(TopJs.Date.add(new Date(2000, 1, 29), TopJs.Date.YEAR, 1), new Date(2001, 1, 28));
+        });
+    });
+
+    describe("TopJs.Date.between", function ()
+    {
+        let startDate = new Date(2017, 0, 1);
+        let endDate = new Date(2017, 0, 31);
+        it("当传入日期为起始日期返回true", function ()
+        {
+            assert.isTrue(TopJs.Date.between(new Date(2017, 0, 1), startDate, endDate));
+        });
+
+        it("当传入日期为结束日期返回true", function ()
+        {
+            assert.isTrue(TopJs.Date.between(new Date(2017, 0, 31), startDate, endDate));
+        });
+
+        it("当传入日期在起始和结束之间时候true", function ()
+        {
+            assert.isTrue(TopJs.Date.between(new Date(2017, 0, 5), startDate, endDate));
+        });
+
+        it("当传入日期在起始之前返回false", function ()
+        {
+            assert.isFalse(TopJs.Date.between(new Date(2016, 11, 30), startDate, endDate));
+        });
+        it("当传入日期在结束之后返回false", function ()
+        {
+            assert.isFalse(TopJs.Date.between(new Date(2016, 2, 1), startDate, endDate));
+        });
+    });
+
+    describe("TopJs.Date.formatting", function ()
+    {
+        let baseline = Date.UTC(2010, 0, 1, 21, 45, 32, 4);
+        let tzOffset = (new Date(baseline)).getTimezoneOffset();
+        let ms = baseline + (tzOffset * 60000);
+        let date = new Date(ms);
+        let format = TopJs.Date.format;
+
+        it("测试格式描述符`d`", function ()
+        {
+            assert.equal(format(date, "d"), "01");
+        });
+
+        it("测试格式化描述符`D`", function ()
+        {
+            assert.equal(format(date, "D"), "Fri");
+        });
+
+        it("测试格式描述符`j`", function ()
+        {
+            assert.equal(format(date, "j"), "1");
+        });
+
+        it("测试格式描述符`l`", function ()
+        {
+            assert.equal(format(date, "l"), "Friday");
+        });
+
+        it("测试格式描述符`N`", function ()
+        {
+            assert.equal(format(date, "N"), "5");
+        });
+
+        it("测试格式描述符`S`", function ()
+        {
+            assert.equal(format(date, "S"), "st");
+        });
+
+        it("测试格式描述符`w`", function ()
+        {
+            assert.equal(format(date, "w"), "5");
+        });
+
+        it("测试格式描述符`z`", function ()
+        {
+            assert.equal(format(date, "z"), "0");
+        });
+
+        it("测试格式描述符`W`", function ()
+        {
+            assert.equal(format(date, "W"), "53");
+        });
+
+        it("测试格式描述符`F`", function ()
+        {
+            assert.equal(format(date, "F"), "January");
+        });
+
+        it("测试格式描述符`m`", function ()
+        {
+            assert.equal(format(date, "m"), "01");
+        });
+
+        it("测试格式描述符`M`", function ()
+        {
+            assert.equal(format(date, "M"), "Jan");
+        });
+
+        it("测试格式描述符`n`", function ()
+        {
+            assert.equal(format(date, "n"), "1");
+        });
+
+        it("测试格式描述符`t`", function ()
+        {
+            assert.equal(format(date, "t"), "31");
+        });
+
+        it("测试格式描述符`L`", function ()
+        {
+            assert.equal(format(date, "L"), "0");
+        });
+
+        it("测试格式描述符`o`", function ()
+        {
+            assert.equal(format(date, "o"), "2009");
+        });
+
+        it("测试格式描述符`Y`", function ()
+        {
+            assert.equal(format(date, "Y"), "2010");
+        });
+
+        it("测试格式描述符`y`", function ()
+        {
+            assert.equal(format(date, "y"), "10");
+        });
+
+        it("测试格式描述符`a`", function ()
+        {
+            assert.equal(format(date, "a"), "pm");
+        });
+
+        it("测试格式描述符`A`", function ()
+        {
+            assert.equal(format(date, "A"), "PM");
+        });
+
+        it("测试格式描述符`g`", function ()
+        {
+            assert.equal(format(date, "g"), "9");
+        });
+
+        it("测试格式描述符`G`", function ()
+        {
+            assert.equal(format(date, "G"), "21");
+        });
+
+        it("测试格式描述符`h`", function ()
+        {
+            assert.equal(format(date, "h"), "09");
+        });
+
+        it("测试格式描述符`H`", function ()
+        {
+            assert.equal(format(date, "H"), "21");
+        });
+
+        it("测试格式描述符`i`", function ()
+        {
+            assert.equal(format(date, "i"), "45");
+        });
+
+        it("测试格式描述符`s`", function ()
+        {
+            assert.equal(format(date, "s"), "32");
+        });
+
+        it("测试格式描述符`u`", function ()
+        {
+            assert.equal(format(date, "u"), "04");
+        });
+
+        it("测试格式描述符`O`", function ()
+        {
+            //依赖时区，没法静态化
+            let offset = TopJs.Date.getGMTOffset(date);
+            assert.equal(format(date, "O"), offset);
+        });
+
+        it("测试格式描述符`P`", function ()
+        {
+            //依赖时区，没法静态化
+            let offset = TopJs.Date.getGMTOffset(date, true);
+            assert.equal(format(date, "P"), offset);
+        });
+
+        it("测试格式描述符`T`", function ()
+        {
+            //依赖时区，没法静态化
+            let tz = TopJs.Date.getTimezone(date);
+            assert.equal(format(date, "T"), tz);
+        });
+
+        it("测试格式描述符`Z`", function ()
+        {
+            //依赖时区，没法静态化
+            let offset = (date.getTimezoneOffset() * -60).toString();
+            assert.equal(format(date, "Z"), offset);
+        });
+
+        it("测试格式描述符`c`", function ()
+        {
+            //依赖时区，没法静态化
+            let expect = "2010-01-01T21:45:32" + TopJs.Date.getGMTOffset(date, true);
+            assert.equal(format(date, "c"), expect);
+        });
+
+        it("测试格式描述符`C`", function ()
+        {
+            assert.equal(format(new Date(baseline), "C"), "2010-01-01T21:45:32.004Z");
+        });
+
+        it("测试格式描述符`U`", function ()
+        {
+            assert.equal(format(new Date(baseline), "U"), "1262382332");
+        });
+
+        it("测试格式描述符`MS`", function ()
+        {
+            let expect = '\\/Date(' + date.getTime() + ')\\/';
+            assert.equal(format(date, "MS"), expect);
+        });
+
+        it("测试格式描述符`time`", function ()
+        {
+            assert.equal(format(date, "time"), date.getTime().toString());
+        });
+
+        it("测试格式描述符`timestamp`", function ()
+        {
+            let expect = Math.floor(date.getTime() / 1000).toString();
+            assert.equal(format(date, "timestamp"), expect);
+        });
+
+        it("应该返回字符串的情况", function ()
+        {
+            assert.equal(format(undefined, "d"), '');
+            assert.equal(format(null, "d"), '');
+            assert.equal(format({}, "d"), '');
+            assert.equal(format([], "d"), '');
+            assert.equal(format('', "d"), '');
+            assert.equal(format(true, "d"), '');
+            assert.equal(format(false, "d"), '');
+            assert.equal(format(2017, "d"), '');
+        });
+
+        it("不应该返回空字符串的情况", function ()
+        {
+            assert.notEqual(format(new Date(), "d"), '');
         });
     });
 });
