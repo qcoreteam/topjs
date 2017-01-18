@@ -8,7 +8,7 @@
 
 export function mount(TopJs)
 {
-   let Array = TopJs.Array = {};
+   let TopJsArray = TopJs.Array = {};
 
    function defaultCompare(left, right)
    {
@@ -26,7 +26,7 @@ export function mount(TopJs)
     * @singleton
     */
 
-   TopJs.apply(Array, /** @lends TopJs.Array */{
+   TopJs.apply(TopJsArray, /** @lends TopJs.Array */{
       /**
        * 二分搜索传入元素在数组中的插入时的索引
        * ```javascript
