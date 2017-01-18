@@ -82,7 +82,56 @@ export function mount(TopJs)
             return begin;
         },
 
-
+        /**
+         * 迭代一个数组或者可迭代的对象，对他的每个元素调动函数`func`
+         * 
+         * ```javascript
+         * var peoples = ['Tom', 'Gate', 'lily', 'softboy'];
+         *
+         * TopJs.Array.each(peoples, function(name, index, countriesItSelf) {
+         *     console.log(name);
+         * });
+         *
+         * var sum = function() {
+         *      var sum = 0;
+         *      TopJs.Array.each(arguments, function(value) {
+         *          sum += value;
+         *      });
+         *      return sum;
+         * };
+         * sum(1, 2, 3); // returns 6
+         * ```
+         * 
+         * @param {Array} array 可迭代的对象，如果该参数不能迭代，那么回调函数`func`执行一次
+         * @param {Function} func 回调函数，返回`false`结束迭代过程，此时函数返回当前迭代得到的索引
+         * 返回`undefined`结束当前的迭代，继续后面的元素的迭代
+         * @param {Object} func.item 当前迭代的元素
+         * @param {Number} func.index 当前迭代元素的索引
+         * @param {Array} func.allItems 迭代的数组本身
+         * @param {Object} [scope] 回调函数的执行作用域
+         * @param {Boolean} [reverse=false] 是否反向迭代
+         * @return {Boolean}
+         */
+        each(array, func, scope, reverse = false)
+        {
+            array = Array.from(array);
+            let len = array.length;
+            if (reverse !== true) {
+                for (let i = 0; i < len; i++) {
+                    if (func.call(scope || array[i], array[i], i, array) === false) {
+                        return i;
+                    }
+                }
+            } else {
+                for(let i = len - 1; i > -1; i--){
+                    if(func.call(scope || array[i], array[i], i, array) === false){
+                        return i;
+                    }
+                }
+            }
+            return true;
+        },
+        
         /**
          * 判断两个数组是否严格相等
          *
