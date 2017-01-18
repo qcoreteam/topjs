@@ -405,7 +405,7 @@ describe("测试TopJs.Date", function ()
             assert.equal(date.getMonth(), month);
             assert.equal(date.getDate(), day);
         }
-        
+
         describe("指定年份的第一个星期", function ()
         {
             afterEach(function ()
@@ -436,15 +436,164 @@ describe("测试TopJs.Date", function ()
                 expect_date(2017, 0, 2);
             });
         });
-        
+
         it("一年中第x个星期的开始总是周一", function ()
         {
-            for(let i = 2013; i <= 2020; i++){
-                for(let j = 1; j < 53; j++){
+            for (let i = 2013; i <= 2020; i++) {
+                for (let j = 1; j < 53; j++) {
                     assert.equal(TopJs.Date.parse(`${i}-${TopJs.String.leftPad(j, 2, '0')}`, "Y-W").getDay(), 1);
                 }
             }
         });
     });
+
+    describe("TopJs.Date.isEqual", function ()
+    {
+        it("两个日期相等应该返回true", function ()
+        {
+            let date1 = new Date(2017, 0, 1, 22, 37, 15, 0);
+            let date2 = new Date(2017, 0, 1, 22, 37, 15, 0);
+            assert.isTrue(TopJs.Date.isEqual(date1, date2));
+        });
+
+        it("两个日期不能有一毫秒的误差", function ()
+        {
+            let date1 = new Date(2017, 0, 1, 22, 37, 15, 1);
+            let date2 = new Date(2017, 0, 1, 22, 37, 15, 0);
+            assert.isFalse(TopJs.Date.isEqual(date1, date2));
+        });
+
+        it("跟null或者undefined比较返回false", function ()
+        {
+            assert.isFalse(TopJs.Date.isEqual(null, new Date()));
+            assert.isFalse(TopJs.Date.isEqual(undefined, new Date()));
+            assert.isFalse(TopJs.Date.isEqual(new Date(), null));
+            assert.isFalse(TopJs.Date.isEqual(new Date(), undefined));
+        });
+
+        it("null与unde之间的相互比较返回true", function ()
+        {
+            assert.isTrue(TopJs.Date.isEqual(null, undefined));
+            assert.isTrue(TopJs.Date.isEqual(null, null));
+            assert.isTrue(TopJs.Date.isEqual(undefined, null));
+            assert.isTrue(TopJs.Date.isEqual(undefined, undefined));
+        })
+    });
+
+    describe("TopJs.Date.getDayOfYear", function ()
+    {
+        it("不是闰年返回`0`到`364`之间的数字", function ()
+        {
+            assert.equal(TopJs.Date.getDayOfYear(new Date(2017, 0, 1)), 0);
+            assert.equal(TopJs.Date.getDayOfYear(new Date(2017, 11, 31)), 364);
+        });
+
+        it("闰年的话返回`0`到`365`之间的数字", function ()
+        {
+            assert.equal(TopJs.Date.getDayOfYear(new Date(2000, 0, 1)), 0);
+            assert.equal(TopJs.Date.getDayOfYear(new Date(2000, 11, 31)), 365);
+        });
+    });
+
+    describe("TopJs.Date.getFirstDayOfMonth", function ()
+    {
+        it("获取指定月份的第一天是周几", function ()
+        {
+            assert.equal(TopJs.Date.getFirstDayOfMonth(new Date(2016, 8, 2)), 4);
+            assert.equal(TopJs.Date.getFirstDayOfMonth(new Date(2012, 8, 2)), 6);
+            assert.equal(TopJs.Date.getFirstDayOfMonth(new Date(2035, 7, 2)), 3);
+            assert.equal(TopJs.Date.getFirstDayOfMonth(new Date(1968, 8, 2)), 0);
+            assert.equal(TopJs.Date.getFirstDayOfMonth(new Date(1988, 6, 2)), 5);
+        });
+    });
+
+    describe("TopJs.Date.getLastDateOfMonth", function ()
+    {
+        it("返回传入日期的当月的最后一天的日期", function ()
+        {
+            assert.deepEqual(TopJs.Date.getLastDateOfMonth(new Date(2016, 8, 2)), new Date(2016, 8, 30));
+            assert.deepEqual(TopJs.Date.getLastDateOfMonth(new Date(2012, 8, 2)), new Date(2012, 8, 30));
+            assert.deepEqual(TopJs.Date.getLastDateOfMonth(new Date(2035, 7, 2)), new Date(2035, 7, 31));
+            assert.deepEqual(TopJs.Date.getLastDateOfMonth(new Date(1968, 8, 2)), new Date(1968, 8, 30));
+            assert.deepEqual(TopJs.Date.getLastDateOfMonth(new Date(1988, 6, 2)), new Date(1988, 6, 31));
+            assert.deepEqual(TopJs.Date.getLastDateOfMonth(new Date(2000, 1, 2)), new Date(2000, 1, 29));
+        });
+    });
+
+    describe("TopJs.Date.clone", function ()
+    {
+        it("克隆一个给定的日期对象", function ()
+        {
+            let originalDate = new Date();
+            let clonedDate = TopJs.Date.clone(originalDate);
+            assert.notEqual(originalDate, clonedDate);
+            assert.deepEqual(originalDate, clonedDate);
+        });
+    });
+
+    describe("TopJs.Date.clearTime", function ()
+    {
+        it("当前日期不合法的返回`Invalid Date`", function ()
+        {
+            let date = new Date('foo');
+            let clearedTimeDate = TopJs.Date.clearTime(date);
+            assert.isNaN(clearedTimeDate.getTime());
+        });
+
+        it("清空时间将小时/分钟/秒数/毫秒都重置为`0`", function ()
+        {
+            let date = new Date(2016, 6, 6, 6, 6, 6, 6);
+            TopJs.Date.clearTime(date);
+            assert.equal(date.getHours(), 0);
+            assert.equal(date.getMinutes(), 0);
+            assert.equal(date.getSeconds(), 0);
+            assert.equal(date.getMilliseconds(), 0);
+        });
+
+        it("如果开启clone选项，清空克隆对象时间将小时/分钟/秒数/毫秒都重置为`0`，原对象不变", function ()
+        {
+            let date = new Date(2016, 6, 6, 6, 6, 6, 6);
+            let cloneDate = TopJs.Date.clearTime(date, true);
+            assert.equal(date.getHours(), 6);
+            assert.equal(date.getMinutes(), 6);
+            assert.equal(date.getSeconds(), 6);
+            assert.equal(date.getMilliseconds(), 6);
+            assert.equal(cloneDate.getHours(), 0);
+            assert.equal(cloneDate.getMinutes(), 0);
+            assert.equal(cloneDate.getSeconds(), 0);
+            assert.equal(cloneDate.getMilliseconds(), 0);
+        });
+    });
     
+    describe("TopJs.Date.add", function()
+    {
+        let date = new Date(2016, 0, 1, 0, 0, 0, 0);
+        it("各种单位的add测试", function ()
+        {
+            assert.deepEqual(TopJs.Date.add(date, TopJs.Date.MILLI, 1), new Date(2016, 0, 1, 0, 0, 0, 1));
+            assert.deepEqual(TopJs.Date.add(date, TopJs.Date.SECOND, 1), new Date(2016, 0, 1, 0, 0, 1, 0));
+            assert.deepEqual(TopJs.Date.add(date, TopJs.Date.MINUTE, 1), new Date(2016, 0, 1, 0, 1, 0, 0));
+            assert.deepEqual(TopJs.Date.add(date, TopJs.Date.HOUR, 1), new Date(2016, 0, 1, 1, 0, 0, 0));
+            assert.deepEqual(TopJs.Date.add(date, TopJs.Date.DAY, 1), new Date(2016, 0, 2, 0, 0, 0, 0));
+            assert.deepEqual(TopJs.Date.add(date, TopJs.Date.MONTH, 1), new Date(2016, 1, 1, 0, 0, 0, 0));
+            assert.deepEqual(TopJs.Date.add(date, TopJs.Date.YEAR, 1), new Date(2017, 0, 1, 0, 0, 0, 0));
+        });
+        
+        it("加月份的时候考虑月份最后一天", function ()
+        {
+            assert.deepEqual(TopJs.Date.add(new Date(2017, 0, 29), TopJs.Date.MONTH, 1), new Date(2017, 1, 28));
+            assert.deepEqual(TopJs.Date.add(new Date(2017, 0, 30), TopJs.Date.MONTH, 1), new Date(2017, 1, 28));
+            assert.deepEqual(TopJs.Date.add(new Date(2017, 0, 27), TopJs.Date.MONTH, 1), new Date(2017, 1, 27));
+            // 看闰年
+            assert.deepEqual(TopJs.Date.add(new Date(2000, 0, 27), TopJs.Date.MONTH, 1), new Date(2000, 1, 27));
+            assert.deepEqual(TopJs.Date.add(new Date(2000, 0, 28), TopJs.Date.MONTH, 1), new Date(2000, 1, 28));
+            assert.deepEqual(TopJs.Date.add(new Date(2000, 0, 29), TopJs.Date.MONTH, 1), new Date(2000, 1, 29));
+            assert.deepEqual(TopJs.Date.add(new Date(2000, 0, 30), TopJs.Date.MONTH, 1), new Date(2000, 1, 29));
+        });
+        
+        it("闰年跨年添加月份", function ()
+        {
+            assert.deepEqual(TopJs.Date.add(new Date(2000, 1, 29), TopJs.Date.YEAR, 1), new Date(2001, 1, 28));
+        });
+    });
 });

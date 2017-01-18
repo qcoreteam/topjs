@@ -1382,7 +1382,7 @@ export function mount(TopJs)
          */
         getFirstDateOfMonth(date)
         {
-            return nativeDate(date.getFullYear(), date.getMonth(), 1);
+            return new nativeDate(date.getFullYear(), date.getMonth(), 1);
         },
 
         /**
@@ -1472,7 +1472,7 @@ export function mount(TopJs)
         },
 
         /**
-         * 清空指定的日期对象
+         * 清空指定的日期对象的时间信息
          *
          * @param {Date} date 等待清空的对象
          * @param {Boolean} [clone=false] `true`的话先克隆日期对象清空数据然后返回
