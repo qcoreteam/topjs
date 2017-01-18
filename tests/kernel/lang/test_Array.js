@@ -249,5 +249,77 @@ describe("TopJs.Array", function ()
         {
             assert.deepEqual(TopJs.Array.clean([1, undefined, 2, null, "3"]), [1, 2, "3"]);
         });
-    })
+    });
+    describe("TopJs.Array.toArray", function ()
+    {
+        it("将数组转换成数组", function ()
+        {
+            assert.deepEqual(TopJs.Array.toArray([1, 2, 3]), [1, 2, 3]);
+        });
+        it("将字符串转化成数组", function()
+        {
+            assert.deepEqual(TopJs.Array.toArray("abcd"), ['a', 'b', 'c', 'd']);
+        });
+        it("创建一个新的对象", function ()
+        {
+            let arr = [1, 2, 3];
+            assert.notEqual(TopJs.Array.toArray(arr), arr);
+            assert.deepEqual(TopJs.Array.toArray(arr), [1, 2, 3]);
+        });
+        it("可以用来转换arguments", function()
+        {
+            let args;
+            let fn = function ()
+            {
+                args = TopJs.Array.toArray(arguments);
+            };
+            fn(1, 2, 3);
+            assert.deepEqual(args, [1, 2, 3]);
+            assert.instanceOf(args, Array);
+        });
+        
+        describe("指定开始结束范围", function ()
+        {
+            it("默认复制全数组", function ()
+            {
+                assert.deepEqual(TopJs.Array.toArray([1, 2, 3, 4, 5]), [1, 2, 3, 4, 5]);
+            });
+            
+            it("指定开始位置", function ()
+            {
+                assert.deepEqual(TopJs.Array.toArray([1, 2, 3, 4, 5, 6], 2), [3, 4, 5, 6])
+            });
+            it("指定结束位置", function ()
+            {
+                assert.deepEqual(TopJs.Array.toArray([1, 2, 3, 4, 5, 6, 7], null, 5), [1, 2, 3, 4, 5]);
+            });
+            it("指定开始和结束位置", function ()
+            {
+                assert.deepEqual(TopJs.Array.toArray([1, 2, 3, 4, 5, 6, 7], 2, 5), [3, 4, 5]);
+            });
+            it("可以指定负的索引值", function ()
+            {
+                assert.deepEqual(TopJs.Array.toArray([1, 2, 3, 4, 5, 6, 7], 2, -1), [3, 4, 5, 6]);
+            })
+        });
+    });
+    
+    describe("TopJs.Array.pluck", function ()
+    {
+        it("操作空数组返回空数组", function ()
+        {
+            assert.deepEqual(TopJs.Array.pluck([], "prop"), []);
+        });
+        it("获取数组中对象的属性值", function ()
+        {
+            let arr = [{prop: 1}, {prop: 2}, {prop: 3}];
+            assert.deepEqual(TopJs.Array.pluck(arr, "prop"), [1, 2, 3]);
+        });
+        it("返回一个新数组", function ()
+        {
+            let arr = [{prop: 1}, {prop: 2}, {prop: 3}];
+            let propArr = TopJs.Array.pluck(arr, "prop");
+            assert.notEqual(arr, propArr);
+        });
+    });
 });
