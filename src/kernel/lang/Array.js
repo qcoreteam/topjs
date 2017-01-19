@@ -571,7 +571,11 @@ export function mount(TopJs)
 
         /**
          * 将数组中的元素从`fromIndex`移动到`toIndex`
-         * 
+         * ```javascript
+         * let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+         * TopJs.Array.move(arr, 2, 7);
+         * // arr现在等于 [1, 2, 4, 5, 6, 7, 3, 8, 9, 10, 11, 12]
+         * ```
          * @param {Array} array 待移动的数组
          * @param {Number} fromIndex 开始索引
          * @param {Number} toIndex 目标索引

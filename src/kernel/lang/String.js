@@ -26,12 +26,12 @@ export function mount(TopJs)
    
    function html_encode_replace(match, capture)
    {
-      return charToEntity[capture];
+      return charToEntity.get(capture);
    }
    
    function html_decode_replace(match, capture)
    {
-      return (capture in entityToChar) ? entityToChar[capture] : 
+      return (entityToChar.has(capture)) ? entityToChar.get(capture) : 
          String.fromCharCode(parseInt(capture.substr(2), 10));
    }
    
@@ -79,7 +79,7 @@ export function mount(TopJs)
          }else if(index >= str.length){
             str += value;
          }else{
-            str += s.substr(0, index) + value + str.substr(index);
+            str = str.substr(0, index) + value + str.substr(index);
          }
          return str;
       },
@@ -121,7 +121,7 @@ export function mount(TopJs)
          if(result){
             if(ignoreCase){
                str = str.toLowerCase();
-               start = end.toLowerCase();
+                end = end.toLowerCase();
             }
             position = position ? position : str.length;
             result = str.endsWith(end, position);
@@ -137,7 +137,7 @@ export function mount(TopJs)
        */
       htmlEncode(value)
       {
-         return (!value) ? value : String(value).replace(charToEntity, html_encode_replace);
+         return (!value) ? value : String(value).replace(charToEntityRegex, html_encode_replace);
       },
 
       /**
@@ -185,7 +185,7 @@ export function mount(TopJs)
       {
          let charKeys = [];
          let entityKeys = [];
-         for(let [key, echar] of entities){
+         for(let [key, echar] of Object.entries(entities)){
             entityToChar.set(key, echar);
             charToEntity.set(echar, key);
             charKeys.push(echar);
@@ -320,6 +320,7 @@ export function mount(TopJs)
             }
             return value.substr(0, length - 3) + "...";
          }
+         return value;
       },
 
       /**
@@ -392,7 +393,7 @@ export function mount(TopJs)
       leftPad(string, size, char = ' ')
       {
          let ret = String(string);
-         if(ret.length < size){
+         while(ret.length < size){
             ret = char + ret;
          }
          return ret;
@@ -418,4 +419,5 @@ export function mount(TopJs)
          return ret.join(sep);
       }
    });
+   StringObject.resetCharEntities();
 }
