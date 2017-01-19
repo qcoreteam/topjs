@@ -313,8 +313,9 @@ export function mount(TopJs)
             }
             tempArr.sort(function (leftIndex, rightIndex)
             {
-                return sortFn(array[leftIndex], rightIndex) || leftIndex - rightIndex;
+                return sortFn(array[leftIndex], array[rightIndex]) || (leftIndex - rightIndex);
             });
+            
             for (let i = 0; i < len; i++) {
                 tempArr[i] = array[tempArr[i]];
             }

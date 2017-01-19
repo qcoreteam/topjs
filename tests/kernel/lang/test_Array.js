@@ -545,6 +545,57 @@ describe("TopJs.Array", function ()
         it("元素比较实用严格相等", function ()
         {
             assert.deepEqual(TopJs.Array.difference([1], ['1']), [1]);
-        })
+        });
+    });
+    describe("TopJs.Array.sort", function ()
+    {
+        let sarray;
+        let narray;
+        beforeEach(function() {
+            sarray = ["bbb", "addda", "erere", "fff", "de3"];
+            narray = [1,3,2,4,6,7];
+        });
+        describe("操作字符串", function ()
+        {
+            it("对字符串进行排序", function ()
+            {
+                let sorted = TopJs.Array.sort(sarray);
+                assert.deepEqual(sorted, ["addda", "bbb", "de3", "erere", "fff"]);
+            });
+            it("指定比较函数", function ()
+            {
+                assert.deepEqual(TopJs.Array.sort(sarray, function (a, b)
+                {
+                    if(a == b){
+                        return 0;
+                    }else if(a < b){
+                        return -1;
+                    }else if(a > b){
+                        return 1;
+                    }
+                }), ["addda", "bbb", "de3", "erere", "fff"]);
+            });
+        });
+        describe("操作数字", function ()
+        {
+            it("对数字进行排序", function ()
+            {
+                let sorted = TopJs.Array.sort(narray);
+                assert.deepEqual(sorted, [1, 2, 3, 4, 6, 7]);
+            });
+            it("指定比较函数", function ()
+            {
+                assert.deepEqual(TopJs.Array.sort(narray, function (a, b)
+                {
+                    if(a == b){
+                        return 0;
+                    }else if(a < b){
+                        return -1;
+                    }else if(a > b){
+                        return 1;
+                    }
+                }), [1, 2, 3, 4, 6, 7]);
+            });
+        });
     });
 });
