@@ -322,4 +322,229 @@ describe("TopJs.Array", function ()
             assert.notEqual(arr, propArr);
         });
     });
+    
+    describe("TopJs.Array.each", function ()
+    {
+        describe("返回值相关", function ()
+        {
+            it("空数组返回true", function ()
+            {
+                assert.equal(TopJs.Array.each([]), true);
+            });
+            it("返回停止的索引", function()
+            {
+                assert.equal(TopJs.Array.each([1, 2, 3], function (item)
+                {
+                    return item != 2;
+                }), 1)
+            });
+            it("回调函数返回true不停止迭代", function ()
+            {
+                assert.isTrue(TopJs.Array.each([12, 3, 4], function (item)
+                {
+                    return true;
+                }));
+            });
+        });
+        
+        describe("扩用域和参数相关", function ()
+        {
+            it("在指定的作用域执行", function ()
+            {
+                let scope = {};
+                let actual;
+                TopJs.Array.each([1], function()
+                {
+                    actual = this;
+                }, scope);
+                assert.equal(actual, scope);
+            });
+            it("应该传递参数`item`,`index`和`array`", function ()
+            {
+                let arrs = [];
+                let values = [];
+                let indexs = [];
+                let data = [1, 2, 3];
+                TopJs.Array.each(data, function (item, index, array)
+                {
+                    arrs.push(array);
+                    values.push(item);
+                    indexs.push(index);
+                });
+                assert.deepEqual(arrs, [data, data, data]);
+                assert.deepEqual(indexs, [0, 1, 2]);
+                assert.deepEqual(values, [1, 2, 3]);
+            });
+        });
+        describe("停止迭代", function ()
+        {
+            it("正常情况不应该停止迭代", function ()
+            {
+                let count = 0;
+                TopJs.Array.each([1, 2, 3, 4, 5], function ()
+                {
+                    count++;
+                });
+                assert.equal(count, 5);
+            });
+            it("只能返回false才能结束迭代", function ()
+            {
+                let count = 0;
+                TopJs.Array.each([1, 2, 3, 4, 5], function ()
+                {
+                    count++;
+                    return null;
+                });
+                assert.equal(count, 5);
+            });
+            it("返回false立即停止", function ()
+            {
+                let count = 0;
+                TopJs.Array.each([1, 2, 3, 4, 5], function (item)
+                {
+                    count++;
+                    return item != 3;
+                });
+                assert.equal(count, 3);
+            });
+        });
+        describe("迭代其他迭代对象", function ()
+        {
+            it("迭代arguments", function ()
+            {
+                let values = [];
+                let func = function ()
+                {
+                    TopJs.Array.each(arguments, function(item){
+                        values.push(item);
+                    });
+                };
+                func(1, 2, 3);
+                assert.deepEqual(values, [1, 2, 3]);
+            });
+        });
+        it("对具有iterable接口的对象先转换成数组，在迭代", function ()
+        {
+            let count = 0;
+            TopJs.Array.each("string", function (){
+                count++;
+            });
+            assert.equal(count, 6);
+        });
+        describe("反向迭代", function ()
+        {
+            it("反向迭代全部元素", function ()
+            {
+                let values = [];
+                TopJs.Array.each([1, 2, 3, 4], function (item)
+                {
+                    values.push(item);
+                }, undefined, true);
+                assert.deepEqual(values, [4, 3, 2, 1]);
+            });
+            it("反向迭代中途退出", function ()
+            {
+                let values = [];
+                TopJs.Array.each([1, 2, 3, 4], function (item)
+                {
+                    if(item === 1){
+                        return false;
+                    }
+                    values.push(item);
+                }, undefined, true);
+                assert.deepEqual(values, [4, 3, 2]);
+            });
+        });
+    });
+    
+    describe("TopJs.Array.merge", function ()
+    {
+        it("应该返回空数组", function ()
+        {
+            //assert.deepEqual(TopJs.Array.merge([]), []);
+        });
+        it("应该清空重复的元素", function ()
+        {
+            assert.deepEqual(TopJs.Array.merge([1, 2, 2, 3]), [1, 2, 3]);
+        });
+        it("新创建对象", function ()
+        {
+            let arr = [1, 2, 3];
+            assert.notEqual(TopJs.Array.merge(arr), arr);
+        });
+        it("去重的比较是严格相等", function ()
+        {
+            assert.deepEqual(TopJs.Array.merge([1, '1']), [1, '1']);
+        });
+        it("合并对个数组然后去重并且保持一定的顺序", function ()
+        {
+            assert.deepEqual(TopJs.Array.merge([1, 2, 3], ['1', '2', '3'], [4, 1, 5, 2], [6, 3, 7, '1'], [8, '2', 9, '3']), 
+                [1, 2, 3, '1', '2', '3', 4, 5, 6, 7, 8, 9])
+        });
+    });
+    describe("TopJs.Array.intersect", function ()
+    {
+        it("不传参数返回空数组", function ()
+        {
+            assert.deepEqual(TopJs.Array.intersect(), []);
+        });
+        it("传空数组返回空数组", function ()
+        {
+            assert.deepEqual(TopJs.Array.intersect([]), []);
+        });
+        it("返回一个新的引用", function ()
+        {
+            let arr = [1, 2, 3];
+            assert.notEqual(TopJs.Array.intersect(arr), arr);
+        });
+        it("复制一个数组如果只传一个参数", function ()
+        {
+            assert.deepEqual(TopJs.Array.intersect([1, 2, 3]), [1, 2, 3]);
+        });
+        it("按照出现的顺序合并数组", function ()
+        {
+            assert.deepEqual(TopJs.Array.intersect([1, 2, 3], [4, 3, 2, 5], [2, 6, 3]), [2, 3])
+        });
+        it("没有交集返回空数组", function ()
+        {
+            assert.deepEqual(TopJs.Array.intersect([1, 2, 3], [32]), [])
+        });
+        it("求交集的时候回去除重复的元素", function ()
+        {
+            assert.deepEqual(TopJs.Array.intersect([1, 1, 2, 3, 3],[1, 1, 2, 3, 3]), [1, 2, 3])
+        });
+        it("通过严格比较元素是否相等", function ()
+        {
+            assert.deepEqual(TopJs.Array.intersect([1], ['1']), []);
+        });
+        it("正确的处理falsy值", function ()
+        {
+            assert.deepEqual(TopJs.Array.intersect(
+                [undefined, null, false, 0, ''], [undefined, null, false, 0, '']),
+                [undefined, null, false, 0, '']);
+        });
+    });
+    describe("TopJs.Array.difference", function ()
+    {
+        it("返回两个数组的差", function(){
+            assert.deepEqual(TopJs.Array.difference([1, 2, 3, 4], [3, 2]), [1, 4]);
+        });
+        it("返回第一个数组如果没交集", function ()
+        {
+            assert.deepEqual(TopJs.Array.difference([1, 2, 3], [4, 5, 6]), [1, 2, 3]);
+        });
+        it("创建一个全新的引用", function ()
+        {
+            let arr = [1, 2];
+            assert.notEqual(TopJs.Array.difference(arr, [3]), arr);
+        });
+        it("删除重复的数据", function ()
+        {
+            assert.deepEqual(TopJs.Array.difference([1, 1, 2, 2, 3, 3, 4, 4], [3]), [1, 2, 4]);
+        });
+        it("元素比较实用严格相等", function ()
+        {
+            assert.deepEqual(TopJs.Array.difference([1], ['1']), [1]);
+        })
+    });
 });

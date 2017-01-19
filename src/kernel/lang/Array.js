@@ -188,7 +188,7 @@ export function mount(TopJs)
         {
             let clone = [];
             let item;
-            let len;
+            let len = array.length;
             for (let i = 0; i < len; i++) {
                 item = array[i];
                 if (!clone.includes(item)) {
@@ -349,17 +349,16 @@ export function mount(TopJs)
          */
         difference(arrayA, arrayB)
         {
-            let clone = arrayA.slice();
-            let len = arrayB.length;
-            let index;
+            let ret = [];
+            let len = arrayA.length;
+            let item;
             for (let i = 0; i < len; i++) {
-                index = clone.indexOf(arrayB[i]);
-                if (-1 !== index) {
-                    //删除找到的项
-                    clone.splice(index, 1);
+                item = arrayA[i];
+                if(-1 === arrayB.indexOf(item)){
+                    ret.push(item);
                 }
             }
-            return clone;
+            return TopJs.Array.unique(ret);
         },
 
         /**
@@ -399,12 +398,12 @@ export function mount(TopJs)
                 }
             }
             minArray = TopJs.Array.unique(minArray);
-            arrays.slice(minArrayIndex, 1);
+            arrays.splice(minArrayIndex, 1);
             arraysLen = arrays.length;
             minArrayLen = minArray.length;
             for (let i = 0; i < minArrayLen; i++) {
                 element = minArray[i];
-                elementCandidate = 0;
+                elementCount = 0;
                 for (let j = 0; j < arraysLen; j++) {
                     array = arrays[j];
                     arrayLen = array.length;
@@ -539,12 +538,7 @@ export function mount(TopJs)
          */
         merge(...arrays)
         {
-            let results = [];
-            let len = arrays.length;
-            for (let i = 0; i < len; i++) {
-                results = results.concat(arrays[i]);
-            }
-            return TopJs.Array.unique(results);
+            return TopJs.Array.unique([].concat(...arrays));
         },
 
         /**
