@@ -598,4 +598,133 @@ describe("TopJs.Array", function ()
             });
         });
     });
+    
+    describe("TopJs.Array.min", function ()
+    {
+        it("默认比较器，找出最小的", function ()
+        {
+            assert.equal(TopJs.Array.min([1, 2, 3, 4, 5, 6]), 1);
+            assert.equal(TopJs.Array.min([6, 5, 4, 3, 2, 1]), 1);
+        });
+        it("指定比较器", function ()
+        {
+            assert.equal(TopJs.Array.min([1, 2, 3, 4, 5, 6], function (a, b)
+            {
+                if(a == b){
+                    return 0;
+                }else if(a < b){
+                    return 1;
+                }else{
+                    return -1;
+                }
+            }), 6);
+        });
+    });
+    
+    describe("TopJs.Array.max", function ()
+    {
+        it("默认比较器，找出最大的", function ()
+        {
+            assert.equal(TopJs.Array.max([1, 2, 3, 4, 5, 6]), 6);
+            assert.equal(TopJs.Array.max([6, 5, 4, 3, 2, 1]), 6);
+        });
+        it("指定比较器", function ()
+        {
+            assert.equal(TopJs.Array.max([1, 2, 3, 4, 5, 6], function (a, b)
+            {
+                if(a == b){
+                    return 0;
+                }else if(a < b){
+                    return 1;
+                }else{
+                    return -1;
+                }
+            }), 1);
+        });
+    });
+    
+    describe("TopJs.Array.sum", function ()
+    {
+        it("返回和", function ()
+        {
+            assert.equal(TopJs.Array.sum([1, 2, 3]), 6);
+        });
+    });
+    
+    describe("TopJs.Array.mean", function ()
+    {
+        it("返回平均数", function ()
+        {
+            assert.equal(TopJs.Array.mean([1, 2, 3, 4, 5, 6]), 3.5);
+        });
+    });
+    
+    describe("TopJs.Array.replace", function ()
+    {
+        it("删除中间的元素", function ()
+        {
+            let array = [0, 1, 2, 3, 4, 5, 6, 7];
+            assert.deepEqual(TopJs.Array.replace(array, 2, 3), [0, 1, 5, 6, 7])
+        });
+        it("在中间插入一下元素", function ()
+        {
+            let arr = [1, 2, 3, 4, 5, 6];
+            assert.deepEqual(TopJs.Array.replace(arr, 2, 0, [100]), [1, 2, 100, 3, 4, 5, 6]);
+        });
+        it("在指定位置替换元素", function ()
+        {
+            let arr = [1, 2, 3, 4, 5, 6];
+            assert.deepEqual(TopJs.Array.replace(arr, 2, 1, [100, 200]), [1, 2, 100, 200, 4, 5, 6]);
+        });
+        it("在指定位置替换元素,删除大于新增", function ()
+        {
+            let arr = [1, 2, 3, 4, 5, 6];
+            assert.deepEqual(TopJs.Array.replace(arr, 1, 3, [100]), [1, 100, 5, 6]);
+        });
+        it("删除数组头部元素", function ()
+        {
+            assert.deepEqual(TopJs.Array.replace([1, 2, 3, 4, 5], 0, 3), [4, 5]);
+        });
+        it("删除数组尾部元素", function ()
+        {
+            assert.deepEqual(TopJs.Array.replace([1, 2, 3, 4, 5], 2, 3), [1, 2]);
+        });
+        it("删除所有元素", function ()
+        {
+            assert.deepEqual(TopJs.Array.replace([1, 2, 3, 4, 5], 0, 5), []);
+        });
+        it("在数组头部插入元素", function ()
+        {
+            assert.deepEqual(TopJs.Array.replace([1, 2], 0, 0, ['a', 'b']), ['a', 'b', 1, 2]);
+        });
+        it("在数组尾部插入元素", function ()
+        {
+            let arr = [1, 2];
+            assert.deepEqual(TopJs.Array.replace(arr, arr.length, 0, ['a', 'b']), [1, 2, 'a', 'b']);
+        });
+        it("在空数组插入元素", function ()
+        {
+            let arr = [];
+            assert.deepEqual(TopJs.Array.replace(arr, 0, 0, ['a', 'b', 'c']), ['a', 'b', 'c']);
+        });
+        it("在数组头部进行替换", function ()
+        {
+            let arr = [0, 1];
+            assert.deepEqual(TopJs.Array.replace(arr, 0, 1, ['a', 'b', 'c']), ['a', 'b', 'c', 1]);
+        });
+        it("在数组尾部进行替换", function ()
+        {
+            let arr = [0, 1];
+            assert.deepEqual(TopJs.Array.replace(arr, arr.length - 1, 1, ['a', 'b', 'c']), [0, 'a', 'b', 'c']);
+        });
+        it("替换整个数组", function ()
+        {
+            let arr = [0, 1];
+            assert.deepEqual(TopJs.Array.replace(arr, 0, arr.length, ['a', 'b', 'c']), ['a', 'b', 'c']);
+        });
+        it("处理负索引", function ()
+        {
+            assert.deepEqual(TopJs.Array.replace(['a', 'b', 'c'], -1, 20), ['a', 'b']);
+        });
+    });
 });

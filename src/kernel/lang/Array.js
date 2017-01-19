@@ -256,12 +256,13 @@ export function mount(TopJs)
                     array.unshift.apply(array, insert);
                 } else if (index < array.length) {
                     //在数组的中间进行操作
-                    array.splice.apply(array, [index, removeCount].concat(index));
+                    array.splice(index, removeCount, ...insert)
+                    
                 } else {
                     array.push.apply(array, insert);
                 }
             } else {
-                array.splice(array, index, removeCount);
+                array.splice(index, removeCount);
             }
             return array;
         },
@@ -338,7 +339,7 @@ export function mount(TopJs)
             for (let i = 0; i < len; i++) {
                 sum += array[i];
             }
-            return item;
+            return sum;
         },
 
         /**
@@ -469,7 +470,7 @@ export function mount(TopJs)
         min(array, compareFn = null)
         {
             let len = array.length;
-            let min = array[i];
+            let min = array[0];
             let item;
             for (let i = 0; i < len; i++) {
                 item = array[i];
@@ -496,7 +497,7 @@ export function mount(TopJs)
         max(array, compareFn = null)
         {
             let len = array.length;
-            let max = array[i];
+            let max = array[0];
             let item;
             for (let i = 0; i < len; i++) {
                 item = array[i];
