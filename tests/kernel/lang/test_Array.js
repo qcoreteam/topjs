@@ -727,4 +727,277 @@ describe("TopJs.Array", function ()
             assert.deepEqual(TopJs.Array.replace(['a', 'b', 'c'], -1, 20), ['a', 'b']);
         });
     });
+    
+    describe("TopJs.Array.toMap", function ()
+    {
+        it("传入空数组是应该返回一个空对象", function ()
+        {
+            assert.deepEqual(TopJs.Array.toMap([]), {});
+        });
+        it("获取的map的值是索引+1", function ()
+        {
+            let map = TopJs.Array.toMap(['a', 'b', 'c']);
+            assert.deepEqual(map, {
+                a: 1,
+                b: 2,
+                c: 3
+            });
+        });
+        it("指定getKey", function ()
+        {
+            let map = TopJs.Array.toMap([
+                {name: "aaa"},
+                {name: "bbb"},
+                {name: "ccc"}
+            ], "name");
+            assert.deepEqual(map, {
+                aaa: 1,
+                bbb: 2,
+                ccc: 3
+            });
+        });
+        it("指定getKey函数", function ()
+        {
+            let map = TopJs.Array.toMap([
+                {name: "aaa"},
+                {name: "bbb"},
+                {name: "ccc"}
+            ], function (obj) {
+                return obj.name
+            });
+            assert.deepEqual(map, {
+                aaa: 1,
+                bbb: 2,
+                ccc: 3
+            });
+        });
+        it("测试getKey函数的作用域", function ()
+        {
+            let expect;
+            let scope = {};
+            let map = TopJs.Array.toMap([
+                {name: "aaa"},
+                {name: "bbb"},
+                {name: "ccc"}
+            ], function (obj) {
+                expect = this;
+                return obj.name;
+            }, scope);
+            assert.equal(scope, expect);
+        });
+    });
+    describe("TopJs.Array.toMapValue", function ()
+    {
+        let a, b, c, aDup;
+        beforeEach(function() {
+            a = {name: 'a'};
+            b = {name: 'b'};
+            c = {name: 'c'};
+            aDup = {name: 'a'};
+        });
+        afterEach(function() {
+            a = b = c = aDup = null;
+        });
+        it("当传入空数组的时候返回空对象", function ()
+        {
+            let map = TopJs.Array.toValueMap([]);
+            assert.deepEqual(map, {});
+        });
+        it("使用默认的名字", function ()
+        {
+            let map = TopJs.Array.toValueMap(['a', 'b', 'c']);
+            assert.deepEqual(map, {
+                a: 'a',
+                b: 'b',
+                c: 'c'
+            });
+        });
+        it("使用数字键值", function ()
+        {
+            let map = TopJs.Array.toValueMap([1, 2, 3]);
+            assert.deepEqual(map, {
+                '1': 1,
+                '2': 2,
+                '3': 3
+            });
+        });
+        describe("使用getKey", function ()
+        {
+            describe("使用字符串类型的getKey", function ()
+            {
+                it("获取map key", function(){
+                    let map = TopJs.Array.toValueMap([a, b, c], "name");
+                    assert.deepEqual(map, {
+                        a: a,
+                        b: b,
+                        c: c
+                    });
+                });
+                it("同样的key添加都数组里面", function ()
+                {
+                    let map = TopJs.Array.toValueMap([a, b, c, aDup], "name");
+                    assert.deepEqual(map, {
+                        a: aDup,
+                        b: b,
+                        c: c
+                    });
+                });
+                it("强制所有值变成数组", function ()
+                {
+                    let map = TopJs.Array.toValueMap([a, b, c, aDup], "name", 1);
+                    assert.deepEqual(map, {
+                        a: [a, aDup],
+                        b: [b],
+                        c: [c]
+                    });
+                });
+                it("有选择的将值变成数组", function ()
+                {
+                    let map = TopJs.Array.toValueMap([a, b, c, aDup], "name", 2);
+                    assert.deepEqual(map, {
+                        a: [a, aDup],
+                        b: b,
+                        c: c
+                    });
+                });
+            });
+            describe("函数类型的getKey", function ()
+            {
+                let toUpper = function(o) {
+                    return o.name.toUpperCase();
+                };
+                it("正确的处理map的key", function ()
+                {
+                    let map = TopJs.Array.toValueMap([a, b, c], toUpper);
+                    assert.deepEqual(map, {
+                        A: a,
+                        B: b,
+                        C: c
+                    });
+                });
+                it("多个相同的键存在，强制转换成数组", function ()
+                {
+                    let map = TopJs.Array.toValueMap([a, b, c, aDup], toUpper, null, 1);
+                    assert.deepEqual(map, {
+                        A: [a, aDup],
+                        B: [b],
+                        C: [c]
+                    });
+                });
+                it("有选择的将值变成数组", function ()
+                {
+                    let map = TopJs.Array.toValueMap([a, b, c, aDup], toUpper, null, 2);
+                    assert.deepEqual(map, {
+                        A: [a, aDup],
+                        B: b,
+                        C: c
+                    });
+                });
+                it("测试传入的作用域", function ()
+                {
+                    let scope = {};
+                    let actualScope;
+                    TopJs.Array.toValueMap([a, b, c, aDup], function(obj){
+                        actualScope = this;
+                        return obj.name;
+                    }, scope, 2);
+                    assert.equal(actualScope, scope);
+                })
+            });
+        });
+    });
+    
+    describe("TopJs.Array.flatten", function ()
+    {
+        it("当多维数组转化成一维", function ()
+        {
+            assert.deepEqual(TopJs.Array.flatten(
+                [1, [2, 3, ['a']], 3]
+            ), [1, 2, 3, 'a', 3]);
+        });
+    });
+    
+    describe("TopJs.Array.equals", function ()
+    {
+        it("想个空数组相等", function ()
+        {
+            assert.isTrue(TopJs.Array.equals([], []));
+        });
+        
+        it("长度不相等，数组不相等", function ()
+        {
+            assert.isFalse(TopJs.Array.equals([1, 2], [1, 2, 3]));
+        });
+        it("元素比较使用严格相等", function ()
+        {
+            assert.isFalse(TopJs.Array.equals([1], ['1']));
+        });
+        it("元素的顺序决定是否相等", function ()
+        {
+            assert.isFalse(TopJs.Array.equals(['a', 'b', 'c'], ['b', 'c', 'a']));
+        });
+        it("元素的顺序相同，数组相等", function ()
+        {
+            assert.isTrue(TopJs.Array.equals(['a', 'b', 'c'], ['a', 'b', 'c']));
+        });
+        it("比较boolean值", function ()
+        {
+            assert.isTrue(TopJs.Array.equals([true, false, true], [true, false, true]));
+        });
+        it("比较对象", function ()
+        {
+            let obj1 = {};
+            let obj2 = {};
+            let obj3 = {};
+            assert.isTrue(TopJs.Array.equals([obj1, obj3, obj2], [obj1, obj3, obj2]));
+        });
+        it("自己比自己一定相等", function ()
+        {
+            let arr = [1, 2, 3];
+            assert.isTrue(TopJs.Array.equals(arr, arr));
+        })
+    });
+    
+    describe("TopJs.Array.move", function ()
+    {
+        let arr;
+        beforeEach(function() {
+            arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        });
+        it("移动第一个参数", function ()
+        {
+            TopJs.Array.move(arr, 0, 2);
+            assert.deepEqual(arr, [2, 3, 1, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+        });
+        it("移动最后一个元素", function ()
+        {
+            TopJs.Array.move(arr, 11, 2);
+            assert.deepEqual(arr, [1, 2, 12, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+        });
+        it("两个元素相等", function ()
+        {
+            TopJs.Array.move(arr, 7, 7);
+            assert.deepEqual(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+        });
+        it("把其他元素移到第一个元素的位置", function ()
+        {
+            TopJs.Array.move(arr, 7, 0);
+            assert.deepEqual(arr, [8, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12]);
+        });
+        it("把其他元素移到最后元素的位置", function ()
+        {
+            TopJs.Array.move(arr, 7, 11);
+            assert.deepEqual(arr, [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 8]);
+        });
+        it("把当前的元素移到自己之前", function ()
+        {
+            TopJs.Array.move(arr, 5, 2);
+            assert.deepEqual(arr, [1, 2, 6, 3, 4, 5, 7, 8, 9, 10, 11, 12]);
+        });
+        it("把当前的元素移到自己之后", function ()
+        {
+            TopJs.Array.move(arr, 5, 6);
+            assert.deepEqual(arr, [1, 2, 3, 4, 5, 7, 6, 8, 9, 10, 11, 12]);
+        });
+    });
 });

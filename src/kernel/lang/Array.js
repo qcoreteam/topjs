@@ -570,6 +570,26 @@ export function mount(TopJs)
         },
 
         /**
+         * 将数组中的元素从`fromIndex`移动到`toIndex`
+         * 
+         * @param {Array} array 待移动的数组
+         * @param {Number} fromIndex 开始索引
+         * @param {Number} toIndex 目标索引
+         */
+        move(array, fromIndex, toIndex)
+        {
+            if (toIndex === fromIndex) {
+                return;
+            }
+            let item = array[fromIndex];
+            let incr = toIndex > fromIndex ? 1 : -1;
+            for(let i = fromIndex; i != toIndex; i += incr){
+                array[i] = array[i + incr];
+            }
+            array[toIndex] = item;
+        },
+
+        /**
          * 将可遍历的对象转换成真正的数组
          * ```javascript
          *
@@ -644,7 +664,7 @@ export function mount(TopJs)
                 }
             } else if (typeof getKey === "string") {
                 while (len--) {
-                    map[array[len--][getKey]] = len + 1;
+                    map[array[len][getKey]] = len + 1;
                 }
             } else {
                 while (len--) {
