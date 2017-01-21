@@ -329,6 +329,26 @@ export function mount(TopJs)
         },
 
         /**
+         * 将指定的日期转换成字符串表示
+         *
+         * @param {Date} date 待转换的日期
+         * @return {string} 日期字符串
+         */
+        toString: function (date)
+        {
+            if (!date) {
+                date = new nativeDate();
+            }
+
+            return date.getFullYear() + "-"
+                + pad(date.getMonth() + 1, 2, '0') + "-"
+                + pad(date.getDate(), 2, '0') + "T"
+                + pad(date.getHours(), 2, '0') + ":"
+                + pad(date.getMinutes(), 2, '0') + ":"
+                + pad(date.getSeconds(), 2, '0');
+        },
+
+        /**
          * 日期解析函数对象，一个`key`对应一个解析函数
          * 这些函数自动添加到`this`对象上面，必须返回一个日期的描述字符串
          * ```javascript
