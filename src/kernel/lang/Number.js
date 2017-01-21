@@ -97,6 +97,7 @@ export function mount(TopJs)
             let wrap = options.wrap;
             let begin;
             let end;
+            indices = indices || [];
             for (let i = 0; i < 2; i++) {
                 begin = end;
                 end = indices[i];
@@ -161,6 +162,7 @@ export function mount(TopJs)
          */
         roundToNearest(value, interval = 1)
         {
+            interval = interval || 1;
             return interval * Math.round(value / interval);
         },
 
@@ -196,10 +198,10 @@ export function mount(TopJs)
          */
         from(value, defaultValue)
         {
-            if (Number.isFinite(value)) {
+            if(isFinite(value)){
                 value = Number.parseFloat(value);
             }
-            return (undefined !== value && !Number.isNaN(value)) ? value : defaultValue;
+            return (undefined !== value && !isNaN(value)) ? value : defaultValue;
         },
 
         /**
