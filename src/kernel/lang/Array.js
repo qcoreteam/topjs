@@ -9,7 +9,7 @@
 export function mount(TopJs)
 {
     let TopJsArray = TopJs.Array = {};
-
+    let nativeSlice = Array.prototype.slice;
     function defaultCompare(left, right)
     {
         return (left < right) ? -1 : ((left > right) ? 1 : 0);
@@ -275,7 +275,7 @@ export function mount(TopJs)
          */
         clone: function (array)
         {
-            return array.slice();
+            return nativeSlice.call(array);
         },
 
         /**
