@@ -115,28 +115,19 @@ export function mount(TopJs)
          * @private
          * @param {String/Object} error 错误字符串，或者包含自定义信息的错误对象，自定义对象必须含有一个`msg`字段
          * 自定义信息将在控制台输出
+         * @param {Function} processer 额外的处理器，对传入的对象对相关的处理
          */
-        raise(error)
+        raise(error, processer = TopJs.emptyFn)
         {
+            let msg;
             error = error || {};
             if (TopJs.isString(error)) {
                 error = {
                     msg: error
                 }
             }
-            let me = this;
-            let method = me.raise.caller;
-            let msg;
-            let name;
-            if (method === TopJs.raise) {
-                if (!error.sourceMethod && (name = method.$_name_$)) {
-                    error.sourceMethod = name;
-                }
-                if(!error.sourceClass && (name = method.$_owner_$) && (name = name.$_class_name_$)) {
-                    error.sourceClass = name;
-                }
-            }
-            if(me.handle(error) !== true){
+            processer(error);
+            if(this.handle(error) !== true){
                 msg = to_string.call(error);
                 //<debug>
                 TopJs.log({
@@ -146,7 +137,7 @@ export function mount(TopJs)
                     stack: true
                 });
                 //</debug>
-                throw new TopJs.Error(err);
+                throw new TopJs.Error(error);
             }
         },
 
@@ -218,6 +209,16 @@ export function mount(TopJs)
      */
     TopJs.raise = function (error)
     {
-        TopJs.Error.raise.call(TopJs.Error, error);
+        let method = TopJs.raise;
+        TopJs.Error.raise.call(TopJs.Error, error, function (error)
+        {
+            let name;
+            if (!error.sourceMethod && (name = method.$_name_$)) {
+                error.sourceMethod = name;
+            }
+            if(!error.sourceClass && (name = method.$_owner_$) && (name = name.$_class_name_$)) {
+                error.sourceClass = name;
+            }
+        });
     };
 }

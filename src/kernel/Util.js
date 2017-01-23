@@ -62,18 +62,109 @@ export function mount(TopJs)
         {
 
         },
-        
+
         iterate()
         {
-            
+
         },
 
         /**
          * 向控制台输出一条信息
-         * 
-         * @private
+         *
+         * @method
+         * @param {Object} [options] 需要输出的信息的选项
+         * @param {String} options.msg 输出的字符串信息(必要字段)
+         * @param {String} [options.level=log] 错误级别 `error`, `warn`, `info` or `log` (默认是 `log`).
+         * @param {Boolean} [options.dump=false] 是否将整个对象`dump`到错误信息里面
+         * @param {Boolean} [options.stack=false] 是否输出函数调用栈
+         * @param {Boolean} [options.indent=true] 是否对错误信息进行缩进
+         * @param {Boolean} [options.outdent=true] 是否对当前的语句和后面的语句减少一个缩进
+         * @param {...String} [message] 需要输出的字符串数据
          */
-        log: (function () {
+        log:
+        //<debug>
+        (function(){
+            
+            function log(message)
+            {
+                let options;
+                let dump;
+                let level = 'log';
+                let indent = log.indent || 0;
+                let prefix;
+                let stack;
+                let fn;
+                log.indent = indent;
+                if (typeof message !== 'string') {
+                    options = message;
+                    message = options.msg || '';
+                    level = options.level || level;
+                    dump = options.dump;
+                    stack = options.stack;
+                    prefix = options.prefix;
+                    fn = options.fn;
+                    if (options.indent) {
+                        ++log.indent;
+                    } else if (options.outdent) {
+                        log.indent = indent = Math.max(indent - 1, 0);
+                    }
+                }
+                
+                if (arguments.length > 1) {
+                    message += Array.prototype.slice.call(arguments, 1).join('');
+                }
+                if (prefix) {
+                    message = prefix + ' - ' + message;
+                }
+                message = indent ? TopJs.String.repeat(' ', log.indentSize * indent) + message : message;
+                if (level !== 'log') {
+                    message = '[' + level.charAt(0).toUpperCase() + '] ' + message;
+                }
+
+                if (fn) {
+                    message += '\nCaller: ' + fn.toString();
+                }
+                if (console[level]) {
+                    console[level](message);
+                } else {
+                    console.log(message);
+                }
+
+                if (dump) {
+                    console.dir(dump);
+                }
+
+                if (stack && console.trace) {
+                    console.trace();
+                }
+                ++log.count;
+                ++log.counters[level];
+            }
+
+            function logx (level, args) {
+                if (typeof args[0] === 'string') {
+                    args.unshift({});
+                }
+                args[0].level = level;
+                log.apply(this, args);
+            }
+
+            log.error = function () {
+                logx('error', Array.prototype.slice.call(arguments));
+            };
+            log.info = function () {
+                logx('info', Array.prototype.slice.call(arguments));
+            };
+            log.warn = function () {
+                logx('warn', Array.prototype.slice.call(arguments));
+            };
+            log.count = 0;
+            log.counters = { error: 0, warn: 0, info: 0, log: 0 };
+            log.indentSize = 2;
+            return log;
+        })() ||
+        //</debug>
+        (function () {
             let nullLog = function () {};
             nullLog.info = nullLog.warn = nullLog.error = TopJs.emptyFn;
             return nullLog;
