@@ -7,7 +7,7 @@
  */
 /**
  * 框架引导文件
- * 
+ *
  * 我们在这个里面初始化一些内部的类，挂载一些快捷函数到TopJs名称空间上面
  */
 import {sep as dir_separator} from "path";
@@ -28,21 +28,21 @@ let topJsLibDir = process.cwd() + dir_separator + "lib";
  * @namespace TopJs
  */
 StandardAutoloader.addAfterRegisteredCallback(function(){
-   //一些比较重要的全局名称空间常量
-   TopJs.TOPJS_LIB_DIR = topJsLibDir;
-   TopJs.global = global;
-   //给全局名称空间挂载比较重要的函数
-   TopJsFuncs.mount(TopJs);
-   //初始化对语言的扩展
-   LangArray.mount(TopJs);
-   LangFunction.mount(TopJs);
-   LangObject.mount(TopJs);
-   LangNumber.mount(TopJs);
-   LangString.mount(TopJs);
-   LangDate.mount(TopJs);
-   TopJsUtil.mount(TopJs);
-   //初始化类系统
-   cls_system_mounter(TopJs);
+    //一些比较重要的全局名称空间常量
+    TopJs.TOPJS_LIB_DIR = topJsLibDir;
+    TopJs.global = global;
+    //给全局名称空间挂载比较重要的函数
+    TopJsFuncs.mount(TopJs);
+    TopJsUtil.mount(TopJs);
+    //初始化对语言的扩展
+    LangArray.mount(TopJs);
+    LangFunction.mount(TopJs);
+    LangObject.mount(TopJs);
+    LangNumber.mount(TopJs);
+    LangString.mount(TopJs);
+    LangDate.mount(TopJs);
+    //初始化类系统
+    cls_system_mounter(TopJs);
 });
 
 module.exports.StandardLoader = StandardAutoloader;
