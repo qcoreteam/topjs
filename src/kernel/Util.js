@@ -125,9 +125,28 @@ export function mount(TopJs)
             }
         })(),
 
-        iterate()
+        /**
+         * 迭代传入的对象，如果`object`是数组，则调用{@link TopJs.Array.each}，如果是对象
+         * 则调用{@link TopJs.Object.each}
+         * 
+         * @param {Object|Array} object 需要迭代的对象或者数组
+         * @param {Function} func 迭代调用的函数，详情请参考{@link TopJs.Array.each}
+         * 和{@link TopJs.Object.each}
+         * @param {Object} scope 迭代器调用时候的作用域参数
+         */
+        iterate(object, func, scope)
         {
-
+            if (TopJs.isEmpty(object)) {
+                return;
+            }
+            if (scope === undefined) {
+                scope = object;
+            }
+            if (TopJs.isIterable(object)) {
+                TopJs.Array.each.call(TopJs.Array, object, func, scope);
+            } else {
+                TopJs.Object.each.call(TopJs.Object, object, func, scope);
+            }
         },
 
         /**
