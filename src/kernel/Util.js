@@ -13,6 +13,7 @@
  */
 export function mount(TopJs)
 {
+    let propertyNameSplitRe = /[,;\s]+/;
     let nonWhitespaceRe = /\S/;
     let toString = Object.prototype.toString;
     let typeofTypes = {
@@ -30,32 +31,59 @@ export function mount(TopJs)
     };
     TopJs.apply(TopJs, /** @lends TopJs */ {
         /**
-         * 在指定的作用域上面执行传入的回调函数，当传入的是一个纯函数的时候，让该函数在指定的作用域下
-         * 执行，如果传入的函数是字符串，那么我们在传入的作用域对象下寻找是否有这个方法，有就执行。
-         * 如果什么都不传，那么我们忽略这个调用。
+         * 将指定的名称的属性从`source`对象复制到`dest`
+         * 
+         * ```javascript
+         * let foo = { a: 1, b: 2, c: 3 };
+         * let bar = TopJs.copyTo({}, foo, 'a,c');
+         * // bar = {a: 1, c: 3}
+         * ```
+         * @param {Object} dest 复制的目标对象
+         * @param {Object} source 等待复制的源对象
+         * @param {String/String[]} names 需要复制的字段名称，数组或者逗号分隔
+         * @param {Boolean} [usePrototypeKeys=false] `true`在圆形链上寻找属性值
+         * @return {Object} `dest`对象
+         */
+        copy(dest, source, names, usePrototypeKeys)
+        {
+            if (typeof names === 'string') {
+                names = names.split(propertyNameSplitRe);
+            }
+            for (let name, i = 0, n = names ? names.length : 0; i < n; i++) {
+                name = names[i];
+                if(source.hasOwnProperty(name) || (usePrototypeKeys && name in source)){
+                    dest[name] = source[name];
+                }
+            }
+            return dest;
+        },
+        
+        /**
+         * 将指定的名称的属性从`source`对象复制到`dest`,如果相应的属性在
+         * `dest`存在的话就不复制
          *
          * ```javascript
-         * //下面几个调用时等价的
-         *
-         * let fn = this.fn;
-         *
-         * TopJs.callback(fn, this, [arg1, arg2]);
-         * TopJs.callback("fn", this, [arg1, arg2]);
-         *
+         * let foo = { a: 1, b: 2, c: 3 };
+         * let bar = TopJs.copyTo({a: 43}, foo, 'a,c');
+         * // bar = {a: 43, c: 3}
          * ```
-         *
-         * @memberOf TopJs
-         * @param {Function|String} callback 一个函数引用或者一个作用域下的方法名称
-         * @param {Object} scope 第一个参数指定的`callback`的执行作用域，如果第一个参数为字符串，那么必须在这个作用域下
-         * 存在名字为`callback`所指字符串的方法,如果`scope`为`null`那么`callback`将在`defaultScope`指定的作用域下执行
-         * @param {Array} args 传给`callback`的参数
-         * @param {Number} defer `callback`延迟调用的毫秒数
-         * @param {Object} caller 如果没有显示的提供`scope`，那么`callback`调用时将用`caller`参数进行解析方法
-         * @param {Object} defaultScope 默认的作用域，最后的容错对象
-         * @return {Mixed|undefined} 返回`callback`的返回值，如果指定`defer`或者`callback`不是一个函数则返回`undefined`
+         * @param {Object} dest 复制的目标对象
+         * @param {Object} source 等待复制的源对象
+         * @param {String/String[]} names 需要复制的字段名称，数组或者逗号分隔
+         * @return {Object} `dest`对象
          */
-        callback(callback, scope, args, defer, caller, defaultScope)
+        copyIf(dest, source, names)
         {
+            if (typeof names === 'string') {
+                names = names.split(propertyNameSplitRe);
+            }
+            for (let name, i = 0, n = names ? names.length : 0; i < n; i++) {
+                name = names[i];
+                if (!(name in dest) && (name in source)) {
+                    dest[name] = source[name];
+                }
+            }
+            return dest;
         },
 
         /**

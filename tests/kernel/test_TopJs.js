@@ -1576,4 +1576,58 @@ describe("TopJs名称空间函数测试", function ()
             });
         });
     });
+    
+    describe("TopJs.copy", function ()
+    {
+        let dest;
+        let source = { a: 1, b: 'x', c: 42, obj: {} };
+        beforeEach(function () {
+            dest = { a: 427 };
+        });
+        it("覆盖原有属性", function ()
+        {
+            TopJs.copy(dest, source, ['a']);
+            assert.equal(dest.a, 1);
+        });
+        it("添加新的属性", function ()
+        {
+            TopJs.copy(dest, source, ['a', 'b']);
+            assert.deepEqual(dest, {
+                a: 1,
+                b: 'x'
+            });
+        });
+        it("引用复制", function ()
+        {
+            TopJs.copy(dest, source, ['obj']);
+            assert.equal(dest.obj, source.obj);
+        });
+    });
+
+    describe("TopJs.copy", function ()
+    {
+        let dest;
+        let source = { a: 1, b: 'x', c: 42, obj: {} };
+        beforeEach(function () {
+            dest = { a: 427 };
+        });
+        it("不覆盖原有属性", function ()
+        {
+            TopJs.copyIf(dest, source, ['a']);
+            assert.equal(dest.a, 427);
+        });
+        it("添加新的属性", function ()
+        {
+            TopJs.copyIf(dest, source, ['a', 'b']);
+            assert.deepEqual(dest, {
+                a: 427,
+                b: 'x'
+            });
+        });
+        it("引用复制", function ()
+        {
+            TopJs.copyIf(dest, source, ['obj']);
+            assert.equal(dest.obj, source.obj);
+        });
+    });
 });
