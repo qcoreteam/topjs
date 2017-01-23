@@ -1095,4 +1095,67 @@ describe("TopJs名称空间函数测试",function(){
          });
       });
    });
+   
+   describe("TopJs.typeof", function ()
+   {
+       it("应该返回null", function ()
+       {
+           assert.equal(TopJs.typeOf(null), "null");
+       });
+       it("返回`undefined`", function ()
+       {
+           assert.equal(TopJs.typeOf(undefined), "undefined");
+       });
+       it("应该返回字符串", function ()
+       {
+           assert.equal(TopJs.typeOf(""), "string");
+           assert.equal(TopJs.typeOf("something"), "string");
+           assert.equal(TopJs.typeOf("1.2"), "string");
+       });
+       it("应该返回number", function ()
+       {
+           assert.equal(TopJs.typeOf(1), "number");
+           assert.equal(TopJs.typeOf(1.2), "number");
+           assert.equal(TopJs.typeOf(new Number(1.2)), "number");
+       });
+       it("返回boolean类型", function ()
+       {
+           assert.equal(TopJs.typeOf(true), "boolean");
+           assert.equal(TopJs.typeOf(false), "boolean");
+           assert.equal(TopJs.typeOf(new Boolean(1.2)), "boolean");
+       });
+       it("返回array", function ()
+       {
+           assert.equal(TopJs.typeOf([1,2,3]), "array");
+           assert.equal(TopJs.typeOf(new Array(1,2,3)), "array");
+       });
+       
+       it("应该返回函数", function ()
+       {
+           assert.equal(TopJs.typeOf(function(){}), "function");
+           assert.equal(TopJs.typeOf(new Function()), "function");
+           assert.equal(TopJs.typeOf(Object), "function");
+           assert.equal(TopJs.typeOf(Array), "function");
+           assert.equal(TopJs.typeOf(Number), "function");
+           assert.equal(TopJs.typeOf(Function), "function");
+           assert.equal(TopJs.typeOf(Boolean), "function");
+           assert.equal(TopJs.typeOf(String), "function");
+           assert.equal(TopJs.typeOf(Date), "function");
+           assert.equal(TopJs.typeOf(TopJs.typeOf), "function");
+       });
+       it("应该返回正则表达式", function ()
+       {
+           assert.equal(TopJs.typeOf(/test/), "regexp");
+           assert.equal(TopJs.typeOf(new RegExp('test')), "regexp");
+       });
+       it("应该返回date类型", function() {
+           assert.equal(TopJs.typeOf(new Date()), "date");
+       });
+       it("应该返回对象类型", function ()
+       {
+           assert.equal(TopJs.typeOf({some: 'stuff'}), "object");
+           assert.equal(TopJs.typeOf(new Object()), "object");
+           assert.equal(TopJs.typeOf(global), "object");
+       })
+   });
 });

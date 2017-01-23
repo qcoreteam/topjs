@@ -58,10 +58,72 @@ export function mount(TopJs)
         {
         },
 
-        typeof()
+        /**
+         * 获取传入参数的类型的字符串表示
+         * 
+         * - `undefined`: 当传入值是`undefined`
+         * - `null`: 当传入值是 `null`
+         * - `string`: 当传入值是字符串类型
+         * - `number`: 当传入值是`number`类型
+         * - `boolean`: 当传入的值得布尔类型
+         * - `date`: 当传入的值是`Date` 类型
+         * - `function`: If the given value is a function reference
+         * - `object`: If the given value is an object
+         * - `array`: If the given value is an array
+         * - `regexp`: If the given value is a regular expression
+         * - `whitespace`: If the given value is a DOM text node and contains only whitespace
+         * 
+         * @method
+         * @param {Object} value 传入的对象
+         * @return {String}
+         */
+        typeOf: (function ()
         {
-
-        },
+            let toString = Object.prototype.toString;
+            let typeofTypes = {
+                number: 1,
+                string: 1,
+                "boolean": 1,
+                "undefined": 1
+            };
+            let toStringTypes = {
+                "[object Array]"  : "array",
+                "[object Date]"   : "date",
+                "[object Boolean]": "boolean",
+                "[object Number]" : "number",
+                "[object RegExp]" : "regexp"
+            };
+            return function (value)
+            {
+                if (value === null) {
+                    return "null";
+                }
+                let type = typeof value;
+                let ret;
+                let typeToString;
+                if(typeofTypes[type]){
+                    return type;
+                }
+                ret = toStringTypes[typeToString = toString.call(value)];
+                if (ret) {
+                    return ret;
+                }
+                if (type === "function") {
+                    return "function";
+                }
+                if ("object" === type){
+                    return "object";
+                }
+                //<debug>
+                TopJs.raise({
+                    sourceClass: "Ext",
+                    sourceMethod: "typeOf",
+                    msg: "Failed to determine the type of \"" + value + "\"."
+                });
+                //</debug>
+                return typeToString;
+            }
+        })(),
 
         iterate()
         {
