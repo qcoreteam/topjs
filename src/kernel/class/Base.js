@@ -89,7 +89,6 @@ export function mount(TopJs)
     let aliasOneMember = {};
     let Base;
     /**
-     * @constructor
      * @class TopJs.Base
      */
     TopJs.Base = Base = function ()
