@@ -9,11 +9,9 @@
 "use strict";
 export function mount(TopJs)
 {
-    let checkVerTemp = [''];
     let endOfVersionRe = /([^\d\.])/;
     let notDigitsRe = /[^\d]/g;
     let plusMinusRe = /[\-+]/g;
-    let stripRe = /\s/g;
     let underscoreRe = /_/g;
     let Version;
     /**

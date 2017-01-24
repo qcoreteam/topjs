@@ -858,7 +858,7 @@ describe("测试TopJs.Date", function ()
 
         it("测试格式描述符`u`", function ()
         {
-            assert.equal(format(date, "u"), "04");
+            assert.equal(format(date, "u"), "004");
         });
 
         it("测试格式描述符`O`", function ()

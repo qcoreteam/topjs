@@ -5,6 +5,7 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+"use strict";
 export function mount(TopJs)
 {
     let dateObj = TopJs.Date = {};
@@ -243,7 +244,7 @@ export function mount(TopJs)
      * @param {Date} date 等待转换的日期
      * @return {String} 转换的结果字符串
      */
-    function to_string()
+    function to_string(date)
     {
         if (!date) {
             date = new nativeDate();
