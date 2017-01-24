@@ -47,6 +47,8 @@ StandardAutoloader.addAfterRegisteredCallback(function(){
     Version.mount(TopJs);
     //初始化类系统
     cls_system_mounter(TopJs);
+    //设置框架当前的版本号
+    TopJs.setVersion("0.0.1");
 });
 
 module.exports.StandardLoader = StandardAutoloader;

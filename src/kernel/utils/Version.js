@@ -417,6 +417,40 @@ export function mount(TopJs)
         {
             let ver = current.isVersion ? current : new Version(current);
             return ver.compareTo(target);
+        },
+        
+        set(version)
+        {
+            return version.isVersion ? version : new Version(version);
+        }
+    });
+    
+    TopJs.apply(TopJs, /** @lends TopJs */{
+        /**
+         * @private
+         */
+        lastRegisteredVersion: null,
+
+        /**
+         * 设置设置`TopJs`框架版本号
+         *
+         * @param {String} version 指定的版本号
+         * @return {TopJs}
+         */
+        setVersion(version)
+        {
+            TopJs.lastRegisteredVersion = Version.set(version);
+            return this;
+        },
+
+        /**
+         * 获取框架当前版本号
+         * 
+         * @return {TopJs.Version} TopJs版本号
+         */
+        getVersion()
+        {
+            return TopJs.lastRegisteredVersion;
         }
     });
 }
