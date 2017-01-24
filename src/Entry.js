@@ -20,6 +20,7 @@ import * as LangObject from "./kernel/lang/Object";
 import * as LangNumber from "./kernel/lang/Number";
 import * as LangString from "./kernel/lang/String";
 import * as LangDate from "./kernel/lang/Date";
+import * as Version from "./kernel/utils/Version"
 
 import {mount as cls_system_mounter} from "./kernel/class/ClassManager";
 import StandardAutoloader from "./kernel/loader/StandardAutoloader";
@@ -43,6 +44,7 @@ StandardAutoloader.addAfterRegisteredCallback(function(){
     LangNumber.mount(TopJs);
     LangString.mount(TopJs);
     LangDate.mount(TopJs);
+    Version.mount(TopJs);
     //初始化类系统
     cls_system_mounter(TopJs);
 });

@@ -13,7 +13,6 @@ export function mount(TopJs)
     let notDigitsRe = /[^\d]/g;
     let plusMinusRe = /[\-+]/g;
     let underscoreRe = /_/g;
-    let Version;
     /**
      * @class TopJs.Version
      * @classdesc
@@ -23,7 +22,7 @@ export function mount(TopJs)
      *
      * `major[.minor[.patch[.build[release]]]]`
      */
-    let Verson = TopJs.Version = function (version, defaultMode)
+    let Version = TopJs.Version = function (version, defaultMode)
     {
         let padModes = this.padModes;
         let ch, pad,
