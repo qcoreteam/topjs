@@ -5,13 +5,13 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+
 const StandardLoader = require("../../../lib/Entry").StandardLoader;
 let assert = require("chai").assert;
 let loader = new StandardLoader({
     [StandardLoader.AUTO_REGISTER_TOPJS]: true
 });
 loader.register();
-
 describe("TopJs.Version", function ()
 {
     let version = new TopJs.Version("1.2.1alpha");

@@ -381,12 +381,12 @@ export function mount(TopJs)
          * let controller = new TopJs.Controller({ ... });
          *
          * TopJs.override(controller, {
-       *    forwardRequest: function()
-       *    {
-       *       //一些语句
-       *       this.callParent();
-       *    }
-       * });
+         *    forwardRequest: function()
+         *    {
+         *       //一些语句
+         *       this.callParent();
+         *    }
+         * });
          *
          * ```
          *

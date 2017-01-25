@@ -20,15 +20,13 @@ import * as LangObject from "./kernel/lang/Object";
 import * as LangNumber from "./kernel/lang/Number";
 import * as LangString from "./kernel/lang/String";
 import * as LangDate from "./kernel/lang/Date";
-import * as Version from "./kernel/utils/Version"
+import * as Version from "./kernel/utils/Version";
 
 import {mount as cls_system_mounter} from "./kernel/class/ClassManager";
 import StandardAutoloader from "./kernel/loader/StandardAutoloader";
 
 let topJsLibDir = process.cwd() + dir_separator + "lib";
-/**
- * @namespace TopJs
- */
+
 StandardAutoloader.addAfterRegisteredCallback(function(){
     //一些比较重要的全局名称空间常量
     TopJs.TOPJS_LIB_DIR = topJsLibDir;

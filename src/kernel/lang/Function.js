@@ -530,6 +530,24 @@ export function mount(TopJs)
                 }
                 return memo.get(key);
             };
+        },
+
+        /**
+         * 创建一个代理函数，在调用指定`count`之后调用被代理的函数
+         * 
+         * @param {Number} count 调用计数
+         * @param {Function} func 需要调用的函数
+         * @param {Object} scope 函数调用作用域
+         * @return {Function}
+         */
+        createBarrier: function(count, func, scope)
+        {
+            return function() {
+                if (!--count) {
+                    return func.apply(scope, arguments);
+                }
+            };
         }
+
     });
 }
