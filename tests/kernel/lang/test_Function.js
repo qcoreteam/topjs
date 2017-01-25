@@ -6,15 +6,11 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 let assert = require("chai").assert;
+require("../../../lib/Entry");
 
-const StandardLoader = require("../../../lib/Entry").StandardLoader;
-
-let loader = new StandardLoader({
-    [StandardLoader.AUTO_REGISTER_TOPJS]: true
-});
-loader.register();
 describe("TopJs.Function", function ()
 {
+
     let _setTimeout;
     let _clearTimeout;
     let timeouts;
