@@ -22,8 +22,7 @@ require("./kernel/lang/String");
 require("./kernel/lang/Date");
 require("./kernel/utils/Version");
 require("./kernel/loader/StandardLoader");
-
-import {mount as cls_system_mounter} from "./kernel/class/ClassManager";
+require("./kernel/class/ClassManager");
 
 let topJsLibDir = process.cwd() + dir_separator + "lib";
 

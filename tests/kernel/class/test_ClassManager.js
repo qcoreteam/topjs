@@ -6,30 +6,27 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-const StandardLoader = require("../../../lib/Entry").StandardLoader;
+const StandardLoader = require("../../../lib/Entry");
 let assert = require("chai").assert;
-let loader = new StandardLoader({
-    [StandardLoader.AUTO_REGISTER_TOPJS]: true
-});
-loader.register();
 
 describe("TopJs.ClassManager", function ()
 {
     
-    // let manager = TopJs.ClassManager;
-    // describe("TopJs.ClassManager.create", function ()
-    // {
-    //     let subClass, parentClass, mixinClass1, subSubClass;
-    //     let mixinClass2 = manager.create('I.am.the.MixinClass2', {
-    //         constructor: function() {
-    //             this.mixinConstructor2Called = true;
-    //         },
-    //
-    //         mixinProperty2: 'mixinProperty2',
-    //
-    //         mixinMethod2: function() {
-    //             this.mixinMethodCalled = true;
-    //         }
-    //     });
-    // });
+    let manager = TopJs.ClassManager;
+    describe("TopJs.ClassManager.create", function ()
+    {
+        let subClass, parentClass, mixinClass1, subSubClass;
+        let mixinClass2 = manager.create('I.am.the.MixinClass2', {
+            constructor: function() {
+                this.mixinConstructor2Called = true;
+            },
+
+            mixinProperty2: 'mixinProperty2',
+
+            mixinMethod2: function() {
+                this.mixinMethodCalled = true;
+                console.log("xiuxiuxiu");
+            }
+        });
+    });
 });

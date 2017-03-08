@@ -21,18 +21,18 @@ TopJs.apply(Function, /** @lends TopJs.Function */{
      * ```javascript
      *
      * let setValueProxy = TopJs.Function.proxySetter(function(name, value){
-         *    this[name] = value;
-         * });
+     *    this[name] = value;
+     * });
      *
      * setValueProxy("name1", "value1");
      *
      * //或者使用常量对象进行批量设置
      * setValueProxy({
-         *    name1: "value1",
-         *    name2: "value2",
-         *    name3: "value3",
-         *    ...
-         * });
+     *    name1: "value1",
+     *    name2: "value2",
+     *    name3: "value3",
+     *    ...
+     * });
      *
      * ```
      *
@@ -116,8 +116,8 @@ TopJs.apply(Function, /** @lends TopJs.Function */{
      * ```javascript
      *
      * var originalFunction = function(...args){
-         *    console.log(args.join(' '));
-         * };
+     *    console.log(args.join(' '));
+     * };
      *
      * var callback = TopJs.Function.pass(originalFunction, ["你好, ", "TopJs"]);
      * callback(); // 输出： "你好,  TopJs"
@@ -233,8 +233,8 @@ TopJs.apply(Function, /** @lends TopJs.Function */{
      * ```javascript
      *
      * var sayHello = function(name){
-         *    console.log("Hello, " + name);
-         * }
+     *    console.log("Hello, " + name);
+     * }
      *
      * // 立即执行:
      * sayHello("TopJs");
@@ -244,8 +244,8 @@ TopJs.apply(Function, /** @lends TopJs.Function */{
      *
      * 这个函数有时候对延迟执行一个匿名函数很有用：
      * TopJs.Function.defer(function(){
-         *    console.log("Anonymous");
-         * }, 200);
+     *    console.log("Anonymous");
+     * }, 200);
      *
      * ```
      *
@@ -361,16 +361,16 @@ TopJs.apply(Function, /** @lends TopJs.Function */{
      *
      * ```javascript
      * var someObj = {
-         *    contents: [],
-         *    add: function(item) {
-         *       this.contents.push(item);
-         *    }
-         * };
+     *    contents: [],
+     *    add: function(item) {
+     *       this.contents.push(item);
+     *    }
+     * };
      * TopJs.Function.interceptBefore(soup, "add", function(item){
-         *    if (!this.contents.length && item !== "something") {
-         *       this.contents.push("something");
-         *     }
-         * });
+     *    if (!this.contents.length && item !== "something") {
+     *       this.contents.push("something");
+     *     }
+     * });
      * someObj.add("item1");
      * someObj.add("item2");
      * someObj.contents; //contents的内容现在是: something, item1, item2
@@ -400,15 +400,15 @@ TopJs.apply(Function, /** @lends TopJs.Function */{
      *
      * ```javascript
      * var someObj = {
-         *    contents: [],
-         *    add: function(item) {
-         *       this.contents.push(item);
-         *    }
-         * };
+     *    contents: [],
+     *    add: function(item) {
+     *       this.contents.push(item);
+     *    }
+     * };
      * TopJs.Function.interceptBefore(soup, "add", function(item){
-         *    let pushItem = this.contents[this.contents.length - 1];
-         *    this.contents[this.contents.length - 1] = pushItem.toUpperCase();
-         * });
+     *    let pushItem = this.contents[this.contents.length - 1];
+     *    this.contents[this.contents.length - 1] = pushItem.toUpperCase();
+     * });
      * someObj.add("item1");
      * someObj.add("item2");
      * someObj.contents; //contents的内容现在是: SOMETHING, ITEM1, ITEM2
@@ -484,12 +484,12 @@ TopJs.apply(Function, /** @lends TopJs.Function */{
      * ```javascript
      *
      * function factorial (value) {
-         *    let ret = value;
-         *    while (--value > 1) {
-         *       ret *= value;
-         *    }
-         *    return ret;
-         * }
+     *    let ret = value;
+     *    while (--value > 1) {
+     *       ret *= value;
+     *    }
+     *    return ret;
+     * }
      *
      * //创建缓存函数的包装器
      * factorial = TopJs.Function.memoize(factorial);
@@ -500,12 +500,12 @@ TopJs.apply(Function, /** @lends TopJs.Function */{
      * //支持多个参数调用
      * function permutation(n, k)
      * {
-         *    return factorial(n) / factorial(n - k);
-         * }
+     *    return factorial(n) / factorial(n - k);
+     * }
      *
      * permutation = TopJs.Function.permutation(permutation, null, function(n, k){
-         *    return `${n}-${k}`
-         * });
+     *    return `${n}-${k}`
+     * });
      *
      * ```
      * ***<font color="red">特别注意</font>***</br>

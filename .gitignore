@@ -1,6 +1,5 @@
 .idea/
 **/.DS_Store
-package.json
 node_modules/
 dist/
 sftp-config.json
