@@ -644,7 +644,6 @@ TopJs.apply(TopJsObj, /** @lends TopJs.Object */{
     },
 
     /**
-     * @private
      * @param {String} obj
      */
     fork(obj)

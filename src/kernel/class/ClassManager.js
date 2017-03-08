@@ -6,6 +6,7 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 "use strict";
+require("./Config");
 require("./Configurator");
 require("./Base");
 require("./Class");

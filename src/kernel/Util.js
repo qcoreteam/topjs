@@ -143,7 +143,7 @@ TopJs.apply(TopJs, /** @lends TopJs */ {
             }
             //<debug>
             TopJs.raise({
-                sourceClass: "Ext",
+                sourceClass: "TopJs",
                 sourceMethod: "typeOf",
                 msg: "Failed to determine the type of \"" + value + "\"."
             });

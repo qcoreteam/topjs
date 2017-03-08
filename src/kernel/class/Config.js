@@ -132,7 +132,7 @@ TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
     get (name)
     {
         let map = TopJs.Config.map;
-        return map[name] || (map[name] = new TopJs.Config);
+        return map[name] || (map[name] = new TopJs.Config());
     },
 
     getGetter ()
