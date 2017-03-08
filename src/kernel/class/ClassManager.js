@@ -240,6 +240,36 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     instantiators: [],
 
     /**
+     * @private
+     */
+    createdListeners: [],
+
+    /**
+     * @private
+     */
+    nameCreatedListeners: {},
+
+    /**
+     * @private
+     */
+    existsListeners: [],
+
+    /**
+     * @private
+     */
+    nameExistsListeners: {},
+
+    /**
+     * @private
+     */
+    postProcessors: {},
+
+    /**
+     * @private
+     */
+    defaultPostProcessors: [],
+
+    /**
      * 检查一个类是否已经定义
      *
      * @param {String} className
@@ -261,27 +291,7 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
         Manager.triggerCreated(className);
         return true;
     },
-
-    /**
-     * @private
-     */
-    createdListeners: [],
-
-    /**
-     * @private
-     */
-    nameCreatedListeners: {},
-
-    /**
-     * @private
-     */
-    existsListeners: [],
-
-    /**
-     * @private
-     */
-    nameExistsListeners: {},
-
+    
     /**
      * @private
      * @param {String} className
@@ -514,8 +524,61 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
         data.$_class_name_$ = className;
         return new Class(ctor, data, function ()
         {
-
+            let postProcessorStack = data.postProcessors || Manager.defaultPostProcessors;
+            let registeredPostProcessors = Manager.postProcessors;
+            let postProcessors = [];
+            
+            delete data.postProcessors;
+            for (let i = 0, len = postProcessorStack.length; i < len; i++) {
+                let postProcessor = postProcessorStack[i];
+                if (typeof postProcessor === "string") {
+                    postProcessor = registeredPostProcessors[postProcessor];
+                    let postProcessorProperties = postProcessor.properties;
+                    if (postProcessorProperties === true) {
+                        postProcessors.push(postProcessor.func);
+                    } else if (postProcessorProperties) {
+                        for (let j = 0, subLen = postProcessorProperties.length; j < subLen; j++) {
+                            let postProcessorProperty = postProcessorProperties[j];
+                            if (data.hasOwnProperty(postProcessorProperty)) {
+                                postProcessors.push(postProcessor.func);
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    postProcessors.push(postProcessor);
+                }
+            }
+            data.postProcessors = postProcessors;
+            data.createdFunc = createdFunc;
+            Manager.processCreate(className, this, data);
         });
+    },
+    
+    processCreate (className, cls, clsData)
+    {
+        let postProcessor = clsData.postProcessors.shift();
+        let createFunc = clsData.createFunc;
+        if (!postProcessor) {
+            //<debug>
+            TopJs.classSystemMonitor && TopJs.classSystemMonitor(className, 'TopJs.ClassManager#classCreated', arguments);
+            //</debug>
+            if (className) {
+                this.set(className, cls);
+            }
+            
+            delete cls._classHooks;
+            if (createFunc) {
+                createFunc.call(cls, cls);
+            }
+            if (className) {
+                this.triggerCreated(className);
+            }
+            return;
+        } 
+        if (postProcessor.call(this, className, cls, clsData, this.processCreate) !== false) {
+            this.processCreate(className, cls, clsData);
+        }
     }
 });
 
@@ -760,7 +823,7 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      * (`this`) will be the newly created class itself.
      * @return {TopJs.Base}
      */
-    define(className, data, createdFunc)
+    define (className, data, createdFunc)
     {
         //<debug>
         TopJs.classSystemMonitor && TopJs.classSystemMonitor(className, 'ClassManager#define', arguments);
@@ -771,5 +834,32 @@ TopJs.apply(TopJs, /** @lends TopJs */{
         }
         Manager.classState[className] = 10;
         return Manager.create.apply(Manager, arguments);
+    },
+
+    /**
+     * Undefines a class defined using the #define method. Typically used
+     * for unit testing where setting up and tearing down a class multiple
+     * times is required.  For example:
+     * ```javascript
+     *
+     *     // define a class
+     *     TopJs.define('Foo', {
+     *        ...
+     *     });
+     *
+     *     // run test
+     *
+     *     // undefine the class
+     *     TopJs.undefine('Foo');
+     * ```
+     * @param {String} className The class name to undefine in string dot-namespaced format.
+     * @private
+     */
+    undefine (className)
+    {
+        //<debug>
+        TopJs.classSystemMonitor && TopJs.classSystemMonitor(className, 'TopJs.ClassManager#undefine', arguments);
+        //</debug>
+        
     }
 });

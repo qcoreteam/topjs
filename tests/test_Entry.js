@@ -7,7 +7,7 @@
  */
 let assert = require("chai").assert;
 
-const StandardLoader = require("../lib/Entry").StandardLoader;
+const TopJs = require("../lib/Entry");
 
 describe("Entry入口测试", function(){
    it("测试暴露接口", function(){

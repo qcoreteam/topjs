@@ -6,12 +6,8 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-const StandardLoader = require("../../../lib/Entry").StandardLoader;
+const TopJs = require("../../../lib/Entry").TopJs;
 let assert = require("chai").assert;
-let loader = new StandardLoader({
-    [StandardLoader.AUTO_REGISTER_TOPJS]: true
-});
-loader.register();
 describe("TopJs.Version", function ()
 {
     let version = new TopJs.Version("1.2.1alpha");

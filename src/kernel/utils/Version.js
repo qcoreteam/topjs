@@ -436,7 +436,7 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      * @param {String} version 指定的版本号
      * @return {TopJs}
      */
-    setVersion(version)
+    setVersion (version)
     {
         TopJs.lastRegisteredVersion = Version.set(version);
         return this;
@@ -447,8 +447,33 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      *
      * @return {TopJs.Version} TopJs版本号
      */
-    getVersion()
+    getVersion ()
     {
         return TopJs.lastRegisteredVersion;
+    },
+
+    /**
+     * Create a closure for deprecated code.
+     * ```javascript
+     *     // This means TopJs.oldMethod is only supported in 4.0.0beta and older.
+     *     // If TopJs.getVersion() returns a version that is later than '4.0.0beta', for example '4.0.0RC',
+     *     // the closure will not be invoked
+     *     TopJs.deprecate('4.0.0beta', function() {
+     *         Ext.oldMethod = Ext.newMethod;
+     *
+     *         ...
+     *     });
+     * ```
+     *
+     * @param {String} since The last version before it's deprecated
+     * @param {Function} closure The callback function to be executed with the specified version is less than the current version
+     * @param {Object} scope The execution scope (`this`) if the closure
+     * @private
+     */
+    deprecate (since, closure, scope) 
+    {
+        if (Version.compare(TopJs.getVersion(), since) < 1) {
+            closure.call(scope);
+        }
     }
 });
