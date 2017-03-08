@@ -24,6 +24,191 @@ let namespaceCache = {
 /**
  * @class TopJs.ClassManager
  * @singleton
+ * @classdesc
+
+ * TopJs.ClassManager manages all classes and handles mapping from string class name to
+ * actual class objects throughout the whole framework. It is not generally accessed directly, rather through
+ * these convenient shorthands:
+ *
+ * - {@link TopJs#define TopJs.define}
+ * - {@link TopJs#create TopJs.create}
+ * - {@link TopJs#getClass TopJs.getClass}
+ * - {@link TopJs#getClassName TopJs.getClassName}
+ *
+ * ### Basic syntax:
+ *
+ *     TopJs.define(className, properties);
+ *
+ * in which `properties` is an object represent a collection of properties that apply to the class. See
+ * {@link TopJs.ClassManager#create} for more detailed instructions.
+ * ```javascript
+ *     TopJs.define('Person', {
+ *          name: 'Unknown',
+ *
+ *          constructor: function(name) {
+ *              if (name) {
+ *                  this.name = name;
+ *              }
+ *          },
+ *
+ *          eat: function(foodType) {
+ *              console.log("I'm eating: " + foodType);
+ *
+ *              return this;
+ *          }
+ *     });
+ *
+ *     let aaron = new Person("Aaron");
+ *     aaron.eat("Sandwich"); // console.log("I'm eating: Sandwich");
+ *  ```
+ * TopJs.Class has a powerful set of extensible {@link TopJs.Class#registerPreprocessor pre-processors} which takes care of
+ * everything related to class creation, including but not limited to inheritance, mixins, configuration, statics, etc.
+ *
+ * ### Inheritance:
+ *
+ *     TopJs.define('Developer', {
+ *          extend: 'Person',
+ *
+ *          constructor: function(name, isGeek) {
+ *              this.isGeek = isGeek;
+ *
+ *              // Apply a method from the parent class' prototype
+ *              this.callParent([name]);
+ *          },
+ *
+ *          code: function(language) {
+ *              console.log("I'm coding in: " + language);
+ *
+ *              this.eat("Bugs");
+ *
+ *              return this;
+ *          }
+ *     });
+ *
+ *     let jacky = new Developer("Jacky", true);
+ *     jacky.code("JavaScript"); // console.log("I'm coding in: JavaScript");
+ *                               // console.log("I'm eating: Bugs");
+ *
+ * See {@link TopJs.Base#callParent} for more details on calling superclass' methods
+ *
+ * ### Mixins:
+ *  ```javascript
+ *     TopJs.define('CanPlayGuitar', {
+ *          playGuitar: function() {
+ *             console.log("F#...G...D...A");
+ *          }
+ *     });
+ *
+ *     TopJs.define('CanComposeSongs', {
+ *          composeSongs: function() { ... }
+ *     });
+ *
+ *     TopJs.define('CanSing', {
+ *          sing: function() {
+ *              console.log("For he's a jolly good fellow...")
+ *          }
+ *     });
+ *
+ *     TopJs.define('Musician', {
+ *          extend: 'Person',
+ *
+ *          mixins: {
+ *              canPlayGuitar: 'CanPlayGuitar',
+ *              canComposeSongs: 'CanComposeSongs',
+ *              canSing: 'CanSing'
+ *          }
+ *     })
+ *
+ *     TopJs.define('CoolPerson', {
+ *          extend: 'Person',
+ *
+ *          mixins: {
+ *              canPlayGuitar: 'CanPlayGuitar',
+ *              canSing: 'CanSing'
+ *          },
+ *
+ *          sing: function() {
+ *              console.log("Ahem....");
+ *
+ *              this.mixins.canSing.sing.call(this);
+ *
+ *              console.log("[Playing guitar at the same time...]");
+ *
+ *              this.playGuitar();
+ *          }
+ *     });
+ *
+ *     let me = new CoolPerson("Jacky");
+ *
+ *     me.sing(); // console.log("Ahem...");
+ *                // console.log("For he's a jolly good fellow...");
+ *                // console.log("[Playing guitar at the same time...]");
+ *                // console.log("F#...G...D...A");
+ *  ```
+ * ### Config:
+ *  ```javascript
+ *     TopJs.define('SmartPhone', {
+ *          config: {
+ *              hasTouchScreen: false,
+ *              operatingSystem: 'Other',
+ *              price: 500
+ *          },
+ *
+ *          isExpensive: false,
+ *
+ *          constructor: function(config) {
+ *              this.initConfig(config);
+ *          },
+ *
+ *          applyPrice: function(price) {
+ *              this.isExpensive = (price > 500);
+ *
+ *              return price;
+ *          },
+ *
+ *          applyOperatingSystem: function(operatingSystem) {
+ *              if (!(/^(iOS|Android|BlackBerry)$/i).test(operatingSystem)) {
+ *                  return 'Other';
+ *              }
+ *
+ *              return operatingSystem;
+ *          }
+ *     });
+ *
+ *     let iPhone = new SmartPhone({
+ *          hasTouchScreen: true,
+ *          operatingSystem: 'iOS'
+ *     });
+ *
+ *     iPhone.getPrice(); // 500;
+ *     iPhone.getOperatingSystem(); // 'iOS'
+ *     iPhone.getHasTouchScreen(); // true;
+ *
+ *     iPhone.isExpensive; // false;
+ *     iPhone.setPrice(600);
+ *     iPhone.getPrice(); // 600
+ *     iPhone.isExpensive; // true;
+ *
+ *     iPhone.setOperatingSystem('AlienOS');
+ *     iPhone.getOperatingSystem(); // 'Other'
+ *  ```
+ * ### Statics:
+ *  ```javascript
+ *     TopJs.define('Computer', {
+ *          statics: {
+ *              factory: function(brand) {
+ *                 // 'this' in static methods refer to the class itself
+ *                  return new this(brand);
+ *              }
+ *          },
+ *
+ *          constructor: function() { ... }
+ *     });
+ *
+ *     let dellComputer = Computer.factory('Dell');
+ *  ```
+ * Also see {@link TopJs.Base#statics} and {@link TopJs.Base#self} for more details on accessing
+ * static properties within class methods
  */
 TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     /**
@@ -36,8 +221,8 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     /*
      * 'TopJs.foo.Bar': <state enum>
      *
-     *  10 = Ext.define called
-     *  20 = Ext.define/override called
+     *  10 = TopJs.define called
+     *  20 = TopJs.define/override called
      *  30 = Manager.existCache[<name>] == true for define
      *  40 = Manager.existCache[<name>] == true for define/override
      *  50 = Manager.isCreated(<name>) == true for define
@@ -179,7 +364,7 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     $_namespace_cache_$: namespaceCache,
 
     /**
-     * See `{@link TopJs#addRootNamespaces Ext.TopJs}`.
+     * See `{@link TopJs#addRootNamespaces TopJs.TopJs}`.
      * @private
      */
     addRootNamespaces (namespaces)
@@ -335,10 +520,250 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
 });
 
 TopJs.apply(TopJs, /** @lends TopJs */{
+    /**
+     * Defines a class or override. A basic class is defined like this:
+     *  ```javascript
+     *      TopJs.define('My.awesome.Class', {
+     *          someProperty: 'something',
+     *          someMethod: function(s) {
+     *              console.log(s + this.someProperty);
+     *          }
+     *
+     *          ...
+     *      });
+     *
+     *      var obj = new My.awesome.Class();
+     *
+     *      obj.someMethod('Say '); // console.logs 'Say something'
+     *  ```
+     * To create an anonymous class, pass `null` for the `className`:
+     *  ```javascript
+     *      TopJs.define(null, {
+     *          constructor: function () {
+     *              // ...
+     *          }
+     *      });
+     *  ```
+     * In some cases, it is helpful to create a nested scope to contain some private
+     * properties. The best way to do this is to pass a function instead of an object
+     * as the second parameter. This function will be called to produce the class
+     * body:
+     *  ```javascript
+     *      TopJs.define('MyApp.foo.Bar', function () {
+     *          var id = 0;
+     *
+     *          return {
+     *              nextId: function () {
+     *                  return ++id;
+     *              }
+     *          };
+     *      });
+     *  ```
+     * _Note_ that when using override, the above syntax will not override successfully, because
+     * the passed function would need to be executed first to determine whether or not the result
+     * is an override or defining a new object. As such, an alternative syntax that immediately
+     * invokes the function can be used:
+     *  ```javascript
+     *      TopJs.define('MyApp.override.BaseOverride', function () {
+     *          var counter = 0;
+     *
+     *          return {
+     *              override: 'TopJs.Component',
+     *              logId: function () {
+     *                  console.log(++counter, this.id);
+     *              }
+     *          };
+     *      }());
+     * ```
+     *
+     * When using this form of `TopJs.define`, the function is passed a reference to its
+     * class. This can be used as an efficient way to access any static properties you
+     * may have:
+     *  ```javascript
+     *      TopJs.define('MyApp.foo.Bar', function (Bar) {
+     *          return {
+     *              statics: {
+     *                  staticMethod: function () {
+     *                      // ...
+     *                  }
+     *              },
+     *
+     *              method: function () {
+     *                  return Bar.staticMethod();
+     *              }
+     *          };
+     *      });
+     *  ```
+     * To define an override, include the `override` property. The content of an
+     * override is aggregated with the specified class in order to extend or modify
+     * that class. This can be as simple as setting default property values or it can
+     * extend and/or replace methods. This can also extend the statics of the class.
+     *
+     * One use for an override is to break a large class into manageable pieces.
+     *
+     *      // File: /src/app/Panel.js
+     *  ```javascript
+     *      TopJs.define('My.app.Panel', {
+     *          extend: 'TopJs.panel.Panel',
+     *          requires: [
+     *              'My.app.PanelPart2',
+     *              'My.app.PanelPart3'
+     *          ]
+     *
+     *          constructor: function (config) {
+     *              this.callParent(arguments); // calls TopJs.panel.Panel's constructor
+     *              //...
+     *          },
+     *
+     *          statics: {
+     *              method: function () {
+     *                  return 'abc';
+     *              }
+     *          }
+     *      });
+     *
+     *      // File: /src/app/PanelPart2.js
+     *      TopJs.define('My.app.PanelPart2', {
+     *          override: 'My.app.Panel',
+     *
+     *          constructor: function (config) {
+     *              this.callParent(arguments); // calls My.app.Panel's constructor
+     *              //...
+     *          }
+     *      });
+     *  ```
+     * Another use of overrides is to provide optional parts of classes that can be
+     * independently required. In this case, the class may even be unaware of the
+     * override altogether.
+     *  ```javascript
+     *      TopJs.define('My.ux.CoolTip', {
+     *          override: 'TopJs.tip.ToolTip',
+     *
+     *          constructor: function (config) {
+     *              this.callParent(arguments); // calls TopJs.tip.ToolTip's constructor
+     *              //...
+     *          }
+     *      });
+     * ```
+     *
+     * The above override can now be required as normal.
+     *  ```javascript
+     *      TopJs.define('My.app.App', {
+     *          requires: [
+     *              'My.ux.CoolTip'
+     *          ]
+     *      });
+     * ```
+     * Overrides can also contain statics, inheritableStatics, or privates:
+     * 
+     * ```javascript
+     *      TopJs.define('My.app.BarMod', {
+     *          override: 'TopJs.foo.Bar',
+     *
+     *          statics: {
+     *              method: function (x) {
+     *                  return this.callParent([x * 2]); // call TopJs.foo.Bar.method
+     *              }
+     *          }
+     *      });
+     *  ```
+     * Starting in version 4.2.2, overrides can declare their `compatibility` based
+     * on the framework version or on versions of other packages. For details on the
+     * syntax and options for these checks, see `TopJs.checkVersion`.
+     *
+     * The simplest use case is to test framework version for compatibility:
+     * ```javascript
+     *      TopJs.define('App.overrides.grid.Panel', {
+     *          override: 'TopJs.grid.Panel',
+     *
+     *          compatibility: '4.2.2', // only if framework version is 4.2.2
+     *
+     *          //...
+     *      });
+     * ```
+     * An array is treated as an OR, so if any specs match, the override is
+     * compatible.
+     * ```javascript
+     *      TopJs.define('App.overrides.some.Thing', {
+     *          override: 'Foo.some.Thing',
+     *
+     *          compatibility: [
+     *              '4.2.2',
+     *              'foo@1.0.1-1.0.2'
+     *          ],
+     *
+     *          //...
+     *      });
+     * ```
+     * To require that all specifications match, an object can be provided:
+     * ```javascript
+     *      TopJs.define('App.overrides.some.Thing', {
+     *          override: 'Foo.some.Thing',
+     *
+     *          compatibility: {
+     *              and: [
+     *                  '4.2.2',
+     *                  'foo@1.0.1-1.0.2'
+     *              ]
+     *          },
+     *
+     *          //...
+     *      });
+     *  ```
+     * Because the object form is just a recursive check, these can be nested:
+     * ```javascript
+     *      TopJs.define('App.overrides.some.Thing', {
+     *          override: 'Foo.some.Thing',
+     *
+     *          compatibility: {
+     *              and: [
+     *                  '4.2.2',  // exactly version 4.2.2 of the framework *AND*
+     *                  {
+     *                      // either (or both) of these package specs:
+     *                      or: [
+     *                          'foo@1.0.1-1.0.2',
+     *                          'bar@3.0+'
+     *                      ]
+     *                  }
+     *              ]
+     *          },
+     *
+     *          //...
+     *      });
+     *  ```
+     *
+     * @param {String} className The class name to create in string dot-namespaced format, for example:
+     * 'My.very.awesome.Class', 'FeedViewer.plugin.CoolPager'
+     * It is highly recommended to follow this simple convention:
+     *  - The root and the class name are 'CamelCased'
+     *  - Everything else is lower-cased
+     * Pass `null` to create an anonymous class.
+     * @param {Object} data The key - value pairs of properties to apply to this class. Property names can be of any valid
+     * strings, except those in the reserved listed below:
+     *
+     *  - {@link TopJs.Class#cfg-alias alias}
+     *  - {@link TopJs.Class#cfg-alternateClassName alternateClassName}
+     *  - {@link TopJs.Class#cfg-cachedConfig cachedConfig}
+     *  - {@link TopJs.Class#cfg-config config}
+     *  - {@link TopJs.Class#cfg-extend extend}
+     *  - {@link TopJs.Class#cfg-inheritableStatics inheritableStatics}
+     *  - {@link TopJs.Class#cfg-mixins mixins}
+     *  - {@link TopJs.Class#cfg-override override}
+     *  - {@link TopJs.Class#cfg-privates privates}
+     *  - {@link TopJs.Class#cfg-requires requires}
+     *  - `self`
+     *  - {@link TopJs.Class#cfg-singleton singleton}
+     *  - {@link TopJs.Class#cfg-statics statics}
+     *  - {@link TopJs.Class#cfg-uses uses}
+     *
+     * @param {Function} [createdFunc] Callback to execute after the class is created, the execution scope of which
+     * (`this`) will be the newly created class itself.
+     * @return {TopJs.Base}
+     */
     define(className, data, createdFunc)
     {
         //<debug>
-        TopJs.classSystemMonitor && Ext.classSystemMonitor(className, 'ClassManager#define', arguments);
+        TopJs.classSystemMonitor && TopJs.classSystemMonitor(className, 'ClassManager#define', arguments);
         //</debug>
         if (data.override) {
             Manager.classState[className] = 20;

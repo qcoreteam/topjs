@@ -8,7 +8,7 @@
 
 let noArgs;
 let baseStaticMembers = [];
-
+let proxySetter = TopJs.Function.proxySetter;
 function get_config(name, peek)
 {
     let ret;
@@ -754,14 +754,149 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
 
     /**
      * @protected
+     * @static
      * @inheritable
      */
-    callParent()
+    callParent (args)
     {
-
+        let method;
+        // This code is intentionally inlined for the least amount of debugger stepping
+        return (method = this.callParent.caller) && (method.$_previous_$ ||
+            ((method = method.$owner ? method : method.caller) &&
+            method.$_owner_$.superclass.self[method.$_name_$])).apply(this, args || noArgs);
     },
 
+    /**
+     * @protected
+     * @static
+     * @inheritable
+     */
+    callSuper (args)
+    {
+        let method;
+
+        // This code is intentionally inlined for the least amount of debugger stepping
+        return (method = this.callSuper.caller) &&
+            ((method = method.$_owner_ ? method : method.caller) &&
+            method.$_owner_$.superclass.self[method.$_name_$]).apply(this, args || noArgs);
+    },
+
+    //<feature classSystem.mixins>
+    /**
+     * Used internally by the mixins pre-processor
+     * @private
+     * @static
+     * @inheritable
+     */
+    mixin (name, mixinClass)
+    {
+        if (typeof name != 'string') {
+            let mixins = name;
+            if (mixins instanceof Array) {
+                for (let i = 0, len = mixins.length; i < len; i++) {
+                    let mixin = mixins[i];
+                    this.mixin(mixin.prototype.mixinId || mixin.$_class_name_$, mixin);
+                }
+            } else {
+                // Not a string or array - process the object form:
+                // mixins: {
+                //     foo: ...
+                // }
+                for (let mixinName in mixins) {
+                    this.mixin(mixinName, mixins[mixinName]);
+                }
+            }
+            return;
+        }
+        let mixin = mixinClass.prototype;
+        let prototype = this.prototype;
+        if (mixin.onClassMixedIn) {
+            mixin.onClassMixedIn.call(mixinClass, this);
+        }
+        if (!prototype.hasOwnProperty('mixins')) {
+            if ('mixins' in prototype) {
+                prototype.mixins = TopJs.Object.chain(prototype.mixins);
+            } else {
+                prototype.mixins = {};
+            }
+        }
+        for (key in mixin) {
+            let mixinValue = mixin[key];
+            if ('mixins' === key) {
+                // if 2 superclasses (e.g. a base class and a mixin) of this class both
+                // have a mixin with the same id, the first one wins, that is to say,
+                // the first mixin's methods to be applied to the prototype will not
+                // be overwritten by the second one.  Since this is the case we also
+                // want to make sure we use the first mixin's prototype as the mixin
+                // reference, hence the "applyIf" below.  A real world example of this
+                // is Ext.Widget which mixes in Ext.mixin.Observable.  Ext.Widget can
+                // be mixed into subclasses of Ext.Component, which mixes in
+                // Ext.util.Observable.  In this example, since the first "observable"
+                // mixin's methods win, we also want its reference to be preserved.
+                TopJs.applyIf(prototype.mixins, mixinValue);
+            } else if (!(key === 'mixinId' ||
+                key === 'config' ||
+                key === '$_inheritable_statics_$') &&
+                (prototype[key] === undefined)) {
+                prototype[key] = mixinValue;
+            }
+        }
+        //<feature classSystem.inheritableStatics>
+        let statics = mixin.$_inheritable_statics_$;
+        if (statics) {
+            let mixinStatics = {};
+            for (let name in statics) {
+                if (!this.hasOwnProperty(name)) {
+                    mixinStatics[name] = mixinClass[name];
+                }
+            }
+            this.addInheritableStatics(mixinStatics);
+        }
+        //</feature>
+        //<feature classSystem.config>
+        if ('config' in mixin) {
+            this.addConfig(mixin.config, mixinClass);
+        }
+        //</feature>
+        prototype.mixins[name] = mixin;
+        if (mixin.afterClassMixedIn) {
+            mixin.afterClassMixedIn.call(mixinClass, this);
+        }
+        return this;
+    },
+
+    //</feature>
+
     //<feature classSystem.config>
+    /**
+     * Adds new config properties to this class. This is called for classes when they
+     * are declared, then for any mixins that class may define and finally for any
+     * overrides defined that target the class.
+     *
+     * @param {Object} config
+     * @param {TopJs.Class} [mixinClass] The mixin class if the configs are from a mixin.
+     * @private
+     * @static
+     */
+    addConfig (config, mixinClass)
+    {
+        let cfg = this.$_config_$ || this.getConfigurator();
+        cfg.add(config, mixinClass);
+    },
+
+    addCachedConfig (config, isMixin)
+    {
+        let cached = {};
+        let key;
+        for (let key in config) {
+            cached[key] = {
+                cached: true,
+                $_value_$: config[key]
+            };
+        }
+        this.addConfig(cached, isMixin);
+    },
+
     /**
      * 返回当前类的`TopJs.Configurator`对象
      *
@@ -772,8 +907,63 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
     getConfigurator()
     {
         return this.$_config_$ || new TopJs.Configurator(this);
-    }
+    },
     //</feature>
+
+    /**
+     * Get the current class' name in string format.
+     * ```javascript
+     *     TopJs.define('My.cool.Class', {
+     *         constructor: function() {
+     *             console.log(this.self.getName()); // console 'My.cool.Class'
+     *         }
+     *     });
+     *
+     *     My.cool.Class.getName(); // 'My.cool.Class'
+     * ```javascript
+     * @return {String} className
+     * @static
+     * @inheritable
+     */
+    getName () 
+    {
+        return TopJs.getClassName(this);
+    },
+
+    /**
+     * Create aliases for existing prototype methods. Example:
+     * ```javascript
+     *     TopJs.define('My.cool.Class', {
+     *         method1: function() { ... },
+     *         method2: function() { ... }
+     *     });
+     *
+     *     let test = new My.cool.Class();
+     *
+     *     My.cool.Class.createAlias({
+     *         method3: 'method1',
+     *         method4: 'method2'
+     *     });
+     *     test.method3(); // test.method1()
+     *     My.cool.Class.createAlias('method5', 'method3');
+     *     test.method5(); // test.method3() -> test.method1()
+     * ```
+     * @param {String|Object} alias The new method name, or an object to set multiple aliases. See
+     * {@link TopJs.Function#proxySetter proxySetter}
+     * @param {String|Object} origin The original method name
+     * @static
+     * @inheritable
+     * @method
+     */
+    createAlias: proxySetter(function (alias, origin)
+    {
+        aliasOneMember[alias] = function ()
+        {
+            return this[origin].apply(this, arguments);
+        };
+        this.override(aliasOneMember);
+        delete aliasOneMember[alias];
+    })
 });
 
 // Capture the set of static members on TopJs.Base that we want to copy to all
@@ -790,7 +980,7 @@ Base.$_static_members_$ = baseStaticMembers;
 Base.getConfigurator(); // lazily create now so as not capture in $_static_members_$
 //</feature>
 
-Base.addMembers({
+Base.addMembers(/** @lends TopJs.Base.prototype */{
     /** @private */
     $_class_name_$: "TopJs.Base",
 
@@ -869,6 +1059,51 @@ Base.addMembers({
     clearPrototypeOnDestroy: false,
 
     /**
+     *  Get the reference to the current class from which this object was instantiated. Unlike {@link TopJs.Base#statics},
+     * `this.self` is scope-dependent and it's meant to be used for dynamic inheritance. See {@link TopJs.Base#statics}
+     * for a detailed comparison
+     *
+     * ```javascript
+     * TopJs.define('MyClass', {
+     *  statics: {
+     *      speciesName: 'ClassName' // MyClass.Cat.speciesName = 'ClassName'
+     *  },
+     *  constructor: function()
+     *  {
+     *      console.log(this.self.speciesName); // dependent on this
+     *  },
+     *  
+     *  clone: function()
+     *  {
+     *      return new this.self();
+     *  }
+     * });
+     *
+     * Ext.define('MyExtendClass', {
+     *     extend: 'MyClass',
+     *     statics: {
+     *         speciesName: 'ExtendClassName' // MyExtendClass.MyClass.speciesName = 'ExtendClassName'
+     *     }
+     * });
+     *
+     * let parent = new MyClass(); // console 'ClassName'
+     * let child = new MyExtendClass(); // console 'ExtendClassName'
+     * let clone = child.clone();
+     * console.log(TopJs.getClassName(clone)); // console 'MyExtendClass'
+     *
+     * ```
+     *
+     * @property {TopJs.Class} self self Class Object
+     * @protected
+     */
+    self: Base,
+
+    constructor ()
+    {
+        return this;
+    },
+
+    /**
      * Get the reference to the class from which this object was instantiated. Note that unlike {@link TopJs.Base#self},
      * `this.statics()` is scope-independent and it always returns the class from which it was called, regardless of what
      * `this` points to during run-time
@@ -925,7 +1160,7 @@ Base.addMembers({
      * @protected
      * @return {TopJs.Class}
      */
-    statics: function ()
+    statics ()
     {
         let method = this.statics.caller;
         let self = this.self;
@@ -1016,7 +1251,7 @@ Base.addMembers({
      * from the current method, for example: `this.callParent(arguments)`
      * @return {Object} Returns the result of calling the parent method
      */
-    callParent(args)
+    callParent (args)
     {
         // NOTE: this code is deliberately as few expressions (and no function calls)
         // as possible so that a debugger can skip over this noise with the minimum number
@@ -1099,7 +1334,7 @@ Base.addMembers({
      * from the current method, for example: `this.callSuper(arguments)`
      * @returan {Object} Returns the result of calling the superclass method
      */
-    callSuper(args) 
+    callSuper (args)
     {
         // NOTE: this code is deliberately as few expressions (and no function calls)
         // as possible so that a debugger can skip over this noise with the minimum number
@@ -1114,7 +1349,296 @@ Base.addMembers({
             method = this.callParent.caller;
             let parentClass;
             let methodName;
+            if (!method.$_owner_$) {
+                if (!method.caller) {
+                    throw new Error("Attempting to call a protected method from the public scope, which is not allowed");
+                }
+                method = method.caller;
+            }
+            parentClass = method.$_owner_$.superclass;
+            methodName = method.$_name_$;
+            if (!(methodName in parentClass)) {
+                throw new Error("this.callSuper() was called but there's no such method (" + methodName +
+                    ") found in the parent class (" + (TopJs.getClassName(parentClass) || 'Object') + ")");
+            }
         }
         //</debug>
+        return superMethod.apply(this, args || noArgs);
+    },
+
+    //<feature classSystem.config>
+    /**
+     * Initialize configuration for this class. a typical example:
+     *
+     *     TopJs.define('My.awesome.Class', {
+     *         // The default config
+     *         config: {
+     *             name: 'Awesome',
+     *             isAwesome: true
+     *         },
+     *
+     *         constructor: function(config) {
+     *             this.initConfig(config);
+     *         }
+     *     });
+     *
+     *     let awesome = new My.awesome.Class({
+     *         name: 'Super Awesome'
+     *     });
+     *
+     *     alert(awesome.getName()); // 'Super Awesome'
+     *
+     * @protected
+     * @param {Object} instanceConfig
+     * @return {TopJs.Base} this
+     */
+    initConfig (instanceConfig)
+    {
+        let cfg = this.self.getConfigurator();
+        this.initConfig = TopJs.emptyFn;
+        this.initialConfig = instanceConfig || {};
+        cfg.configure(this, instanceConfig);
+        return this;
+    },
+
+    beforeInitConfig: TopJs.emptyFn,
+
+    /**
+     * Returns a specified config property value. If the name parameter is not passed,
+     * all current configuration options will be returned as key value pairs.
+     * @method
+     * @param {String} [name] The name of the config property to get.
+     * @param {Boolean} [peek=false] `true` to peek at the raw value without calling the getter.
+     * @return {Object} The config property value.
+     */
+    getConfig: get_config,
+
+    /**
+     * Sets a single/multiple configuration options.
+     * @method
+     * @param {String|Object} name The name of the property to set, or a set of key value pairs to set.
+     * @param {Object} [value] The value to set for the name parameter.
+     * @return {TopJs.Base} this
+     */
+    setConfig (name, value, /* private */ options)
+    {
+        // options can have the following properties:
+        // - defaults `true` to only set the config(s) that have not been already set on
+        // this instance.
+        // - strict `false` to apply properties to the instance that are not configs,
+        // and do not have setters.
+        if (name) {
+            if (typeof name === 'string') {
+                config = {};
+                config[name] = value;
+            } else {
+                config = name;
+            }
+            this.self.getConfigurator().reconfigure(this, config, options);
+        }
+        return this;
+    },
+
+    /**
+     * @private
+     */
+    getCurrentConfig ()
+    {
+        let cfg = this.self.getConfigurator();
+        return cfg.getCurrentConfig(this);
+    },
+
+    /**
+     * @private
+     * @param {String} name config key name
+     * @return {boolean}
+     */
+    hasConfig (name)
+    {
+        return name in this.defaultConfig;
+    },
+
+    /**
+     * Returns the initial configuration passed to the constructor when
+     * instantiating this class.
+     *
+     * Given this example Ext.button.Button definition and instance:
+     *
+     *     TopJs.define('Class', {
+     *         extend: 'ParentClass',
+     *         xtype: 'myclasstype',
+     *         name: 'myname',
+     *         age: 12
+     *     });
+     *
+     *     var obj = Ext.create({
+     *         xtype: 'myclasstype',
+     *         address: 'my address',
+     *         text: 'hello world'
+     *     });
+     *
+     * Calling `obj.getInitialConfig()` would return an object including the config
+     * options passed to the `create` method:
+     *
+     *     xtype: 'myclasstype',
+     *     address: 'my address',
+     *     text: 'hello world'
+     *
+     * Calling `btn.getInitialConfig('address')`returns **'my address'**.
+     *
+     * @param {String} [name] Name of the config option to return.
+     * @return {Object|Mixed} The full config object or a single config value
+     * when `name` parameter specified.
+     */
+    getInitialConfig (name)
+    {
+        let config = this.config;
+        if (!name) {
+            return config;
+        }
+        return config[name];
+    },
+    //</feature>
+
+    $_links_$: null,
+
+    /**
+     * Adds a "destroyable" object to an internal list of objects that will be destroyed
+     * when this instance is destroyed (via `{@link #destroy}`).
+     * @param {String} name
+     * @param {Object} value
+     * @return {Object} The `value` passed.
+     * @private
+     */
+    link (name)
+    {
+        let links = this.$_links_$ || (this.$_links_$ = {});
+        links[name] = true;
+        this[name] = value;
+        return value;
+    },
+
+    /**
+     * Destroys a given set of `{@link #link linked}` objects. This is only needed if
+     * the linked object is being destroyed before this instance.
+     * @param {String[]} names The names of the linked objects to destroy.
+     * @return {Ext.Base} this
+     * @private
+     */
+    unlink (names)
+    {
+        //<debug>
+        if (!TopJs.isArray(names)) {
+            TopJs.raise('Invalid argument - expected array of strings');
+        }
+        //</debug>
+        for (let i = 0, ln = names.length; i < ln; i++) {
+            let link = names[i];
+            value = this[link];
+
+            if (value) {
+                if (value.isInstance && !value.destroyed) {
+                    value.destroy();
+                }
+            }
+            this[link] = null;
+        }
+    },
+
+    reap ()
+    {
+        let protectedProps = this.$_no_clear_on_destroy_$;
+        for (let prop in this) {
+            if ((!protectedProps || !protectedProps[prop]) && this.hasOwnProperty(prop)) {
+                let value = this[prop];
+                let type = typeof value;
+                // Object may retain references to other objects. Functions can do too
+                // if they are closures, and most of the *own* function properties
+                // are closures indeed. We skip TopJs.emptyFn and the like though,
+                // they're mostly harmless.
+                if (type === 'object' || (type === 'function' && !value.$_no_clear_on_destroy_$)) {
+                    this[prop] = null;
+                }
+            }
+        }
+        //<debug>
+        // We also want to make sure no methods are called on the destroyed object,
+        // because that may lead to accessing nulled properties and resulting exceptions.
+        if (this.clearPrototypeOnDestroy && !this.$_veto_clearing_prototype_on_destroy_$ &&
+            Object.setPrototypeOf) {
+            Object.setPrototypeOf(this, null);
+        }
+        //</debug>
+    },
+
+    /**
+     * This method is called to cleanup an object and its resources. After calling
+     * this method, the object should not be used any further in any way, including
+     * access to its methods and properties.
+     *
+     * To prevent potential memory leaks, all object references will be nulled
+     * at the end of destruction sequence, unless {@link #clearPropertiesOnDestroy}
+     * is set to `false`.
+     */
+    destroy ()
+    {
+        let links = this.$_links_$;
+        let clearPropertiesOnDestroy = this.clearPropertiesOnDestroy;
+        if (links) {
+            this.$_links_$ = null;
+            this.unlink(TopJs.Object.getKeys(links));
+        }
+        this.destory = TopJs.emptyFn;
+        // isDestroyed added for compat reasons
+        this.isDestroyed = this.destroyed = true;
+        // By this time the destruction is complete. Now we can make sure
+        // no objects are retained by the husk of this ex-Instance.
+        if (clearPropertiesOnDestroy === true) {
+            this.reap();
+        } else if (clearPropertiesOnDestroy) {
+            //<debug>
+            if (clearPropertiesOnDestroy !== 'async') {
+                TopJs.raise('Invalid value for clearPropertiesOnDestroy');
+            }
+            //</debug>
+            Reaper.add(this);
+        }
     }
 });
+
+//<debug>
+TopJs.privacyViolation = function (cls, existing, member, isStatic)
+{
+    let name = member.$_name_$;
+    let conflictCls = existing.$_owner_$ && existing.$_owner_$.$_class_name_$;
+    let s = isStatic ? 'static ' : '';
+    let msg = member.$_privacy_$
+        ? 'Private ' + s + member.$_privacy_$ + ' method "' + name + '"'
+        : 'Public ' + s + 'method "' + name + '"';
+
+    if (cls.$_class_name_$) {
+        msg = cls.$_class_name_$ + ': ' + msg;
+    }
+
+    if (!existing.$_privacy_$) {
+        msg += conflictCls
+            ? ' hides public method inherited from ' + conflictCls
+            : ' hides inherited public method.';
+    } else {
+        msg += conflictCls
+            ? ' conflicts with private ' + existing.$_privacy_$ +
+            ' method declared by ' + conflictCls
+            : ' conflicts with inherited private ' + existing.$_privacy_$ + ' method.';
+    }
+
+    let compat = TopJs.getCompatVersion();
+    let ver = TopJs.getVersion();
+
+    // When compatibility is enabled, log problems instead of throwing errors.
+    if (ver && compat && compat.lt(ver)) {
+        TopJs.log.error(msg);
+    } else {
+        TopJs.raise(msg);
+    }
+};
+//</debug>
