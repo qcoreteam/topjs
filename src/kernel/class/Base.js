@@ -432,7 +432,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
         if (len > 0) {
             for (let i = 0; i < len; i++) {
                 callback = callbacks[i];
-                callback.fn.apply(callback.scope || this, arguments);
+                callback.func.apply(callback.scope || this, arguments);
             }
         }
     },
@@ -441,10 +441,10 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * @private
      * @inheritable
      */
-    onExtended(fn, scope)
+    onTopJsended(func, scope)
     {
-        this.onExtended({
-            fn: fn,
+        this.onTopJsended({
+            func: func,
             scope: scope
         });
         return this;
@@ -454,13 +454,13 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * 增加或者覆盖当前类
      * ```javascript
      * TopJs.define('SomeSystem.CoolCls', {
-         *      ...
-         * });
+     *      ...
+     * });
      * SomeSystem.CoolCls.addStatics({
-         *      someProperty: 'someValue',      // SomeSystem.CoolCls.someProperty = 'someValue'
-         *      method1: function() { ... },    // SomeSystem.CoolCls.method1 = function() { ... };
-         *      method2: function() { ... }     // SomeSystem.CoolCls.method2 = function() { ... };
-         * });
+     *      someProperty: 'someValue',      // SomeSystem.CoolCls.someProperty = 'someValue'
+     *      method1: function() { ... },    // SomeSystem.CoolCls.method1 = function() { ... };
+     *      method2: function() { ... }     // SomeSystem.CoolCls.method2 = function() { ... };
+     * });
      * ```
      *
      * @inheritable
@@ -516,18 +516,18 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      *
      * ```javascript
      * TopJs.define('My.awesome.Cat', {
-         *    constructor: function() {
-         *       ...
-         *    }
-         * });
+     *    constructor: function() {
+     *       ...
+     *    }
+     * });
      *
      * My.awesome.Cat.addMembers({
-         *   meow: function() {
-         *      console.log('Meowww...');
-         *   }
-         * });
+     *   meow: function() {
+     *      console.log('Meowww...');
+     *   }
+     * });
      *
-     * var kitty = new My.awesome.Cat();
+     * let kitty = new My.awesome.Cat();
      * kitty.meow();
      * ```
      * @inheritable
@@ -623,6 +623,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
         }
         return this;
     },
+    
     /**
      * @private
      * @inheritable
@@ -641,16 +642,17 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * 将其他的类的属性和方法添加到当前类的原型里面
      *
      * ```javascript
-     * TopJs.define('Bank', {
-         *     money: '$$$',
-         *     printMoney: function() {
-         *         console.log('$$$$$$$');
-         *     }
-         * });
+     * 
+     * TopJs.define('Bank', {  
+     *     money: '$$$',
+     *     printMoney: function() {
+     *         console.log('$$$$$$$');
+     *     }
+     * });
      *
      * TopJs.define('Thief', {
-         *    ...
-         * });
+     *    ...
+     * });
      *
      * Thief.borrow(Bank, ['money', 'printMoney']);
      *
@@ -658,6 +660,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      *
      * console.log(steve.money); // console.logs '$$$'
      * steve.printMoney(); // console.logs '$$$$$$$'
+     * 
      * ```
      * @inheritable
      * @private
@@ -685,6 +688,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
     /**
      * 重载这个类的方法，被重载的方法可以通过 {@link TopJs.Base.callParent}进行调用
      * ```javascript
+     * 
      * TopJs.define('My.Cat', {
      *    constructor: function() {
      *       console.log("I'm a cat!");
@@ -702,9 +706,11 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * // console "I'm going to be a cat!"
      * // console "I'm a cat!"
      * // console "Meeeeoooowwww"
+     * 
      * ```
      * 我们一般很少直接使用这个方法，我们一般通过{@link TopJs.define}方法进行使用，例如：
      * ```javascript
+     * 
      * TopJs.define('My.CatOverride', {
      *    override: 'My.Cat',
      *    constructor: function() {
@@ -713,6 +719,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      *       console.log("Meeeeoooowwww");
      *    }
      * });
+     * 
      * ```
      * @inheritable
      * @param {Object} members 将要重载的方法列表
@@ -829,9 +836,9 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
                 // be overwritten by the second one.  Since this is the case we also
                 // want to make sure we use the first mixin's prototype as the mixin
                 // reference, hence the "applyIf" below.  A real world example of this
-                // is Ext.Widget which mixes in Ext.mixin.Observable.  Ext.Widget can
-                // be mixed into subclasses of Ext.Component, which mixes in
-                // Ext.util.Observable.  In this example, since the first "observable"
+                // is TopJs.Widget which mixes in TopJs.mixin.Observable.  TopJs.Widget can
+                // be mixed into subclasses of TopJs.Component, which mixes in
+                // TopJs.util.Observable.  In this example, since the first "observable"
                 // mixin's methods win, we also want its reference to be preserved.
                 TopJs.applyIf(prototype.mixins, mixinValue);
             } else if (!(key === 'mixinId' ||
@@ -909,10 +916,11 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
         return this.$_config_$ || new TopJs.Configurator(this);
     },
     //</feature>
-
     /**
      * Get the current class' name in string format.
+     * 
      * ```javascript
+     * 
      *     TopJs.define('My.cool.Class', {
      *         constructor: function() {
      *             console.log(this.self.getName()); // console 'My.cool.Class'
@@ -920,7 +928,8 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      *     });
      *
      *     My.cool.Class.getName(); // 'My.cool.Class'
-     * ```javascript
+     * ```
+     * 
      * @return {String} className
      * @static
      * @inheritable
@@ -933,6 +942,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
     /**
      * Create aliases for existing prototype methods. Example:
      * ```javascript
+     * 
      *     TopJs.define('My.cool.Class', {
      *         method1: function() { ... },
      *         method2: function() { ... }
@@ -947,6 +957,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      *     test.method3(); // test.method1()
      *     My.cool.Class.createAlias('method5', 'method3');
      *     test.method5(); // test.method3() -> test.method1()
+     *     
      * ```
      * @param {String|Object} alias The new method name, or an object to set multiple aliases. See
      * {@link TopJs.Function#proxySetter proxySetter}
@@ -1064,6 +1075,7 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * for a detailed comparison
      *
      * ```javascript
+     * 
      * TopJs.define('MyClass', {
      *  statics: {
      *      speciesName: 'ClassName' // MyClass.Cat.speciesName = 'ClassName'
@@ -1079,15 +1091,15 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *  }
      * });
      *
-     * Ext.define('MyExtendClass', {
+     * TopJs.define('MyExtendClass', {
      *     extend: 'MyClass',
      *     statics: {
-     *         speciesName: 'ExtendClassName' // MyExtendClass.MyClass.speciesName = 'ExtendClassName'
+     *         speciesName: 'TopJsendClassName' // MyExtendClass.MyClass.speciesName = 'TopJsendClassName'
      *     }
      * });
      *
      * let parent = new MyClass(); // console 'ClassName'
-     * let child = new MyExtendClass(); // console 'ExtendClassName'
+     * let child = new MyExtendClass(); // console 'TopJsendClassName'
      * let clone = child.clone();
      * console.log(TopJs.getClassName(clone)); // console 'MyExtendClass'
      *
@@ -1108,6 +1120,8 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * `this.statics()` is scope-independent and it always returns the class from which it was called, regardless of what
      * `this` points to during run-time
      *
+     * ```javascript
+     * 
      *     TopJs.define('My.Cat', {
      *         statics: {
      *             totalCreated: 0,
@@ -1156,7 +1170,8 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *     console.log(clone.groupName);                 // console.logs 'Cat'
      *
      *     console.log(My.Cat.totalCreated);             // console.logs 3
-     *
+     * ```
+     * 
      * @protected
      * @return {TopJs.Class}
      */
@@ -1174,6 +1189,8 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * Call the "parent" method of the current method. That is the method previously
      * overridden by derivation or by an override (see {@link TopJs#define}).
      *
+     * ```javascript 
+     * 
      *      TopJs.define('My.Base', {
      *          constructor: function (x) {
      *              this.x = x;
@@ -1197,9 +1214,12 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *      var obj = new My.Derived();
      *
      *      console.log(obj.x);  // console.logs 21
-     *
+     * ```
+     * 
      * This can be used with an override as follows:
-     *
+     * 
+     * ```javascript
+     * 
      *      TopJs.define('My.DerivedOverride', {
      *          override: 'My.Derived',
      *
@@ -1211,9 +1231,11 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *      var obj = new My.Derived();
      *
      *      console.log(obj.x);  // now console.logs 42
-     *
+     * ```
+     * 
      * This also works with static and private methods.
-     *
+     * ```javascript
+     * 
      *      TopJs.define('My.Derived2', {
      *          extend: 'My.Base',
      *
@@ -1227,9 +1249,12 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *
      *      console.log(My.Base.method(10));     // console.logs 10
      *      console.log(My.Derived2.method(10)); // console.logs 20
-     *
+     * ```
+     * 
      * Lastly, it also works with overridden static methods.
      *
+     * ```javascript 
+     * 
      *      TopJs.define('My.Derived2Override', {
      *          override: 'My.Derived2',
      *
@@ -1242,12 +1267,13 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *      });
      *
      *      console.log(My.Derived2.method(10); // now console.logs 40
-     *
+     * ```
+     * 
      * To override a method and replace it and also call the superclass method, use
      * {@link #method-callSuper}. This is often done to patch a method to fix a bug.
      *
      * @protected
-     * @param {Array/Arguments} args The arguments, either an array or the `arguments` object
+     * @param {Array|Arguments} args The arguments, either an array or the `arguments` object
      * from the current method, for example: `this.callParent(arguments)`
      * @return {Object} Returns the result of calling the parent method
      */
@@ -1289,7 +1315,8 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * contains a bug but for whatever reason cannot be fixed directly.
      *
      * Consider:
-     *
+     * ```javascript
+     * 
      *      TopJs.define('TopJs.some.Class', {
      *          method: function () {
      *              console.log('Good');
@@ -1307,10 +1334,13 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *              this.callParent();
      *          }
      *      });
+     * ```
      *
-     * To patch the bug in `Ext.some.DerivedClass.method`, the typical solution is to create an
+     * To patch the bug in `TopJs.some.DerivedClass.method`, the typical solution is to create an
      * override:
-     *
+     * 
+     *  ```javascript
+     *  
      *      TopJs.define('App.patches.DerivedClass', {
      *          override: 'TopJs.some.DerivedClass',
      *          
@@ -1322,6 +1352,7 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *              this.callSuper();
      *          }
      *      });
+     * ```
      *
      * The patch method cannot use {@link #method-callParent} to call the superclass
      * `method` since that would call the overridden method containing the bug. In
@@ -1369,7 +1400,8 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
     //<feature classSystem.config>
     /**
      * Initialize configuration for this class. a typical example:
-     *
+     * ```javascript
+     * 
      *     TopJs.define('My.awesome.Class', {
      *         // The default config
      *         config: {
@@ -1386,8 +1418,9 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *         name: 'Super Awesome'
      *     });
      *
-     *     alert(awesome.getName()); // 'Super Awesome'
-     *
+     *     console.log(awesome.getName()); // 'Super Awesome'
+     *     
+     *  ```
      * @protected
      * @param {Object} instanceConfig
      * @return {TopJs.Base} this
@@ -1462,8 +1495,9 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * Returns the initial configuration passed to the constructor when
      * instantiating this class.
      *
-     * Given this example Ext.button.Button definition and instance:
-     *
+     * Given this example TopJs.button.Button definition and instance:
+     * ```javascript 
+     * 
      *     TopJs.define('Class', {
      *         extend: 'ParentClass',
      *         xtype: 'myclasstype',
@@ -1471,11 +1505,12 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *         age: 12
      *     });
      *
-     *     var obj = Ext.create({
+     *     var obj = TopJs.create({
      *         xtype: 'myclasstype',
      *         address: 'my address',
      *         text: 'hello world'
      *     });
+     * ```
      *
      * Calling `obj.getInitialConfig()` would return an object including the config
      * options passed to the `create` method:
@@ -1484,7 +1519,7 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *     address: 'my address',
      *     text: 'hello world'
      *
-     * Calling `btn.getInitialConfig('address')`returns **'my address'**.
+     * Calling `obj.getInitialConfig('address')`returns **'my address'**.
      *
      * @param {String} [name] Name of the config option to return.
      * @return {Object|Mixed} The full config object or a single config value
@@ -1522,7 +1557,7 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * Destroys a given set of `{@link #link linked}` objects. This is only needed if
      * the linked object is being destroyed before this instance.
      * @param {String[]} names The names of the linked objects to destroy.
-     * @return {Ext.Base} this
+     * @return {TopJs.Base} this
      * @private
      */
     unlink (names)

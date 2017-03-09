@@ -139,13 +139,6 @@ describe("TopJs.Class", function ()
         //     assert.instanceOf(obj, TopJs.Base);
         // });
 
-        it("class string", function() {
-            Cls = TopJs.define(null, {
-                extend: 'Spec.Base'
-            });
-            let obj = new Cls;
-            assert.instanceOf(obj, Spec.Base);
-        });
         
         describe("extending from a parent", function ()
         {
@@ -154,6 +147,14 @@ describe("TopJs.Class", function ()
                     extend: Spec.Base
                 });
                 let obj = new Cls();
+                assert.instanceOf(obj, Spec.Base);
+            });
+
+            it("class string", function() {
+                Cls = TopJs.define(null, {
+                    extend: 'Spec.Base'
+                });
+                let obj = new Cls;
                 assert.instanceOf(obj, Spec.Base);
             });
         });

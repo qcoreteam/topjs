@@ -953,10 +953,10 @@ TopJs.apply(TopJs, /** @lends TopJs */{
         TopJs.classSystemMonitor && TopJs.classSystemMonitor(className, 'TopJs.ClassManager#undefine', arguments);
         //</debug>
         let classes = Manager.classes;
-        classes.delete(className);
         let index = className.lastIndexOf('.');
         let clsName;
         let ns;
+        classes.delete(className);
         if (index < 0) {
             ns = Manager.getNamespace(className);
             clsName = className;
