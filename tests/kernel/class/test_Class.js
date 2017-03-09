@@ -120,23 +120,42 @@ describe("TopJs.Class", function ()
     
     describe("extend", function ()
     {
-        // beforeEach(function() {
-        //     func = function() {};
-        //     TopJs.define('Spec.Base', {
-        //         aProp: 1,
-        //         aFn: func
-        //     });
-        // });
-        //
-        // afterEach(function() {
-        //     TopJs.undefine('Spec.Base');
-        // });
+        beforeEach(function() {
+            func = function() {};
+            TopJs.define('Spec.Base', {
+                aProp: 1,
+                aFn: func
+            });
+        });
+
+        afterEach(function() {
+            TopJs.undefine('Spec.Base');
+        });
         
-        it("should extend from TopJs.Base if no 'extend' property found", function ()
-        {
-            Cls = TopJs.define(null, {});
+        // it("should extend from TopJs.Base if no 'extend' property found", function ()
+        // {
+        //     Cls = TopJs.define(null, {});
+        //     let obj = new Cls;
+        //     assert.instanceOf(obj, TopJs.Base);
+        // });
+
+        it("class string", function() {
+            Cls = TopJs.define(null, {
+                extend: 'Spec.Base'
+            });
             let obj = new Cls;
-            assert.instanceOf(obj, TopJs.Base);
+            assert.instanceOf(obj, Spec.Base);
+        });
+        
+        describe("extending from a parent", function ()
+        {
+            it("class reference" , function () {
+                Cls = TopJs.define(null, {
+                    extend: Spec.Base
+                });
+                let obj = new Cls();
+                assert.instanceOf(obj, Spec.Base);
+            });
         });
     });
 });

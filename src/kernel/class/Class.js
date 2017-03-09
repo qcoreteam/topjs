@@ -298,11 +298,15 @@ TopJsClass.registerPreprocessor('extend', function (Class, data, hooks)
     let extend = data.extend;
     let Parent;
     delete data.extend;
+    if (TopJs.isString(extend)) {
+        extend = TopJs.ClassManager.getClassByName(extend);
+    }
     if (extend && extend !== Object) {
         Parent = extend;
     } else {
         Parent = Base;
     }
+    
     let parentPrototype = Parent.prototype;
     if (!Parent.$_is_class_$) {
         for (let key in basePrototype) {

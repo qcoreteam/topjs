@@ -230,24 +230,24 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
 
     /**
      * @protected
-     * @property {Map[]} namespaces 名称空间到类的文件夹之间的映射
+     * @property {Map} namespaces 名称空间到类的文件夹之间的映射
      */
     namespaces: new Map(),
 
     /**
      * @protected
-     * @property {Map[]} namespaceCache the namespaces lookup cache
+     * @property {Map} namespaceCache the namespaces lookup cache
      */
     namespaceCache: new Map(),
 
     /**
-     * @property {Object} classes
+     * @property {Map} classes
      * 
      * All classes which were defined through the ClassManager. Keys are the
      * name of the classes and the values are references to the classes.
      * @private
      */
-    classes: {},
+    classes: new Map(),
 
     /*
      * 'TopJs.foo.Bar': <state enum>
@@ -312,7 +312,7 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
             throw new Error("[TopJs.ClassManager] Invalid classname, must be a string and must not be empty");
         }
         //</debug>
-        if (Manager.classes[className] || Manager.existCache[className]) {
+        if (Manager.classes.has(className) || Manager.existCache[className]) {
             return true;
         }
         if (!Manager.lookupName(className, false)) {
@@ -481,33 +481,20 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     {
         let parts = namespace.split(Manager.NS_SEPARATOR);
         let ns;
-        let nsDir;
         let partName;
         let parentNs;
-        if (!this.namespaces.has(parts[0])) {
-            return null;
+        if (this.namespaces.has(parts[0])) {
+            ns = this.namespaces.get(parts[0]);
+        } else {
+            ns = new Namespace(parts[0], null, parts[0]);
+            TopJs.global[parts[0]] = ns;
         }
-        ns = this.namespaces.get(parts[0]);
         for (let i = 1; i < parts.length; i++) {
             partName = parts[i];
-            nsDir = ns.directory;
             parentNs = ns;
             ns = ns.getChildNamespace(partName);
             if (null == ns) {
-                //判断文件夹是否存在
-                try {
-                    let filename = path.resolve(nsDir, partName);
-                    let stats = statSync(filename);
-                    if (stats.isDirectory()) {
-                        ns = new Namespace(partName, parentNs, filename);
-                    }
-                } catch (err) {
-                    if ("ENOENT" === err.code) {
-                        let dir = nsDir + dir_separator + partName;
-                        err.message = `create namespace error: directory ${dir} not exist`;
-                    }
-                    throw err;
-                }
+                ns = new Namespace(partName, parentNs, parentNs.directory + dir_separator + filename);
             }
         }
         return ns;
@@ -531,7 +518,7 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
         }
         //<debug>
         if (className) {
-            if (Manager.classes[className]) {
+            if (Manager.classes.has(className)) {
                 TopJs.log.warn("[TopJs.define] Duplicate class name '" + className + "' specified, must be a non-empty string");
             }
         }
@@ -542,7 +529,6 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
             let postProcessorStack = data.postProcessors || Manager.defaultPostProcessors;
             let registeredPostProcessors = Manager.postProcessors;
             let postProcessors = [];
-            
             delete data.postProcessors;
             for (let i = 0, len = postProcessorStack.length; i < len; i++) {
                 let postProcessor = postProcessorStack[i];
@@ -604,7 +590,7 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     registerToClassMap (name, value)
     {
         let targetName = Manager.getClassName(value);
-        Manager.classes[name] = Manager.mountClsToNamespace(name, value);
+        Manager.classes.set(name, Manager.mountClsToNamespace(name, value));
         if (targetName && targetName !== name) {
             //Manager.addAlternate(targetName, name);
         }
@@ -615,6 +601,7 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     {
         let index = fullClassName.lastIndexOf('.');
         let targetScope = TopJs.global;
+        let ret;
         if (index < 0) {
             // mount at global scope
             if (targetScope.hasOwnProperty(fullClassName)) {
@@ -624,13 +611,13 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
                 //</debug>
                 return targetScope[fullClassName];
             }
-            targetScope[fullClassName] = cls;
+            ret = targetScope[fullClassName] = cls;
         } else {
-            let clsName = fullClassName.substring(i + 1);
-            targetScope = this.getNamspace(fullClassName.substring(0, i));
-            targetScope[clsName] = cls;
+            let clsName = fullClassName.substring(index + 1);
+            targetScope = this.getNamespace(fullClassName.substring(0, index));
+            ret = targetScope[clsName] = cls;
         }
-        return targetScope[fullClassName];
+        return ret;
     },
 
     /**
@@ -665,6 +652,25 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     getClass (object)
     {
         return object && object.self || null;
+    },
+
+    /**
+     * Retrieve Class Object by class name
+     * 
+     * @param {String} className
+     * @return {TopJs.Class}
+     * @throws
+     */
+    getClassByName (className)
+    {
+        if (!this.classes.has(className)) {
+            TopJs.raise({
+                sourceClass: 'TopJs.ClassManager',
+                sourceMethod: 'getClassByName',
+                msg: `Class: ${className} not exist!`
+            });
+        }
+        return this.classes.get(className);
     }
 });
 
@@ -946,6 +952,22 @@ TopJs.apply(TopJs, /** @lends TopJs */{
         //<debug>
         TopJs.classSystemMonitor && TopJs.classSystemMonitor(className, 'TopJs.ClassManager#undefine', arguments);
         //</debug>
-        
+        let classes = Manager.classes;
+        classes.delete(className);
+        let index = className.lastIndexOf('.');
+        let clsName;
+        let ns;
+        if (index < 0) {
+            ns = Manager.getNamespace(className);
+            clsName = className;
+        } else {
+            ns = Manager.getNamespace(className.substring(0, index));
+            clsName = className.substring(index + 1);
+        }
+        if (ns.parent) {
+            delete ns[clsName];
+        } else {
+            delete TopJs.global[clsName];
+        }
     }
 });

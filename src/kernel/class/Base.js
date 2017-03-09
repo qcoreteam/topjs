@@ -1035,7 +1035,7 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
     destroyed: false,
 
     /**
-     * @property {Boolean/"async"} [clearPropertiesOnDestroy=true]
+     * @property {Boolean} [clearPropertiesOnDestroy=true]
      * Setting this property to `false` will prevent nulling object references
      * on a Class instance after destruction. Setting this to `"async"` will delay
      * the clearing for approx 50ms.
