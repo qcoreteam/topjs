@@ -21,7 +21,7 @@ require("./kernel/lang/Number");
 require("./kernel/lang/String");
 require("./kernel/lang/Date");
 require("./kernel/utils/Version");
-require("./kernel/loader/StandardLoader");
+require("./kernel/class/Loader");
 require("./kernel/class/ClassManager");
 
 let topJsLibDir = process.cwd() + dir_separator + "lib";

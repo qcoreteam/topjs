@@ -10,17 +10,14 @@ require("./Config");
 require("./Configurator");
 require("./Base");
 require("./Class");
+import {sep as dir_separator, dirname} from 'path';
+import {is_object, in_array, rtrim, is_string, change_str_at, file_exist} from '../internal/Funcs';
+import Namespace from "./Namespace";
 
 let Class = TopJs.Class;
 let makeCtor = Class.makeCtor;
 let Manager = TopJs.ClassManager = {};
-let nameLookupStack = [];
-let namespaceCache = {
-    TopJs: {
-        name: 'TopJs',
-        value: TopJs
-    }
-};
+
 /**
  * @class TopJs.ClassManager
  * @singleton
@@ -212,8 +209,42 @@ let namespaceCache = {
  */
 TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     /**
+     * @readonly
+     * @static
+     * @property {string} NS_SEPARATOR 名称空间分隔符
+     */
+    NS_SEPARATOR: ".",
+    /**
+     * @readonly
+     * @static
+     * @property {string} LOAD_NS 参数批量设置的时候名称空间项识别码常量
+     */
+    LOAD_NS: "namespaces",
+
+    /**
+     * @readonly
+     * @static
+     * @property {string} NAMESPACE_ACCESSOR_KEY 对象代理访问时候获取名称空间对象的特殊键名
+     */
+    NAMESPACE_ACCESSOR_KEY: "__NAMESPACE_ACCESSOR_KEY__",
+
+    /**
+     * @protected
+     * @property {Map[]} namespaces 名称空间到类的文件夹之间的映射
+     */
+    namespaces: new Map(),
+
+    /**
+     * @protected
+     * @property {Map[]} namespaceCache the namespaces lookup cache
+     */
+    namespaceCache: new Map(),
+
+    /**
      * @property {Object} classes
-     * 所有通过`TopJs.ClassManager`定义的类的集合，键是类的名称值是类对象
+     * 
+     * All classes which were defined through the ClassManager. Keys are the
+     * name of the classes and the values are references to the classes.
      * @private
      */
     classes: {},
@@ -227,7 +258,6 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
      *  40 = Manager.existCache[<name>] == true for define/override
      *  50 = Manager.isCreated(<name>) == true for define
      *  60 = Manager.isCreated(<name>) == true for define/override
-     *
      */
     classState: {},
 
@@ -368,136 +398,121 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
     },
 
     /**
-     * Supports namespace rewriting.
-     * @private
-     */
-    $_namespace_cache_$: namespaceCache,
-
-    /**
-     * See `{@link TopJs#addRootNamespaces TopJs.TopJs}`.
-     * @private
-     */
-    addRootNamespaces (namespaces)
-    {
-        for (let name in namespaces) {
-            namespaceCache[name] = {
-                name: name,
-                value: namespaces[name]
-            };
-        }
-    },
-
-    /**
-     * Clears the namespace lookup cache. After application launch, this cache can
-     * often contain several hundred entries that are unlikely to be needed again.
-     * These will be rebuilt as needed, so it is harmless to clear this cache even
-     * if its results will be used again.
-     * @private
-     */
-    clearNamespaceCache()
-    {
-        nameLookupStack.length = 0;
-        for (let name in namespaceCache) {
-            if (!namespaceCache[name].value) {
-                delete namespaceCache[name];
-            }
-        }
-    },
-
-    /**
-     * Return the namespace cache entry for the given a class name or namespace
+     * 注册一个名称空间到对应文件夹的映射项
      *
-     * @param {String} namespace The namespace or class name to lookup.
-     * @return {Object} The cache entry.
-     * @return {String} return.name The leaf name
-     * @return {Object} return.parent The entry of the parent namespace
-     * @return {Object} return.value The namespace object. This is only set for
-     * top-level namespace entries to support renaming them for sandboxing
-     * @private
+     * @param {string} namespace
+     * @param {string} directory
+     * @returns {TopJs.Namespace}
      */
-    getNamespaceEntry(namespace)
+    registerNamespace(namespace, directory)
     {
-        if (typeof namespace !== 'string') {
-            return namespace;  // assume we've been given an entry object
+        let sep = Manager.NS_SEPARATOR;
+        namespace = rtrim(namespace, sep);
+        let parts = namespace.split(sep);
+        let nsObj;
+        if (this.namespaces.has(parts[0])) {
+            nsObj = this.namespaces.get(parts[0]);
+        } else {
+            nsObj = new Namespace(parts[0], null, null);
+            this.namespaces.set(parts[0], nsObj);
         }
-        let entry = namespaceCache[namespace];
-        let i;
-        if (!entry) {
-            i = namespace.lastIndexOf('.');
-            if (i < 0) {
-                entry = {
-                    name: namespace
-                };
+        //子名称空间
+        for (let i = 1; i < parts.length; i++) {
+            let childNsObj = nsObj.getChildNamespace(parts[i]);
+            if (null === childNsObj) {
+                nsObj = new Namespace(parts[i], nsObj, null);
             } else {
-                entry = {
-                    name: namespace.substring(i + 1),
-                    parent: Manager.getNamespaceEntry(namespace.substring(0, i))
-                };
+                nsObj = childNsObj;
             }
-            namespaceCache[namespace] = entry;
         }
-        return entry;
+        try {
+            nsObj.setDirectory(this.normalizeDirectory(directory));
+        } catch (err) {}
+        return nsObj;
     },
 
     /**
-     * Return the value of the given "dot path" name. This supports remapping (for use
-     * in sandbox builds) as well as auto-creating of namespaces.
+     * 一次性注册多个名称空间到文件目录的映射, `namespace`参数结构如下：
+     * ```javascript
+     * {
+     *    namespace1: dir1,
+     *    namespace2: dir2,
+     *    ...
+     * }
+     * ```
      *
-     * @param {String} namespace The name of the namespace or class.
-     * @param {Boolean} [autoCreate] Pass `true` to create objects for undefined names.
-     * @return {Object} The object that is the namespace or class name.
-     * @private
+     * @param {Object} namespaces 需要注册的名称空间类型
+     * @returns {TopJs.ClassManager}
      */
-    lookupName: function (namespace, autoCreate = true)
+    registerNamespaces(namespaces)
     {
-        let entry = Manager.getNamespaceEntry(namespace);
-        let scope = TopJs.global;
-        let parent;
-        let i = 0;
-        let e;
-        // Put entries on the stack in reverse order: 
-        // TopJs.Some.Class => ["Class", "Some", "TopJs"]
-        for (e = entry; e; e = e.parent) {
-            // since we process only what we add to the array, and that always
-            // starts at index=0, we don't need to clean up the array (that would
-            // just encourage the GC to do something pointless).
-            nameLookupStack[i++] = e;
+        if (!is_object(namespaces)) {
+            throw new Error('arg namespaces must be object');
         }
-        
-        while (scope && i-- > 0) {
-            // We'll process entries in top-down order ("TopJs", "Some" then "Class").
-            e = nameLookupStack[i];
-            parent = scope;
-            scope = e.value || scope[e.name];
-            if (!scope && autoCreate) {
-                parent[e.name] = scope = {};
-            }
+        for (let [namespace, direcotry] of Object.entries(namespaces)) {
+            this.registerNamespace(namespace, direcotry);
         }
-        return scope;
+        return this;
     },
 
     /**
-     * Creates a namespace and assign the `value` to the created object.
+     * 通过名称空间名称，获取底层名称空间对象引用
      *
-     *     TopJs.ClassManager.setNamespace('MyCompany.pkg.Example', someObject);
-     *
-     *     console.log(MyCompany.pkg.Example === someObject); // console true
-     *
-     * @param {String} namespace
-     * @param {Object} value
+     * @param {Object} name 名称空间的名称
+     * @returns {TopJs.Namespace}
      */
-    setNamespace (namespace, value)
+    getNamespace(name)
     {
-        let entry = Manager.getNamespaceEntry(namespace);
-        let scope = TopJs.global;
-
-        if (entry.parent) {
-            scope = Manager.lookupName(entry.parent, true);
+        let ns;
+        if (this.namespaceCache.has(name)) {
+            ns = this.namespaceCache.get(name);
+        } else {
+            ns = this.createNamespace(name);
+            this.namespaceCache.set(name, ns);
         }
-        scope[entry.name] = value;
-        return value;
+        return ns;
     },
 
+    /**
+     * @param {String} namespace 名称空间的字符串描述
+     * @return {Namespace}
+     */
+    createNamespace(namespace)
+    {
+        let parts = namespace.split(Manager.NS_SEPARATOR);
+        let ns;
+        let nsDir;
+        let partName;
+        let parentNs;
+        if (!this.namespaces.has(parts[0])) {
+            return null;
+        }
+        ns = this.namespaces.get(parts[0]);
+        for (let i = 1; i < parts.length; i++) {
+            partName = parts[i];
+            nsDir = ns.directory;
+            parentNs = ns;
+            ns = ns.getChildNamespace(partName);
+            if (null == ns) {
+                //判断文件夹是否存在
+                try {
+                    let filename = path.resolve(nsDir, partName);
+                    let stats = statSync(filename);
+                    if (stats.isDirectory()) {
+                        ns = new Namespace(partName, parentNs, filename);
+                    }
+                } catch (err) {
+                    if ("ENOENT" === err.code) {
+                        let dir = nsDir + dir_separator + partName;
+                        err.message = `create namespace error: directory ${dir} not exist`;
+                    }
+                    throw err;
+                }
+            }
+        }
+        return ns;
+    },
+    
     /**
      * @param {String} className
      * @param {Object} data
@@ -564,7 +579,7 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
             TopJs.classSystemMonitor && TopJs.classSystemMonitor(className, 'TopJs.ClassManager#classCreated', arguments);
             //</debug>
             if (className) {
-                this.set(className, cls);
+                this.registerToClassMap(className, cls);
             }
             
             delete cls._classHooks;
@@ -579,6 +594,77 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
         if (postProcessor.call(this, className, cls, clsData, this.processCreate) !== false) {
             this.processCreate(className, cls, clsData);
         }
+    },
+
+    /**
+     * @param {String} name the class name
+     * @param {Object} value The Class Object
+     * @return {TopJs.ClassManager} this
+     */
+    registerToClassMap (name, value)
+    {
+        let targetName = Manager.getClassName(value);
+        Manager.classes[name] = Manager.mountClsToNamespace(name, value);
+        if (targetName && targetName !== name) {
+            //Manager.addAlternate(targetName, name);
+        }
+        return this;
+    },
+    
+    mountClsToNamespace (fullClassName, cls)
+    {
+        let index = fullClassName.lastIndexOf('.');
+        let targetScope = TopJs.global;
+        if (index < 0) {
+            // mount at global scope
+            if (targetScope.hasOwnProperty(fullClassName)) {
+                //<debug>
+                TopJs.log.warn(`[TopJs.ClassManager.mountClsToNamespace] class ${fullClassName} 
+                already exist at target scope`);
+                //</debug>
+                return targetScope[fullClassName];
+            }
+            targetScope[fullClassName] = cls;
+        } else {
+            let clsName = fullClassName.substring(i + 1);
+            targetScope = this.getNamspace(fullClassName.substring(0, i));
+            targetScope[clsName] = cls;
+        }
+        return targetScope[fullClassName];
+    },
+
+    /**
+     * Get the name of the class by its reference or its instance. This is
+     * usually invoked by the shorthand {@link TopJs#getClassName}.
+     *
+     * ```javascript
+     *
+     *  TopJs.ClassManager.getName(TopJs.SomeClass); // returns "TopJs.SomeClass"
+     *
+     * ```
+     * @param {TopJs.Class|Object} object
+     * @return {String} className
+     */
+    getClassName (object)
+    {
+        return object && object.$_class_name_$ || '';
+    },
+
+    /**
+     * Get the class of the provided object; returns null if it's not an instance
+     * of any class created with Ext.define. This is usually invoked by the
+     * shorthand {@link TopJs#getClass}.
+     *
+     *  ```javascript
+     *  let obj = new TopJs.SomeClass();
+     *  TopJs.getClass(obj); // returns TopJs.SomeClass
+     *  ```
+     * @param {Object} object
+     * @return {TopJs.Class} class
+     */
+    getClass (object)
+    {
+        return object && object.self || null;
     }
 });
 

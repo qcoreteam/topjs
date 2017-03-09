@@ -142,7 +142,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
     /**
      * @private
      */
-    $_is_class: true,
+    $_is_class_$: true,
 
     /**
      * 创建当前类的一个实例

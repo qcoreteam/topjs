@@ -77,13 +77,13 @@ Object.assign(Namespace.prototype, /** @lends TopJs.Namespace.prototype */{
         for (let key of iterator) {
             keys.push(key);
         }
-        return kyes;
+        return keys;
     },
 
     setDirectory(directory)
     {
         if (null !== this.directory) {
-            throw new Error(`当前名称空间："${this.name}"的文件夹已经设置`);
+            throw new Error(`the directory of namespace ："${this.name}" already setted.`);
         }
         this.directory = directory;
     },

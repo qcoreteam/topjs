@@ -135,7 +135,8 @@ describe("TopJs.Class", function ()
         it("should extend from TopJs.Base if no 'extend' property found", function ()
         {
             Cls = TopJs.define(null, {});
-            assert.instanceOf(new Cls, TopJs.Base);
+            let obj = new Cls;
+            assert.instanceOf(obj, TopJs.Base);
         });
     });
 });

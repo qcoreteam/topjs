@@ -137,7 +137,7 @@ TopJs.apply(TopJsClass, /** @lends TopJs.Class */{
                 if (preprocessorsProperties === true) {
                     preprocessors.push(preprocessor.func);
                 } else if (preprocessorsProperties) {
-                    for (let j = 0, subLn = preprocessorsProperties.length; j < subLn; j++) {
+                    for (let j = 0, subLen = preprocessorsProperties.length; j < subLen; j++) {
                         preprocessorProperty = preprocessorsProperties[j];
                         if (data.hasOwnProperty(preprocessorProperty)) {
                             preprocessors.push(preprocessor.func);
@@ -168,7 +168,7 @@ TopJs.apply(TopJsClass, /** @lends TopJs.Class */{
         hooks.onBeforeCreated.apply(this, arguments);
     },
 
-    registerPreprocessor (name, fn, properties, position, relativeTo)
+    registerPreprocessor (name, func, properties, position, relativeTo)
     {
         if (!position) {
             position = 'last';
@@ -179,7 +179,7 @@ TopJs.apply(TopJsClass, /** @lends TopJs.Class */{
         this.preprocessors[name] = {
             name: name,
             properties: properties || false,
-            fn: fn
+            func: func
         };
         this.setDefaultPreprocessorPosition(name, position, relativeTo);
         return this;
@@ -296,6 +296,7 @@ TopJsClass.registerPreprocessor('extend', function (Class, data, hooks)
     let Base = TopJs.Base;
     let basePrototype = Base.prototype;
     let extend = data.extend;
+    let Parent;
     delete data.extend;
     if (extend && extend !== Object) {
         Parent = extend;
