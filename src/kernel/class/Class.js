@@ -10,13 +10,12 @@ let Base = TopJs.Base;
 let baseStaticMembers = Base.$_static_members_$;
 /**
  * @class TopJs.Class
- * @requires TopJs.Base
  * @classdesc
  *
  * This is a low level factory that is used by {@link TopJs#define TopJs.define} and should not be used
  * directly in application code.
  *
- * The configs of this class are intended to be used in `Ext.define` calls to describe the class you
+ * The configs of this class are intended to be used in `TopJs.define` calls to describe the class you
  * are declaring. For example:
  *
  *     TopJs.define('App.util.Thing', {
@@ -88,7 +87,7 @@ TopJs.apply(TopJsClass, /** @lends TopJs.Class */{
         Class.addMembers(data);
         hooks.onCreated.call(Class, Class);
         //<debug>
-        TopJs.classSystemMonitor && TopJs.classSystemMonitor(Class, '<< Ext.Class#onBeforeCreated', arguments);
+        TopJs.classSystemMonitor && TopJs.classSystemMonitor(Class, '<< TopJs.Class#onBeforeCreated', arguments);
         //</debug>
     },
 
@@ -222,7 +221,7 @@ TopJs.apply(TopJsClass, /** @lends TopJs.Class */{
      *
      * @private
      * @param {Array} preprocessors
-     * @return {Ext.Class} this
+     * @return {TopJs.Class} this
      * @static
      */
     setDefaultPreprocessors (preprocessors)
@@ -373,3 +372,131 @@ TopJsClass.registerPreprocessor('privates', function (Class, data)
         Class.addMembers(statics, true, privacy);
     }
 });
+
+//<feature classSystem.config>
+/**
+ * List of configuration options with their default values.
+ *
+ * __Note:__ You need to make sure {@link TopJs.Base#initConfig} is called from your constructor if you are defining
+ * your own class or singleton, unless you are extending a Component. Otherwise the generated getter and setter
+ * methods will not be initialized.
+ *
+ * Each config item will have its own setter and getter method automatically generated inside the class prototype
+ * during class creation time, if the class does not have those methods explicitly defined.
+ *
+ * As an example, let's convert the name property of a Person class to be a config item, then add extra age and
+ * gender items.
+ * 
+ * ```javascript
+ * 
+ * TopJs.define('My.sample.Person', {
+ *    config: {
+ *        name: 'Mr. Unknown',
+ *        age: 0,
+ *        gender: 'Male'
+ *    },
+ *    constructor: function(config) {
+ *        this.initConfig(config);
+ *        return this;
+ *    }
+ * });
+ * 
+ * ```
+ *
+ * Within the class, this.name still has the default value of "Mr. Unknown". However, it's now publicly accessible
+ * without sacrificing encapsulation, via setter and getter methods.
+ * 
+ * ```javascript
+ * 
+ * let jacky = new Person({
+ *     name: "Jacky",
+ *     age: 35
+ * });
+ *
+ * console.log(jacky.getAge());      // console.logs 35
+ * console.log(jacky.getGender());   // console.logs "Male"
+ * jacky.walk(10);             // console.logs "Jacky is walking 10 steps"
+ * jacky.setName("Mr. Nguyen");
+ * console.log(jacky.getName());     // console.logs "Mr. Nguyen"
+ * jacky.walk(10);             // console.logs "Mr. Nguyen is walking 10 steps"
+ *     
+ * ```
+ * 
+ * Notice that we changed the class constructor to invoke this.initConfig() and pass in the provided config object.
+ * Two key things happened:
+ *
+ *  - The provided config object when the class is instantiated is recursively merged with the default config object.
+ *  - All corresponding setter methods are called with the merged values.
+ *
+ * Beside storing the given values, throughout the frameworks, setters generally have two key responsibilities:
+ *
+ *  - Filtering / validation / transformation of the given value before it's actually stored within the instance.
+ *  - Notification (such as firing events) / post-processing after the value has been set, or changed from a
+ *    previous value.
+ *
+ * By standardize this common pattern, the default generated setters provide two extra template methods that you
+ * can put your own custom logics into, i.e: an "applyFoo" and "updateFoo" method for a "foo" config item, which are
+ * executed before and after the value is actually set, respectively. Back to the example class, let's validate that
+ * age must be a valid positive number, and fire an 'agechange' if the value is modified.
+ *
+ * ```javascript
+ *
+ * TopJs.define('My.sample.Person', {
+ *     config: {
+ *             // ...
+ *     },
+ *     constructor: {
+ *             // ...
+ *     },
+ *     applyAge: function(age) {
+ *         if (typeof age !== 'number' || age < 0) {
+ *             console.warn("Invalid age, must be a positive number");
+ *             return;
+ *         }
+ *         return age;
+ *     },
+ *     
+ *     updateAge: function(newAge, oldAge) {
+ *         // age has changed from "oldAge" to "newAge"
+ *         this.fireEvent('agechange', this, newAge, oldAge);
+ *     }
+ *
+ *     // ...
+ * });
+ *
+ * let jacky = new Person({
+ *     name: "Jacky",
+ *     age: 'invalid'
+ * });
+ *
+ * console.log(jacky.getAge());      // console.logs 0
+ * console.log(jacky.setAge(-100));  // console.logs 0
+ * console.log(jacky.getAge());      // console.logs 0
+ * console.log(jacky.setAge(35));    // console.logs 0
+ * console.log(jacky.getAge());      // console.logs 35
+ *     
+ * ```
+ * 
+ * In other words, when leveraging the config feature, you mostly never need to define setter and getter methods
+ * explicitly. Instead, "apply*" and "update*" methods should be implemented where necessary. Your code will be
+ * consistent throughout and only contain the minimal logic that you actually care about.
+ *
+ * When it comes to inheritance, the default config of the parent class is automatically, recursively merged with
+ * the child's default config. The same applies for mixins.
+ * @name config
+ * @property {Object} config
+ * @memberOf TopJs.Class.prototype
+ */
+TopJsClass.registerPreprocessor('config', function(Class, data) 
+{
+    // Need to copy to the prototype here because that happens after preprocessors
+    if (data.hasOwnProperty('$_config_prefixed_$')) {
+        Class.prototype.$_config_prefixed_$ = data.$_config_prefixed_$;
+    }
+    Class.addConfig(data.config);
+    // We need to remove this or it will be applied by addMembers and smash the
+    // "config" placed on the prototype by Configurator (which includes *all* configs
+    // such as cachedConfigs).
+    delete data.config;
+});
+//</feature>

@@ -659,7 +659,7 @@ TopJs.apply(Manager, /** @lends TopJs.ClassManager */{
      * 
      * @param {String} className
      * @return {TopJs.Class}
-     * @throws
+     * @throws {TopJs.Error}
      */
     getClassByName (className)
     {

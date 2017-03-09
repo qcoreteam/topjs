@@ -118,44 +118,87 @@ describe("TopJs.Class", function ()
     //     o = SubClass = ParentCls = MixinClass1 = MixinClass2 = sub = Cls = null;
     // });
     
-    describe("extend", function ()
-    {
+    // describe("extend", function ()
+    // {
+    //     beforeEach(function() {
+    //         func = function() {};
+    //         TopJs.define('Spec.Base', {
+    //             prop1: 1,
+    //             showInfo: func
+    //         });
+    //     });
+    //
+    //     afterEach(function() {
+    //         TopJs.undefine('Spec.Base');
+    //     });
+    //    
+    //     // it("should extend from TopJs.Base if no 'extend' property found", function ()
+    //     // {
+    //     //     Cls = TopJs.define(null, {});
+    //     //     let obj = new Cls;
+    //     //     assert.instanceOf(obj, TopJs.Base);
+    //     // });
+    //
+    //    
+    //     describe("extending from a parent", function ()
+    //     {
+    //         it("class reference" , function () {
+    //             Cls = TopJs.define(null, {
+    //                 extend: Spec.Base
+    //             });
+    //             let obj = new Cls();
+    //             assert.instanceOf(obj, Spec.Base);
+    //         });
+    //
+    //         it("class string", function() {
+    //             Cls = TopJs.define(null, {
+    //                 extend: 'Spec.Base'
+    //             });
+    //             let obj = new Cls;
+    //             assert.instanceOf(obj, Spec.Base);
+    //         });
+    //     });
+    //    
+    //     it("should have superclass reference", function ()
+    //     {
+    //         let parentPrototype = Spec.Base.prototype;
+    //         Cls = TopJs.define(null, {
+    //             extend: Spec.Base
+    //         });
+    //         assert.equal(Cls.superClass, parentPrototype);
+    //         assert.equal((new Cls).superClass, parentPrototype);
+    //     });
+    //    
+    //     it("should copy properties from the parent", function ()
+    //     {
+    //         Cls = TopJs.define(null, {
+    //             extend: Spec.Base
+    //         });
+    //         assert.equal(Cls.prototype.prop1, 1);
+    //     });
+    //    
+    //     it("should copy functions from the parent.", function() {
+    //         Cls = TopJs.define(null, {
+    //             extend: Spec.Base
+    //         });
+    //         assert.equal(Cls.prototype.showInfo, func);
+    //     });
+    // });
+    
+    describe("Config", function(){
         beforeEach(function() {
             func = function() {};
-            TopJs.define('Spec.Base', {
-                aProp: 1,
-                aFn: func
-            });
         });
-
-        afterEach(function() {
-            TopJs.undefine('Spec.Base');
-        });
-        
-        // it("should extend from TopJs.Base if no 'extend' property found", function ()
-        // {
-        //     Cls = TopJs.define(null, {});
-        //     let obj = new Cls;
-        //     assert.instanceOf(obj, TopJs.Base);
-        // });
-
-        
-        describe("extending from a parent", function ()
+        describe("getter/setter creation", function ()
         {
-            it("class reference" , function () {
+            it("should create getter if not exists", function ()
+            {
                 Cls = TopJs.define(null, {
-                    extend: Spec.Base
+                    config: {
+                        someName: 'someValue'
+                    }
                 });
-                let obj = new Cls();
-                assert.instanceOf(obj, Spec.Base);
-            });
-
-            it("class string", function() {
-                Cls = TopJs.define(null, {
-                    extend: 'Spec.Base'
-                });
-                let obj = new Cls;
-                assert.instanceOf(obj, Spec.Base);
+                assert.isDefined(Cls.prototype.getSomeName);
             });
         });
     });
