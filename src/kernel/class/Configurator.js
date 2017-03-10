@@ -340,10 +340,11 @@ TopJs.Configurator.prototype = {
                         // avoid creating initGetters for configs that don't need them
                         // and we can easily pick up the cached fn to save the call.
                         instance[names.get] = cfg.initGetter || cfg.getInitGetter();
+                    } else {
+                        // Non-object configs w/o custom setter, applier or updater can
+                        // be simply stored on the prototype.
+                        prototype[cfg.getInternalName(prototype)] = value;
                     }
-                    // Non-object configs w/o custom setter, applier or updater can
-                    // be simply stored on the prototype.
-                    prototype[cfg.getInternalName(prototype)] = value;
                 } else if (isCached) {
                     prototype[cfg.getInternalName(prototype)] = undefined;
                 }
