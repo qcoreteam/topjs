@@ -18,11 +18,11 @@ function get_config(name, peek)
         cfg = TopJs.Config.map[name];
         //<debug>
         if (!cfg) {
-            TopJs.Logger.error("Invalid property name for getter: '" + name + "' for '" + me.$_className_$ + "'.");
+            TopJs.Logger.error("Invalid property name for getter: '" + name + "' for '" + this.$_class_name_$ + "'.");
         }
         //</debug>
         getterName = cfg.names.get;
-        if (peek && this.hasOwnProperty(getterName)) {
+        if (peek && this[getterName]) {
             ret = this.config[name];
         } else {
             ret = this[getterName]();

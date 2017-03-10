@@ -10,15 +10,20 @@ let assert = require("chai").assert;
 
 describe("TopJs.Class", function ()
 {
-    let emptyFn = function () {};
-    let defaultInitConfig = function (config) {
+    let emptyFn = function ()
+    {
+    };
+    let defaultInitConfig = function (config)
+    {
         this.initConfig(config);
     };
     let Cls, sub, func, SubClass, ParentCls, MixinClass1, MixinClass2, o;
-    
+
     beforeEach(function ()
     {
-        func = function () {};
+        func = function ()
+        {
+        };
         MixinClass1 = TopJs.define(null, {
             config: {
                 mixinConfig: 'mixinConfig'
@@ -70,7 +75,7 @@ describe("TopJs.Class", function ()
                 hobbies: ['football', 'bowling']
             },
 
-            constructor (config) 
+            constructor (config)
             {
                 this.initConfig(config);
                 this.parentConstructorCalled = true;
@@ -99,7 +104,7 @@ describe("TopJs.Class", function ()
                 hobbies: ['sleeping', 'eating', 'movies'],
                 isSpecial: true
             },
-            constructor (config) 
+            constructor (config)
             {
                 this.initConfig(config);
                 this.subConstructorCalled = true;
@@ -113,22 +118,26 @@ describe("TopJs.Class", function ()
         });
     });
 
-    afterEach(function()
+    afterEach(function ()
     {
         o = SubClass = ParentCls = MixinClass1 = MixinClass2 = sub = Cls = null;
     });
-    
+
     describe("extend", function ()
     {
-        beforeEach(function() {
-            func = function() {};
+        beforeEach(function ()
+        {
+            func = function ()
+            {
+            };
             TopJs.define('Spec.Base', {
                 prop1: 1,
                 showInfo: func
             });
         });
 
-        afterEach(function() {
+        afterEach(function ()
+        {
             TopJs.undefine('Spec.Base');
         });
 
@@ -142,7 +151,8 @@ describe("TopJs.Class", function ()
 
         describe("extending from a parent", function ()
         {
-            it("class reference" , function () {
+            it("class reference", function ()
+            {
                 Cls = TopJs.define(null, {
                     extend: Spec.Base
                 });
@@ -150,7 +160,8 @@ describe("TopJs.Class", function ()
                 assert.instanceOf(obj, Spec.Base);
             });
 
-            it("class string", function() {
+            it("class string", function ()
+            {
                 Cls = TopJs.define(null, {
                     extend: 'Spec.Base'
                 });
@@ -177,17 +188,22 @@ describe("TopJs.Class", function ()
             assert.equal(Cls.prototype.prop1, 1);
         });
 
-        it("should copy functions from the parent.", function() {
+        it("should copy functions from the parent.", function ()
+        {
             Cls = TopJs.define(null, {
                 extend: Spec.Base
             });
             assert.equal(Cls.prototype.showInfo, func);
         });
     });
-    
-    describe("Config", function(){
-        beforeEach(function() {
-            func = function() {};
+
+    describe("Config", function ()
+    {
+        beforeEach(function ()
+        {
+            func = function ()
+            {
+            };
         });
         describe("getter/setter creation", function ()
         {
@@ -233,7 +249,7 @@ describe("TopJs.Class", function ()
                 assert.equal(Cls.prototype.setAddress, func);
             });
 
-            it("should allow a custom getter to call the generated getter", function()
+            it("should allow a custom getter to call the generated getter", function ()
             {
                 Cls = TopJs.define(null, {
                     config: {
@@ -249,7 +265,7 @@ describe("TopJs.Class", function ()
                 assert.equal(obj.getAge(), 37);
             });
 
-            it("should allow a custom setter to cal the generated setter", function()
+            it("should allow a custom setter to cal the generated setter", function ()
             {
                 Cls = TopJs.define(null, {
                     config: {
@@ -265,7 +281,7 @@ describe("TopJs.Class", function ()
                 obj.setAge(22);
                 assert.equal(obj.getAge(), 22);
             });
-            
+
             it("should not set the value if the applier returns undefined", function ()
             {
                 let called = false;
@@ -274,7 +290,7 @@ describe("TopJs.Class", function ()
                         name: "softboy"
                     },
                     constructor: defaultInitConfig,
-                    applyName (name) 
+                    applyName (name)
                     {
                         if (!called) {
                             called = true;
@@ -307,7 +323,8 @@ describe("TopJs.Class", function ()
                 obj.setAge(11);
                 assert.equal(count, 2);
             });
-            it("should check using === to see if the value changed", function(){
+            it("should check using === to see if the value changed", function ()
+            {
                 let count = 0;
                 Cls = TopJs.define(null, {
                     config: {
@@ -324,13 +341,14 @@ describe("TopJs.Class", function ()
                 assert.equal(count, 2);
             });
 
-            it("should allow define a config named `configurator`", function(){
+            it("should allow define a config named `configurator`", function ()
+            {
                 Cls = TopJs.define(null, {
                     config: {
                         configurator: 1
                     },
                     constructor: defaultInitConfig,
-                    applyConfigurator (v) 
+                    applyConfigurator (v)
                     {
                         return v + 2;
                     }
@@ -344,21 +362,25 @@ describe("TopJs.Class", function ()
             {
                 let applyCount;
                 let updateCount;
-                beforeEach(function(){
+                beforeEach(function ()
+                {
                     Cls = TopJs.define(null, {
                         config: {
                             foo: 1,
                             bar: 2
                         },
                         constructor: defaultInitConfig,
-                        updateFoo: function() {
+                        updateFoo: function ()
+                        {
                             this.getBar();
                         },
-                        applyBar: function(bar) {
+                        applyBar: function (bar)
+                        {
                             ++applyCount;
                             return bar;
                         },
-                        updateBar: function() {
+                        updateBar: function ()
+                        {
                             ++updateCount;
                         }
                     });
@@ -370,7 +392,7 @@ describe("TopJs.Class", function ()
                     assert.equal(applyCount, 1);
                     assert.equal(updateCount, 1);
                 });
-                it("should only call applier/updaters once for instance configs", function()
+                it("should only call applier/updaters once for instance configs", function ()
                 {
                     applyCount = updateCount = 0;
                     let obj = new Cls({
@@ -381,10 +403,12 @@ describe("TopJs.Class", function ()
                     assert.equal(updateCount, 1);
                 });
             });
-            describe("initialization", function()
+            describe("initialization", function ()
             {
-                describe("default values - no passed config", function() {
-                    describe("null", function() {
+                describe("default values - no passed config", function ()
+                {
+                    describe("null", function ()
+                    {
                         it("should not initialize with a custom setter", function ()
                         {
                             let count = 0;
@@ -441,7 +465,7 @@ describe("TopJs.Class", function ()
                         })
                     });
 
-                    describe("other values", function()
+                    describe("other values", function ()
                     {
                         it("should not call the setter", function ()
                         {
@@ -459,7 +483,7 @@ describe("TopJs.Class", function ()
                             assert.isTrue(called);
                         });
 
-                        it("should call the setter if this is an applier", function()
+                        it("should call the setter if this is an applier", function ()
                         {
                             let called = false;
                             Cls = TopJs.define(null, {
@@ -476,7 +500,7 @@ describe("TopJs.Class", function ()
                             assert.isTrue(called);
                         });
 
-                        it("should call the setter if this is an updater", function()
+                        it("should call the setter if this is an updater", function ()
                         {
                             let called = false;
                             Cls = TopJs.define(null, {
@@ -511,57 +535,60 @@ describe("TopJs.Class", function ()
                         });
                     });
                 });
-                
+
                 describe("dependencies", function ()
                 {
                     it("should force an initialization if the getter is called during init time for a primitive",
-                    function(){
-                        let secondVal;
-                        Cls = TopJs.define(null, {
-                            config: {
-                                first: undefined,
-                                second: undefined
-                            },
-                            constructor: defaultInitConfig,
-                            updateFirst ()
-                            {
-                                secondVal = this.getSecond();
-                            }
+                        function ()
+                        {
+                            let secondVal;
+                            Cls = TopJs.define(null, {
+                                config: {
+                                    first: undefined,
+                                    second: undefined
+                                },
+                                constructor: defaultInitConfig,
+                                updateFirst ()
+                                {
+                                    secondVal = this.getSecond();
+                                }
+                            });
+                            new Cls({
+                                first: 1,
+                                second: 2
+                            });
+                            assert.equal(secondVal, 2);
                         });
-                        new Cls({
-                            first: 1,
-                            second: 2
-                        });
-                        assert.equal(secondVal, 2);
-                    });
-                    
+
                     it("should have a non-config applied by the time any setter is called  with non-strict mode",
-                    function(){
-                        let secondVal;
-                        Cls = TopJs.define(null, {
-                            config: {
-                                first: undefined
-                            },
-                            constructor: defaultInitConfig,
-                            $_config_strict_$: false,
-                            applyFirst ()
-                            {
-                                secondVal = this.second;
-                            }
+                        function ()
+                        {
+                            let secondVal;
+                            Cls = TopJs.define(null, {
+                                config: {
+                                    first: undefined
+                                },
+                                constructor: defaultInitConfig,
+                                $_config_strict_$: false,
+                                applyFirst ()
+                                {
+                                    secondVal = this.second;
+                                }
+                            });
+                            new Cls({
+                                first: 1,
+                                second: 2
+                            });
+                            assert.equal(secondVal, 2);
                         });
-                        new Cls({
-                            first: 1,
-                            second: 2
-                        });
-                        assert.equal(secondVal, 2);
-                    });
                 });
             });
         });
-        
-        describe("get/setConfig", function()
+
+        describe("get/setConfig", function ()
         {
-            beforeEach(function() {
+            beforeEach(function ()
+            {
                 Cls = TopJs.define(null, {
                     config: {
                         foo: 1,
@@ -570,10 +597,12 @@ describe("TopJs.Class", function ()
                     constructor: defaultInitConfig
                 });
             });
-            
-            describe("dependency ordering", function(){
+
+            describe("dependency ordering", function ()
+            {
                 let order;
-                function declare_class ()
+
+                function declare_class()
                 {
                     order = [];
                     Cls = TopJs.define(null, {
@@ -599,7 +628,8 @@ describe("TopJs.Class", function ()
                         }
                     });
                 }
-                it("should initialize dependent config first", function()
+
+                it("should initialize dependent config first", function ()
                 {
                     declare_class();
                     let obj = new Cls();
@@ -621,23 +651,149 @@ describe("TopJs.Class", function ()
                     assert.deepEqual(order, ['a=1', 'b=2', 'c=3']);
                 });
             });
-            
-            describe("getConfig", function()
+
+            describe("getConfig", function ()
             {
-               it("should be able to get a config by name", function()
-               {
-                   let obj = new Cls();
-                   assert.equal(obj.getConfig('bar'), 2);
-               });
-               
-               it("should return all configs if no name is passed", function ()
-               {
-                   let obj = new Cls();
-                   assert.deepEqual(obj.getConfig(), {
-                       foo: 1,
-                       bar: 2
-                   });
-               });
+                it("should be able to get a config by name", function ()
+                {
+                    let obj = new Cls();
+                    assert.equal(obj.getConfig('bar'), 2);
+                });
+
+                it("should return all configs if no name is passed", function ()
+                {
+                    let obj = new Cls();
+                    assert.deepEqual(obj.getConfig(), {
+                        foo: 1,
+                        bar: 2
+                    });
+                });
+                it("should throw an exception when asking for config that doesn't exist", function ()
+                {
+                    let obj = new Cls();
+                    assert.throws(function ()
+                    {
+                        obj.getConfig('fake');
+                    }, Error);
+                });
+
+                describe("peek", function ()
+                {
+                    let called = false;
+                    beforeEach(function ()
+                    {
+                        Cls = TopJs.define(null, {
+                            constructor (config){
+                                this.initConfig(config);
+                            },
+                            config: {
+                                foo: {
+                                    lazy: true,
+                                    $_value_$: 120
+                                }
+                            },
+
+                            getFoo ()
+                            {
+                                called = true;
+                            }
+                        });
+                    });
+                    afterEach(function ()
+                    {
+                        called = false;
+                    });
+                    it("should not call the getter if initGetter has not yet been called", function ()
+                    {
+                        let obj = new Cls({
+                            foo: 1
+                        });
+                        obj.getConfig('foo', true);
+                        assert.isFalse(called);
+                    });
+
+                    it("should return the pending value configured on this instance", function ()
+                    {
+                        let obj = new Cls({
+                            foo: 1
+                        });
+                        assert.equal(obj.getConfig('foo', true), 1);
+                    });
+
+                    it("should return the pending value configured on the class", function ()
+                    {
+                        let obj = new Cls();
+                        assert.equal(obj.getConfig('foo', true), 120);
+                    });
+
+                });
+            });
+
+            describe("setConfig", function ()
+            {
+                it("should be able to set a config by name", function ()
+                {
+                    let obj = new Cls();
+                    obj.setConfig('foo', 7);
+                    assert.equal(obj.getFoo(), 7);
+                });
+                
+                it("should be able to set a group of configs at once", function ()
+                {
+                    let obj = new Cls();
+                    obj.setConfig({
+                        foo: 6,
+                        bar: 8
+                    });
+                    assert.equal(obj.getFoo(), 6);
+                    assert.equal(obj.getBar(), 8);
+                });
+                
+                it("should call the setter for non-config property if one exits and $_config_strict_$ is false", function ()
+                {
+                    let arg;
+                    Cls = TopJs.define(null, {
+                       $_config_strict_$: false,
+                        constructor: defaultInitConfig,
+                        setBaz (value)
+                        {
+                            arg = value;
+                        }
+                    });
+                    let obj = new Cls();
+                    obj.setConfig({
+                        baz: 100
+                    });
+                    assert.equal(arg, 100);
+                });
+                
+                it("should set non-config properties on the instance when the strict option is false " +
+                    "and $_config_strict_$ is false", function ()
+                {
+                    Cls = TopJs.define(null, {
+                        $_config_strict_$: false,
+                        constructor: defaultInitConfig
+                    });
+                    let obj = new Cls();
+                    obj.setConfig('baz', 100, {
+                        strict: false
+                    });
+                    assert.equal(obj.baz, 100);
+                });
+                
+                it("should be able to handle undefined/null configs", function(){
+                    let obj = new Cls();
+                    assert.doesNotThrow(function(){
+                        obj.setConfig(null);
+                        obj.setConfig(undefined);
+                    });
+                });
+                
+                it("should return the current instance", function()
+                {
+                    let obj = new Cls();
+                    assert.equal(obj.setConfig(), obj);
+                });
             });
         });
     });
