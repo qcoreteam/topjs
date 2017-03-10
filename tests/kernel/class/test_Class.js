@@ -559,6 +559,70 @@ describe("TopJs.Class", function ()
             });
         });
         
-        
+        describe("get/setConfig", function()
+        {
+            beforeEach(function() {
+                Cls = TopJs.define(null, {
+                    config: {
+                        foo: 1,
+                        bar: 2
+                    },
+                    constructor: defaultInitConfig
+                });
+            });
+            
+            describe("dependency ordering", function(){
+                let order;
+                function declare_class ()
+                {
+                    order = [];
+                    Cls = TopJs.define(null, {
+                        config: {
+                            b: 'bbb',
+                            c: 'ccc',
+                            a: 'aaa'
+                        },
+                        constructor: defaultInitConfig,
+                        applyA (value)
+                        {
+                            order.push('a=' + value);
+                        },
+                        applyB (value)
+                        {
+                            this.getA();
+                            order.push('b=' + value);
+                        },
+                        applyC (value)
+                        {
+                            this.getB();
+                            order.push('c=' + value);
+                        }
+                    });
+                }
+                it("should initialize dependent config first", function()
+                {
+                    declare_class();
+                    let obj = new Cls();
+                    assert.deepEqual(order, ['a=aaa', 'b=bbb', 'c=ccc']);
+                });
+                it("should update configs in dependency order", function ()
+                {
+                    declare_class();
+                    let obj = new Cls();
+                    order = [];
+                    // Because the objects tend to be enumerated in order of keys
+                    // declared, we deliberately put these *not* in the order that
+                    // we expect them to be processed.
+                    obj.setConfig({
+                        a: 1,
+                        c: 3,
+                        b: 2
+                    });
+                    assert.deepEqual(order, ['a=1', 'b=2', 'c=3']);
+                });
+            });
+            
+            
+        });
     });
 });
