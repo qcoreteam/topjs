@@ -1,4 +1,4 @@
-/*
+/**
  * TopJs Framework (http://www.topjs.org/)
  *
  * @link      http://github.com/qcoreteam/topjs for the canonical source repository
@@ -112,12 +112,12 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      * ```javascript
      *
      * TopJs.define("MyClass", {
-       *    nothing: TopJs.emptyFnm
-       *    
-       *    privates: {
-       *       privateNothing: TopJs.privateFn
-       *    }
-       * })
+     *    nothing: TopJs.emptyFnm
+     *    
+     *    privates: {
+     *       privateNothing: TopJs.privateFn
+     *    }
+     * })
      *
      * ```
      *
@@ -382,12 +382,12 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      * let controller = new TopJs.Controller({ ... });
      *
      * TopJs.override(controller, {
-         *    forwardRequest: function()
-         *    {
-         *       //一些语句
-         *       this.callParent();
-         *    }
-         * });
+     *    forwardRequest: function()
+     *    {
+     *       //一些语句
+     *       this.callParent();
+     *    }
+     * });
      *
      * ```
      *

@@ -233,7 +233,8 @@ describe("TopJs.Class", function ()
                 assert.equal(Cls.prototype.setAddress, func);
             });
             
-            it("should allow a custom getter to call the generated getter", function() {
+            it("should allow a custom getter to call the generated getter", function()
+            {
                 Cls = TopJs.define(null, {
                     config: {
                         age: 27
@@ -246,6 +247,23 @@ describe("TopJs.Class", function ()
                 });
                 let obj = new Cls();
                 assert.equal(obj.getAge(), 37);
+            });
+            
+            it("should allow a custom setter to cal the generated setter", function()
+            {
+                Cls = TopJs.define(null, {
+                    config: {
+                        age: 12
+                    },
+                    constructor: defaultInitConfig,
+                    setAge (age)
+                    {
+                        return this.callParent(age);
+                    }
+                });
+                let obj = new Cls();
+                obj.setAge(22);
+                assert.equal(obj.getAge(), 22);
             });
         });
     });

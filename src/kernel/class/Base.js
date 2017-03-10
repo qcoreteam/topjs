@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
-let noArgs;
+
 let baseStaticMembers = [];
 let proxySetter = TopJs.Function.proxySetter;
 
@@ -689,6 +689,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
 
     /**
      * 重载这个类的方法，被重载的方法可以通过 {@link TopJs.Base.callParent}进行调用
+     * 
      * ```javascript
      *
      * TopJs.define('My.Cat', {
@@ -710,7 +711,9 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * // console "Meeeeoooowwww"
      *
      * ```
+     * 
      * 我们一般很少直接使用这个方法，我们一般通过{@link TopJs.define}方法进行使用，例如：
+     * 
      * ```javascript
      *
      * TopJs.define('My.CatOverride', {
@@ -1250,13 +1253,14 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * from the current method, for example: `this.callParent(arguments)`
      * @return {Object} Returns the result of calling the parent method
      */
-    callParent (args)
+    callParent ()
     {
         // NOTE: this code is deliberately as few expressions (and no function calls)
         // as possible so that a debugger can skip over this noise with the minimum number
         // of steps. Basically, just hit Step Into until you are where you really wanted
         // to be.
         let method;
+        let args = Array.from(arguments);
         let superMethod = (method = this.callParent.caller) && (method.$_previous_$ ||
             ((method = method.$_owner_$ ? method : method.caller) &&
             method.$_owner_$.superClass[method.$_name_$]));
@@ -1279,7 +1283,7 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
             }
         }
         //</debug>
-        return superMethod.apply(this, args || noArgs);
+        return superMethod.call(this, ...args);
     },
 
     /**
@@ -1338,13 +1342,14 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * from the current method, for example: `this.callSuper(arguments)`
      * @returan {Object} Returns the result of calling the superclass method
      */
-    callSuper (args)
+    callSuper ()
     {
         // NOTE: this code is deliberately as few expressions (and no function calls)
         // as possible so that a debugger can skip over this noise with the minimum number
         // of steps. Basically, just hit Step Into until you are where you really wanted
         // to be.
         let method;
+        let args = Array.from(arguments);
         let superMethod = (method = this.callSuper.caller) &&
             ((method = method.$_owner_$ ? method : method.caller) &&
             method.$_owner_$.super_class_$[method.$_name_$]);
@@ -1355,19 +1360,20 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
             let methodName;
             if (!method.$_owner_$) {
                 if (!method.caller) {
-                    throw new Error("Attempting to call a protected method from the public scope, which is not allowed");
+                    throw new Error("Attempting to call a protected method from the public scope, " +
+                        "which is not allowed");
                 }
                 method = method.caller;
             }
             parentClass = method.$_owner_$.superclass;
             methodName = method.$_name_$;
             if (!(methodName in parentClass)) {
-                throw new Error("this.callSuper() was called but there's no such method (" + methodName +
-                    ") found in the parent class (" + (TopJs.getClassName(parentClass) || 'Object') + ")");
+                throw new Error("this.callSuper() was called but there's no such method (" + methodName +") " +
+                    "found in the parent class (" + (TopJs.getClassName(parentClass) || 'Object') + ")");
             }
         }
         //</debug>
-        return superMethod.apply(this, args || noArgs);
+        return superMethod.call(this, ...args);
     },
 
     //<feature classSystem.config>
