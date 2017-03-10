@@ -54,6 +54,7 @@ TopJs.Config = function (name)
         set: 'set' + capitalizedName,
         initGet: 'initGet' + capitalizedName
     };
+    this.root = this;
 };
 
 TopJs.apply(TopJs.Config.prototype, /** @lends TopJs.Config.prototype */{
@@ -100,13 +101,6 @@ TopJs.apply(TopJs.Config.prototype, /** @lends TopJs.Config.prototype */{
      * @private
      */
     isConfig: true,
-});
-
-TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
-    /**
-     * @private
-     */
-    map: {},
 
     /**
      * @property {Boolean} [cached=false]
@@ -123,21 +117,31 @@ TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
      * @private
      */
     lazy: false,
-    
+
     /**
-     * Get the config object by name, if not exist, create a new one.
-     *
-     * @param {String} name
+     * This function if supplied will be called as classes or instances provide values
+     * that need to be combined with inherited values. The function should return the
+     * value that will be the config value. Further calls may receive such returned
+     * values as `oldValue`.
+     * 
+     * @property {Function} [merge]
+     * @property {Object} merge.newValue The new value to merge with the old.
+     * @property {Object} merge.oldValue The current value prior to `newValue` being merged.
+     * @property {Object} merge.target The class or instance to which the merged config value
+     * will be applied.
+     * @property {TopJs.Class} merge.mixinClass The mixin providing the `newValue` or `null` if
+     * the `newValue` is not being provided by a mixin.
      */
-    get (name)
-    {
-        let map = TopJs.Config.map;
-        return map[name] || (map[name] = new TopJs.Config());
-    },
+    merge: null,
 
     getGetter ()
     {
         return this.getter || (this.root.getter = this.makeGetter());
+    },
+    
+    getSetter ()
+    {
+        return this.setter || (this.root.setter = this.makeSetter());
     },
 
     getInitGetter ()
@@ -193,7 +197,7 @@ TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
      * @return {Object}
      * @private
      */
-    mergeSets (newValue, oldValue, preserveExisting = false) 
+    mergeSets (newValue, oldValue, preserveExisting = false)
     {
         let ret = oldValue ? TopJs.Object.chain(oldValue) : {};
         let val;
@@ -218,17 +222,17 @@ TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
         }
         return ret;
     },
-    
-    makeGetter () 
+
+    makeGetter ()
     {
         let name = this.name;
         let prefixedName = this.names.internal;
-        return function () 
+        return function ()
         {
             let internalName = this.$_config_prefixed_$ ? prefixedName : name;
         };
     },
-    
+
     makeInitGetter ()
     {
         let name = this.name;
@@ -246,7 +250,7 @@ TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
             return this[getName].apply(this, arguments);
         };
     },
-    
+
     makeSetter ()
     {
         let name = this.name;
@@ -257,7 +261,7 @@ TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
         let updateName = names.update;
         // http://jsperf.com/method-call-apply-or-direct
         // http://jsperf.com/method-detect-invoke
-        let setter = function (value) 
+        let setter = function (value)
         {
             let internalName = this.$_config_prefixed_$ ? prefixedName : name;
             let oldValue = this[internalName];
@@ -277,5 +281,23 @@ TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
         };
         setter.$_is_default_$ = true;
         return setter;
+    }
+});
+
+TopJs.apply(TopJs.Config, /** @lends TopJs.Config */{
+    /**
+     * @private
+     */
+    map: {},
+    
+    /**
+     * Get the config object by name, if not exist, create a new one.
+     *
+     * @param {String} name
+     */
+    get (name)
+    {
+        let map = TopJs.Config.map;
+        return map[name] || (map[name] = new TopJs.Config(name));
     }
 });

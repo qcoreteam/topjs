@@ -15,6 +15,7 @@ let TopJsObject = TopJs.Object;
  * @class Ext.Configurator
  * @constructor
  * @classdesc
+ *
  * This class manages the config properties for a class.
  */
 TopJs.Configurator = function (cls)
@@ -241,6 +242,7 @@ TopJs.Configurator.prototype = {
                 // a "config" (obscure case certainly).
                 //
                 names = cfg.names;
+                let s;
                 if (!prototype[s = names.get]) {
                     prototype[s] = cfg.getter || cfg.getGetter();
                 }
@@ -535,7 +537,7 @@ TopJs.Configurator.prototype = {
         // Expose the value from the prototype chain (false):
         delete instance.isConfiguring;
     },
-    
+
     getCurrentConfig (instance)
     {
         let defaultConfig = instance.defaultConfig;
@@ -576,7 +578,7 @@ TopJs.Configurator.prototype = {
         }
         return baseConfig;
     },
-    
+
     reconfigure (instance, instanceConfig, options)
     {
         let currentConfig = instance.config;

@@ -5,7 +5,8 @@
   ],
   "plugins": [
     "transform-class-properties",
-    "transform-runtime"
+    "transform-runtime",
+    "transform-remove-strict-mode"
   ],
   "sourceMaps": true
 }

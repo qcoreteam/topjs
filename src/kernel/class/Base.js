@@ -5,10 +5,10 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
-
 let noArgs;
 let baseStaticMembers = [];
 let proxySetter = TopJs.Function.proxySetter;
+
 function get_config(name, peek)
 {
     let ret;
@@ -147,13 +147,15 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
     /**
      * 创建当前类的一个实例
      * ```javascript
+     * 
      *  TopJs.define('My.cool.Class', {
-         *     ...
-         *  });
+     *      ...
+     *  });
      *
      *  My.cool.Class.create({
-         *     someConfig: true
-         *  });
+     *      someConfig: true
+     *  });
+     *  
      * ```
      * 所有的参数都传递给类的构造函数
      * @inheritable
@@ -211,14 +213,14 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
                         member = names[oldName];
                         fn = null;
                         if (!member) {
-                            /*
+                            /**
                              * Something like:
                              *
-                             *      '5.1': {
-                             *          methods: {
-                             *              removedMethod: null
-                             *          }
+                             *  '5.1': {
+                             *      methods: {
+                             *          removedMethod: null
                              *      }
+                             *  }
                              *
                              * Since there is no recovering the method, we always put
                              * on a shim to catch abuse.
@@ -229,14 +231,14 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
                             fn = make_deprecated_method(displayName + oldName);
                             //</debug>
                         } else if (TopJs.isString(member)) {
-                            /*
+                            /**
                              * Something like:
                              *
-                             *      '5.1': {
-                             *          methods: {
-                             *              oldName: 'newName'
-                             *          }
+                             *  '5.1': {
+                             *      methods: {
+                             *          oldName: 'newName'
                              *      }
+                             *  }
                              *
                              * If this block is enabled, we just put an alias in place.
                              * Otherwise we need to inject a
@@ -256,35 +258,35 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
                             }
                             //</debug>
                         } else {
-                            /*
+                            /**
                              * Something like:
                              *
-                             *      '5.1': {
-                             *          methods: {
-                             *              foo: function () { ... }
-                             *          }
+                             *  '5.1': {
+                             *      methods: {
+                             *          foo: function () { ... }
                              *      }
+                             *  }
                              *
                              * Or this:
                              *
-                             *      '5.1': {
-                             *          methods: {
-                             *              foo: {
-                             *                  fn: function () { ... },
-                             *                  message: 'Please use "bar" instead.'
-                             *              }
+                             *  '5.1': {
+                             *      methods: {
+                             *          foo: {
+                             *              fn: function () { ... },
+                             *              message: 'Please use "bar" instead.'
                              *          }
                              *      }
+                             *  }
                              *
                              * Or just this:
                              *
-                             *      '5.1': {
-                             *          methods: {
-                             *              foo: {
-                             *                  message: 'Use something else instead.'
-                             *              }
+                             *  '5.1': {
+                             *      methods: {
+                             *          foo: {
+                             *              message: 'Use something else instead.'
                              *          }
                              *      }
+                             *  }
                              *
                              * If this block is enabled, and "foo" is an existing
                              * method, than we apply the given method as an override.
@@ -454,12 +456,12 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * 增加或者覆盖当前类
      * ```javascript
      * TopJs.define('SomeSystem.CoolCls', {
-     *      ...
+     *     ...
      * });
      * SomeSystem.CoolCls.addStatics({
-     *      someProperty: 'someValue',      // SomeSystem.CoolCls.someProperty = 'someValue'
-     *      method1: function() { ... },    // SomeSystem.CoolCls.method1 = function() { ... };
-     *      method2: function() { ... }     // SomeSystem.CoolCls.method2 = function() { ... };
+     *     someProperty: 'someValue',      // SomeSystem.CoolCls.someProperty = 'someValue'
+     *     method1: function() { ... },    // SomeSystem.CoolCls.method1 = function() { ... };
+     *     method2: function() { ... }     // SomeSystem.CoolCls.method2 = function() { ... };
      * });
      * ```
      *
@@ -517,13 +519,13 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * ```javascript
      * TopJs.define('My.awesome.Cat', {
      *    constructor: function() {
-     *       ...
+     *      ...
      *    }
      * });
      *
      * My.awesome.Cat.addMembers({
      *   meow: function() {
-     *      console.log('Meowww...');
+     *       console.log('Meowww...');
      *   }
      * });
      *
@@ -623,7 +625,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
         }
         return this;
     },
-    
+
     /**
      * @private
      * @inheritable
@@ -642,7 +644,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * 将其他的类的属性和方法添加到当前类的原型里面
      *
      * ```javascript
-     * 
+     *
      * TopJs.define('Bank', {  
      *     money: '$$$',
      *     printMoney: function() {
@@ -651,7 +653,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      * });
      *
      * TopJs.define('Thief', {
-     *    ...
+     *     ...
      * });
      *
      * Thief.borrow(Bank, ['money', 'printMoney']);
@@ -660,7 +662,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      *
      * console.log(steve.money); // console.logs '$$$'
      * steve.printMoney(); // console.logs '$$$$$$$'
-     * 
+     *
      * ```
      * @inheritable
      * @private
@@ -688,29 +690,29 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
     /**
      * 重载这个类的方法，被重载的方法可以通过 {@link TopJs.Base.callParent}进行调用
      * ```javascript
-     * 
+     *
      * TopJs.define('My.Cat', {
-     *    constructor: function() {
-     *       console.log("I'm a cat!");
-     *    }
+     *     constructor: function() {
+     *         console.log("I'm a cat!");
+     *     }
      * });
      *
      * My.Cat.override({
-     *    constructor: function() {
-     *       console.log("I'm going to be a cat!");
-     *       this.callParent(arguments);
-     *       console.log("Meeeeoooowwww");
-     *    }
+     *     constructor: function() {
+     *         console.log("I'm going to be a cat!");
+     *         this.callParent(arguments);
+     *          console.log("Meeeeoooowwww");
+     *     }
      * });
      * let kitty = new My.Cat();
      * // console "I'm going to be a cat!"
      * // console "I'm a cat!"
      * // console "Meeeeoooowwww"
-     * 
+     *
      * ```
      * 我们一般很少直接使用这个方法，我们一般通过{@link TopJs.define}方法进行使用，例如：
      * ```javascript
-     * 
+     *
      * TopJs.define('My.CatOverride', {
      *    override: 'My.Cat',
      *    constructor: function() {
@@ -719,7 +721,7 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
      *       console.log("Meeeeoooowwww");
      *    }
      * });
-     * 
+     *
      * ```
      * @inheritable
      * @param {Object} members 将要重载的方法列表
@@ -757,35 +759,6 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
             this.mixin(mixins);
         }
         return this;
-    },
-
-    /**
-     * @protected
-     * @static
-     * @inheritable
-     */
-    callParent (args)
-    {
-        let method;
-        // This code is intentionally inlined for the least amount of debugger stepping
-        return (method = this.callParent.caller) && (method.$_previous_$ ||
-            ((method = method.$owner ? method : method.caller) &&
-            method.$_owner_$.superclass.self[method.$_name_$])).apply(this, args || noArgs);
-    },
-
-    /**
-     * @protected
-     * @static
-     * @inheritable
-     */
-    callSuper (args)
-    {
-        let method;
-
-        // This code is intentionally inlined for the least amount of debugger stepping
-        return (method = this.callSuper.caller) &&
-            ((method = method.$_owner_ ? method : method.caller) &&
-            method.$_owner_$.superclass.self[method.$_name_$]).apply(this, args || noArgs);
     },
 
     //<feature classSystem.mixins>
@@ -918,23 +891,23 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
     //</feature>
     /**
      * Get the current class' name in string format.
-     * 
-     * ```javascript
-     * 
-     *     TopJs.define('My.cool.Class', {
-     *         constructor: function() {
-     *             console.log(this.self.getName()); // console 'My.cool.Class'
-     *         }
-     *     });
      *
-     *     My.cool.Class.getName(); // 'My.cool.Class'
+     * ```javascript
+     *
+     * TopJs.define('My.cool.Class', {
+     *     constructor: function() {
+     *         console.log(this.self.getName()); // console 'My.cool.Class'
+     *     }
+     * });
+     *
+     * My.cool.Class.getName(); // 'My.cool.Class'
      * ```
-     * 
+     *
      * @return {String} className
      * @static
      * @inheritable
      */
-    getName () 
+    getName ()
     {
         return TopJs.getClassName(this);
     },
@@ -942,22 +915,22 @@ TopJs.apply(Base, /** @lends TopJs.Base */{
     /**
      * Create aliases for existing prototype methods. Example:
      * ```javascript
-     * 
-     *     TopJs.define('My.cool.Class', {
-     *         method1: function() { ... },
-     *         method2: function() { ... }
-     *     });
      *
-     *     let test = new My.cool.Class();
+     * TopJs.define('My.cool.Class', {
+     *     method1: function() { ... },
+     *     method2: function() { ... }
+     * });
      *
-     *     My.cool.Class.createAlias({
-     *         method3: 'method1',
-     *         method4: 'method2'
-     *     });
-     *     test.method3(); // test.method1()
-     *     My.cool.Class.createAlias('method5', 'method3');
-     *     test.method5(); // test.method3() -> test.method1()
-     *     
+     * let test = new My.cool.Class();
+     *
+     * My.cool.Class.createAlias({
+     *     method3: 'method1',
+     *     method4: 'method2'
+     * });
+     * test.method3(); // test.method1()
+     * My.cool.Class.createAlias('method5', 'method3');
+     * test.method5(); // test.method3() -> test.method1()
+     *
      * ```
      * @param {String|Object} alias The new method name, or an object to set multiple aliases. See
      * {@link TopJs.Function#proxySetter proxySetter}
@@ -1075,24 +1048,24 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * for a detailed comparison
      *
      * ```javascript
-     * 
+     *
      * TopJs.define('MyClass', {
-     *  statics: {
-     *      speciesName: 'ClassName' // MyClass.Cat.speciesName = 'ClassName'
-     *  },
-     *  constructor: function()
-     *  {
-     *      console.log(this.self.speciesName); // dependent on this
-     *  },
+     *    statics: {
+     *        speciesName: 'ClassName' // MyClass.Cat.speciesName = 'ClassName'
+     *    },
+     *    constructor: function()
+     *    {
+     *        console.log(this.self.speciesName); // dependent on this
+     *    },
      *  
-     *  clone: function()
-     *  {
-     *      return new this.self();
-     *  }
+     *    clone: function()
+     *    {
+     *        return new this.self();
+     *    }
      * });
      *
      * TopJs.define('MyExtendClass', {
-     *     extend: 'MyClass',
+     * extend: 'MyClass',
      *     statics: {
      *         speciesName: 'TopJsendClassName' // MyExtendClass.MyClass.speciesName = 'TopJsendClassName'
      *     }
@@ -1121,57 +1094,57 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * `this` points to during run-time
      *
      * ```javascript
-     * 
-     *     TopJs.define('My.Cat', {
-     *         statics: {
-     *             totalCreated: 0,
-     *             speciesName: 'Cat' // My.Cat.speciesName = 'Cat'
-     *         },
      *
-     *         constructor: function() {
-     *             var statics = this.statics();
+     * TopJs.define('My.Cat', {
+     *     statics: {
+     *         totalCreated: 0,
+     *         speciesName: 'Cat' // My.Cat.speciesName = 'Cat'
+     *     },
      *
-     *             console.log(statics.speciesName);     // always equals to 'Cat' no matter what 'this' refers to
-     *                                             // equivalent to: My.Cat.speciesName
+     *     constructor: function() {
+     *         var statics = this.statics();
      *
-     *             console.log(this.self.speciesName);   // dependent on 'this'
+     *         console.log(statics.speciesName);     // always equals to 'Cat' no matter what 'this' refers to
+     *                                         // equivalent to: My.Cat.speciesName
      *
-     *             statics.totalCreated++;
-     *         },
+     *         console.log(this.self.speciesName);   // dependent on 'this'
      *
-     *         clone: function() {
-     *             var cloned = new this.self();   // dependent on 'this'
+     *         statics.totalCreated++;
+     *     },
      *
-     *             cloned.groupName = this.statics().speciesName;   // equivalent to: My.Cat.speciesName
+     *     clone: function() {
+     *         var cloned = new this.self();   // dependent on 'this'
      *
-     *             return cloned;
-     *         }
-     *     });
+     *         cloned.groupName = this.statics().speciesName;   // equivalent to: My.Cat.speciesName
+     *
+     *         return cloned;
+     *     }
+     * });
      *
      *
-     *     TopJs.define('My.SnowLeopard', {
-     *         extend: 'My.Cat',
+     * TopJs.define('My.SnowLeopard', {
+     *     extend: 'My.Cat',
      *
-     *         statics: {
-     *             speciesName: 'Snow Leopard'     // My.SnowLeopard.speciesName = 'Snow Leopard'
-     *         },
+     *     statics: {
+     *         speciesName: 'Snow Leopard'     // My.SnowLeopard.speciesName = 'Snow Leopard'
+     *     },
      *
-     *         constructor: function() {
-     *             this.callParent();
-     *         }
-     *     });
+     *     constructor: function() {
+     *         this.callParent();
+     *     }
+     * });
      *
-     *     var cat = new My.Cat();                 // console.logs 'Cat', then console.logs 'Cat'
+     * var cat = new My.Cat();                 // console.logs 'Cat', then console.logs 'Cat'
      *
-     *     var snowLeopard = new My.SnowLeopard(); // console.logs 'Cat', then console.logs 'Snow Leopard'
+     * var snowLeopard = new My.SnowLeopard(); // console.logs 'Cat', then console.logs 'Snow Leopard'
      *
-     *     var clone = snowLeopard.clone();
-     *     console.log(TopJs.getClassName(clone));         // console.logs 'My.SnowLeopard'
-     *     console.log(clone.groupName);                 // console.logs 'Cat'
+     * var clone = snowLeopard.clone();
+     * console.log(TopJs.getClassName(clone));         // console.logs 'My.SnowLeopard'
+     * console.log(clone.groupName);                 // console.logs 'Cat'
      *
-     *     console.log(My.Cat.totalCreated);             // console.logs 3
+     * console.log(My.Cat.totalCreated);             // console.logs 3
      * ```
-     * 
+     *
      * @protected
      * @return {TopJs.Class}
      */
@@ -1189,84 +1162,84 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * Call the "parent" method of the current method. That is the method previously
      * overridden by derivation or by an override (see {@link TopJs#define}).
      *
-     * ```javascript 
-     * 
-     *      TopJs.define('My.Base', {
-     *          constructor: function (x) {
-     *              this.x = x;
-     *          },
-     *
-     *          statics: {
-     *              method: function (x) {
-     *                  return x;
-     *              }
-     *          }
-     *      });
-     *
-     *      TopJs.define('My.Derived', {
-     *          extend: 'My.Base',
-     *
-     *          constructor: function () {
-     *              this.callParent([21]);
-     *          }
-     *      });
-     *
-     *      var obj = new My.Derived();
-     *
-     *      console.log(obj.x);  // console.logs 21
-     * ```
-     * 
-     * This can be used with an override as follows:
-     * 
      * ```javascript
-     * 
-     *      TopJs.define('My.DerivedOverride', {
-     *          override: 'My.Derived',
      *
-     *          constructor: function (x) {
-     *              this.callParent([x*2]); // calls original My.Derived constructor
+     *  TopJs.define('My.Base', {
+     *      constructor: function (x) {
+     *          this.x = x;
+     *      },
+     *
+     *      statics: {
+     *          method: function (x) {
+     *              return x;
      *          }
-     *      });
+     *      }
+     *  });
      *
-     *      var obj = new My.Derived();
+     *  TopJs.define('My.Derived', {
+     *      extend: 'My.Base',
      *
-     *      console.log(obj.x);  // now console.logs 42
+     *      constructor: function () {
+     *          this.callParent([21]);
+     *      }
+     *  });
+     *
+     *  var obj = new My.Derived();
+     *
+     *  console.log(obj.x);  // console.logs 21
      * ```
-     * 
+     *
+     * This can be used with an override as follows:
+     *
+     * ```javascript
+     *
+     *  TopJs.define('My.DerivedOverride', {
+     *      override: 'My.Derived',
+     *
+     *      constructor: function (x) {
+     *          this.callParent([x*2]); // calls original My.Derived constructor
+     *      }
+     *  });
+     *
+     *  var obj = new My.Derived();
+     *
+     *  console.log(obj.x);  // now console.logs 42
+     * ```
+     *
      * This also works with static and private methods.
      * ```javascript
-     * 
-     *      TopJs.define('My.Derived2', {
-     *          extend: 'My.Base',
      *
-     *          // privates: {
-     *          statics: {
-     *              method: function (x) {
-     *                  return this.callParent([x*2]); // calls My.Base.method
-     *              }
+     *  TopJs.define('My.Derived2', {
+     *      extend: 'My.Base',
+     *
+     *      // privates: {
+     *      statics: {
+     *          method: function (x) {
+     *              return this.callParent([x*2]); // calls My.Base.method
      *          }
-     *      });
+     *      }
+     *  });
      *
-     *      console.log(My.Base.method(10));     // console.logs 10
-     *      console.log(My.Derived2.method(10)); // console.logs 20
+     *  console.log(My.Base.method(10));     // console.logs 10
+     *  console.log(My.Derived2.method(10)); // console.logs 20
      * ```
      * 
      * Lastly, it also works with overridden static methods.
      *
      * ```javascript 
      * 
-     *      TopJs.define('My.Derived2Override', {
-     *          override: 'My.Derived2',
+     *  TopJs.define('My.Derived2Override', {
+     *      override: 'My.Derived2',
      *
-     *          // privates: {
-     *          statics: {
-     *              method: function (x) {
-     *                  return this.callParent([x*2]); // calls My.Derived2.method
-     *              }
+     *      // privates: {
+     *      statics: {
+     *          method: function (x) {
+     *              return this.callParent([x*2]); // calls My.Derived2.method
      *          }
-     *      });
+     *      }
+     *  });
      *
-     *      console.log(My.Derived2.method(10); // now console.logs 40
+     *  console.log(My.Derived2.method(10); // now console.logs 40
      * ```
      * 
      * To override a method and replace it and also call the superclass method, use
@@ -1316,42 +1289,42 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      *
      * Consider:
      * ```javascript
-     * 
-     *      TopJs.define('TopJs.some.Class', {
-     *          method: function () {
-     *              console.log('Good');
-     *          }
-     *      });
      *
-     *      TopJs.define('TopJs.some.DerivedClass', {
-     *          extend: 'TopJs.some.Class',
-     *          
-     *          method: function () {
-     *              console.log('Bad');
+     *  TopJs.define('TopJs.some.Class', {
+     *      method: function () {
+     *          console.log('Good');
+     *      }
+     *  });
+     *
+     *  TopJs.define('TopJs.some.DerivedClass', {
+     *      extend: 'TopJs.some.Class',
+     *      
+     *      method: function () {
+     *          console.log('Bad');
      * 
-     *              // ... logic but with a bug ...
-     *              
-     *              this.callParent();
-     *          }
-     *      });
+     *          // ... logic but with a bug ...
+     *          
+     *          this.callParent();
+     *      }
+     *  });
      * ```
      *
      * To patch the bug in `TopJs.some.DerivedClass.method`, the typical solution is to create an
      * override:
-     * 
-     *  ```javascript
-     *  
-     *      TopJs.define('App.patches.DerivedClass', {
-     *          override: 'TopJs.some.DerivedClass',
-     *          
-     *          method: function () {
-     *              console.log('Fixed');
-     * 
-     *              // ... logic but with bug fixed ...
      *
-     *              this.callSuper();
-     *          }
-     *      });
+     *  ```javascript
+     *
+     *  TopJs.define('App.patches.DerivedClass', {
+     *      override: 'TopJs.some.DerivedClass',
+     *      
+     *      method: function () {
+     *          console.log('Fixed');
+     * 
+     *          // ... logic but with bug fixed ...
+     *
+     *          this.callSuper();
+     *      }
+     *  });
      * ```
      *
      * The patch method cannot use {@link #method-callParent} to call the superclass
@@ -1401,25 +1374,25 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
     /**
      * Initialize configuration for this class. a typical example:
      * ```javascript
-     * 
-     *     TopJs.define('My.awesome.Class', {
-     *         // The default config
-     *         config: {
-     *             name: 'Awesome',
-     *             isAwesome: true
-     *         },
      *
-     *         constructor: function(config) {
-     *             this.initConfig(config);
-     *         }
-     *     });
+     * TopJs.define('My.awesome.Class', {
+     *     // The default config
+     *     config: {
+     *         name: 'Awesome',
+     *         isAwesome: true
+     *     },
      *
-     *     let awesome = new My.awesome.Class({
-     *         name: 'Super Awesome'
-     *     });
+     *     constructor: function(config) {
+     *         this.initConfig(config);
+     *     }
+     * });
      *
-     *     console.log(awesome.getName()); // 'Super Awesome'
-     *     
+     * let awesome = new My.awesome.Class({
+     *     name: 'Super Awesome'
+     * });
+     *
+     * console.log(awesome.getName()); // 'Super Awesome'
+     *
      *  ```
      * @protected
      * @param {Object} instanceConfig
@@ -1453,7 +1426,7 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * @param {Object} [value] The value to set for the name parameter.
      * @return {TopJs.Base} this
      */
-    setConfig (name, value, /* private */ options)
+    setConfig (name, value, /** private */ options)
     {
         // options can have the following properties:
         // - defaults `true` to only set the config(s) that have not been already set on
@@ -1496,28 +1469,28 @@ Base.addMembers(/** @lends TopJs.Base.prototype */{
      * instantiating this class.
      *
      * Given this example TopJs.button.Button definition and instance:
-     * ```javascript 
-     * 
-     *     TopJs.define('Class', {
-     *         extend: 'ParentClass',
-     *         xtype: 'myclasstype',
-     *         name: 'myname',
-     *         age: 12
-     *     });
+     * ```javascript
      *
-     *     var obj = TopJs.create({
-     *         xtype: 'myclasstype',
-     *         address: 'my address',
-     *         text: 'hello world'
-     *     });
+     * TopJs.define('Class', {
+     *     extend: 'ParentClass',
+     *     xtype: 'myclasstype',
+     *     name: 'myname',
+     *     age: 12
+     * });
+     *
+     * var obj = TopJs.create({
+     *     xtype: 'myclasstype',
+     *     address: 'my address',
+     *     text: 'hello world'
+     * });
      * ```
      *
      * Calling `obj.getInitialConfig()` would return an object including the config
      * options passed to the `create` method:
      *
-     *     xtype: 'myclasstype',
-     *     address: 'my address',
-     *     text: 'hello world'
+     * xtype: 'myclasstype',
+     * address: 'my address',
+     * text: 'hello world'
      *
      * Calling `obj.getInitialConfig('address')`returns **'my address'**.
      *

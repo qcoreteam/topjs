@@ -195,10 +195,57 @@ describe("TopJs.Class", function ()
             {
                 Cls = TopJs.define(null, {
                     config: {
-                        someName: 'someValue'
+                        address: 'address'
                     }
                 });
-                assert.isDefined(Cls.prototype.getSomeName);
+                assert.isDefined(Cls.prototype.getAddress);
+            });
+            
+            it("should NOT create getter if already exists", function ()
+            {
+                Cls = TopJs.define(null, {
+                    getAddress: func,
+                    config: {
+                        address: 'address'
+                    }
+                });
+                assert.equal(Cls.prototype.getAddress, func);
+            });
+            
+            it("should create setter if not exists", function ()
+            {
+                Cls = TopJs.define(null, {
+                    config: {
+                        address: 'address'
+                    }
+                });
+                assert.isDefined(Cls.prototype.setAddress);
+            });
+            
+            it("should not create setter if alreay exists", function ()
+            {
+                Cls = TopJs.define(null, {
+                    config: {
+                        address: 'address'
+                    },
+                    setAddress: func
+                });
+                assert.equal(Cls.prototype.setAddress, func);
+            });
+            
+            it("should allow a custom getter to call the generated getter", function() {
+                Cls = TopJs.define(null, {
+                    config: {
+                        age: 27
+                    },
+                    constructor: defaultInitConfig,
+                    getAge ()
+                    {
+                        return this.callParent() + 10;
+                    }
+                });
+                let obj = new Cls;
+                assert.equal(obj.getAge(), 37);
             });
         });
     });

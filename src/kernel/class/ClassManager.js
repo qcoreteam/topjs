@@ -33,176 +33,163 @@ let Manager = TopJs.ClassManager = {};
  * - {@link TopJs#getClassName TopJs.getClassName}
  *
  * ### Basic syntax:
- *
- *     TopJs.define(className, properties);
+ * ```javascript
+ * TopJs.define(className, properties);
+ * ```
  *
  * in which `properties` is an object represent a collection of properties that apply to the class. See
  * {@link TopJs.ClassManager#create} for more detailed instructions.
+ * 
  * ```javascript
- *     TopJs.define('Person', {
- *          name: 'Unknown',
+ * TopJs.define('Person', {
+ *    name: 'Unknown',
+ *    constructor: function(name) {
+ *        if (name) {
+ *            this.name = name;
+ *        }
+ *    },
  *
- *          constructor: function(name) {
- *              if (name) {
- *                  this.name = name;
- *              }
- *          },
+ *    eat: function(foodType) {
+ *        console.log("I'm eating: " + foodType);
+ *        return this;
+ *    }
+ * });
  *
- *          eat: function(foodType) {
- *              console.log("I'm eating: " + foodType);
- *
- *              return this;
- *          }
- *     });
- *
- *     let aaron = new Person("Aaron");
- *     aaron.eat("Sandwich"); // console.log("I'm eating: Sandwich");
+ * let aaron = new Person("Aaron");
+ * aaron.eat("Sandwich"); // console.log("I'm eating: Sandwich");
+ * 
  *  ```
  * TopJs.Class has a powerful set of extensible {@link TopJs.Class#registerPreprocessor pre-processors} which takes care of
  * everything related to class creation, including but not limited to inheritance, mixins, configuration, statics, etc.
  *
  * ### Inheritance:
+ * ```javascript
+ * TopJs.define('Developer', {
+ *     extend: 'Person',
+ *     constructor: function(name, isGeek) {
+ *         this.isGeek = isGeek;
+ *         // Apply a method from the parent class' prototype
+ *         this.callParent([name]);
+ *     },
  *
- *     TopJs.define('Developer', {
- *          extend: 'Person',
+ *     code: function(language) {
+ *         console.log("I'm coding in: " + language);
+ *         this.eat("Bugs");
+ *         return this;
+ *     }
+ * });
  *
- *          constructor: function(name, isGeek) {
- *              this.isGeek = isGeek;
- *
- *              // Apply a method from the parent class' prototype
- *              this.callParent([name]);
- *          },
- *
- *          code: function(language) {
- *              console.log("I'm coding in: " + language);
- *
- *              this.eat("Bugs");
- *
- *              return this;
- *          }
- *     });
- *
- *     let jacky = new Developer("Jacky", true);
- *     jacky.code("JavaScript"); // console.log("I'm coding in: JavaScript");
- *                               // console.log("I'm eating: Bugs");
+ * let jacky = new Developer("Jacky", true);
+ * jacky.code("JavaScript"); // console.log("I'm coding in: JavaScript");
+ *                           // console.log("I'm eating: Bugs");
+ * ```
  *
  * See {@link TopJs.Base#callParent} for more details on calling superclass' methods
  *
  * ### Mixins:
  *  ```javascript
- *     TopJs.define('CanPlayGuitar', {
- *          playGuitar: function() {
- *             console.log("F#...G...D...A");
- *          }
- *     });
+ * TopJs.define('CanPlayGuitar', {
+ *     playGuitar: function() {
+ *         console.log("F#...G...D...A");
+ *     }
+ * });
  *
- *     TopJs.define('CanComposeSongs', {
- *          composeSongs: function() { ... }
- *     });
+ * TopJs.define('CanComposeSongs', {
+ *     composeSongs: function() { ... }
+ * });
  *
- *     TopJs.define('CanSing', {
- *          sing: function() {
- *              console.log("For he's a jolly good fellow...")
- *          }
- *     });
+ * TopJs.define('CanSing', {
+ *     sing: function() {
+ *         console.log("For he's a jolly good fellow...")
+ *     }
+ * });
  *
- *     TopJs.define('Musician', {
- *          extend: 'Person',
+ * TopJs.define('Musician', {
+ *     extend: 'Person',
+ *     mixins: {
+ *         canPlayGuitar: 'CanPlayGuitar',
+ *         canComposeSongs: 'CanComposeSongs',
+ *          canSing: 'CanSing'
+ *     }
+ * })
  *
- *          mixins: {
- *              canPlayGuitar: 'CanPlayGuitar',
- *              canComposeSongs: 'CanComposeSongs',
- *              canSing: 'CanSing'
- *          }
- *     })
+ * TopJs.define('CoolPerson', {
+ *    extend: 'Person',
+ *    mixins: {
+ *        canPlayGuitar: 'CanPlayGuitar',
+ *        canSing: 'CanSing'
+ *    },
+ *    sing: function() {
+ *         console.log("Ahem....");
+ *         this.mixins.canSing.sing.call(this);
+ *         console.log("[Playing guitar at the same time...]");
+ *         this.playGuitar();
+ *     }
+ * });
  *
- *     TopJs.define('CoolPerson', {
- *          extend: 'Person',
- *
- *          mixins: {
- *              canPlayGuitar: 'CanPlayGuitar',
- *              canSing: 'CanSing'
- *          },
- *
- *          sing: function() {
- *              console.log("Ahem....");
- *
- *              this.mixins.canSing.sing.call(this);
- *
- *              console.log("[Playing guitar at the same time...]");
- *
- *              this.playGuitar();
- *          }
- *     });
- *
- *     let me = new CoolPerson("Jacky");
- *
- *     me.sing(); // console.log("Ahem...");
- *                // console.log("For he's a jolly good fellow...");
- *                // console.log("[Playing guitar at the same time...]");
- *                // console.log("F#...G...D...A");
- *  ```
+ * let me = new CoolPerson("Jacky");
+ * me.sing(); // console.log("Ahem...");
+ *            // console.log("For he's a jolly good fellow...");
+ *            // console.log("[Playing guitar at the same time...]");
+ *            // console.log("F#...G...D...A");
+ * ```
  * ### Config:
  *  ```javascript
- *     TopJs.define('SmartPhone', {
- *          config: {
- *              hasTouchScreen: false,
- *              operatingSystem: 'Other',
- *              price: 500
- *          },
+ * TopJs.define('SmartPhone', {
+ *    config: {
+ *         hasTouchScreen: false,
+ *         operatingSystem: 'Other',
+ *         price: 500
+ *    },
+ *    isExpensive: false,
+ *    constructor: function(config) {
+ *        this.initConfig(config);
+ *    },
+ *    applyPrice: function(price) {
+ *        this.isExpensive = (price > 500);
+ *        return price;
+ *    },
  *
- *          isExpensive: false,
+ *    applyOperatingSystem: function(operatingSystem) {
+ *        if (!(/^(iOS|Android|BlackBerry)$/i).test(operatingSystem)) {
+ *            return 'Other';
+ *        }
+ *        return operatingSystem;
+ *    }
+ * });
  *
- *          constructor: function(config) {
- *              this.initConfig(config);
- *          },
+ * let iPhone = new SmartPhone({
+ *      hasTouchScreen: true,
+ *      operatingSystem: 'iOS'
+ * });
  *
- *          applyPrice: function(price) {
- *              this.isExpensive = (price > 500);
+ * iPhone.getPrice(); // 500;
+ * iPhone.getOperatingSystem(); // 'iOS'
+ * iPhone.getHasTouchScreen(); // true;
  *
- *              return price;
- *          },
+ * iPhone.isExpensive; // false;
+ * iPhone.setPrice(600);
+ * iPhone.getPrice(); // 600
+ * iPhone.isExpensive; // true;
  *
- *          applyOperatingSystem: function(operatingSystem) {
- *              if (!(/^(iOS|Android|BlackBerry)$/i).test(operatingSystem)) {
- *                  return 'Other';
- *              }
- *
- *              return operatingSystem;
- *          }
- *     });
- *
- *     let iPhone = new SmartPhone({
- *          hasTouchScreen: true,
- *          operatingSystem: 'iOS'
- *     });
- *
- *     iPhone.getPrice(); // 500;
- *     iPhone.getOperatingSystem(); // 'iOS'
- *     iPhone.getHasTouchScreen(); // true;
- *
- *     iPhone.isExpensive; // false;
- *     iPhone.setPrice(600);
- *     iPhone.getPrice(); // 600
- *     iPhone.isExpensive; // true;
- *
- *     iPhone.setOperatingSystem('AlienOS');
- *     iPhone.getOperatingSystem(); // 'Other'
+ * iPhone.setOperatingSystem('AlienOS');
+ * iPhone.getOperatingSystem(); // 'Other'
+ * 
  *  ```
  * ### Statics:
  *  ```javascript
- *     TopJs.define('Computer', {
- *          statics: {
- *              factory: function(brand) {
- *                 // 'this' in static methods refer to the class itself
- *                  return new this(brand);
- *              }
- *          },
+ * TopJs.define('Computer', {
+ *      statics: {
+ *          factory: function(brand) {
+ *             // 'this' in static methods refer to the class itself
+ *              return new this(brand);
+ *          }
+ *      },
+ *      constructor: function() { ... }
+ * });
  *
- *          constructor: function() { ... }
- *     });
- *
- *     let dellComputer = Computer.factory('Dell');
+ * let dellComputer = Computer.factory('Dell');
+ * 
  *  ```
  * Also see {@link TopJs.Base#statics} and {@link TopJs.Base#self} for more details on accessing
  * static properties within class methods
@@ -778,49 +765,51 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      *      });
      *
      *      // File: /src/app/PanelPart2.js
-     *      TopJs.define('My.app.PanelPart2', {
-     *          override: 'My.app.Panel',
-     *
-     *          constructor: function (config) {
-     *              this.callParent(arguments); // calls My.app.Panel's constructor
-     *              //...
-     *          }
-     *      });
+     * TopJs.define('My.app.PanelPart2', {
+     *      override: 'My.app.Panel',
+     *      constructor: function (config) {
+     *          this.callParent(arguments); // calls My.app.Panel's constructor
+     *          //...
+     *      }
+     *  });
      *  ```
      * Another use of overrides is to provide optional parts of classes that can be
      * independently required. In this case, the class may even be unaware of the
      * override altogether.
      *  ```javascript
-     *      TopJs.define('My.ux.CoolTip', {
-     *          override: 'TopJs.tip.ToolTip',
-     *
-     *          constructor: function (config) {
-     *              this.callParent(arguments); // calls TopJs.tip.ToolTip's constructor
-     *              //...
-     *          }
-     *      });
+     *  
+     * TopJs.define('My.ux.CoolTip', {
+     *     override: 'TopJs.tip.ToolTip',
+     *     constructor: function (config) {
+     *         this.callParent(arguments); // calls TopJs.tip.ToolTip's constructor
+     *         //...
+     *     }
+     * });
+     * 
      * ```
      *
      * The above override can now be required as normal.
      *  ```javascript
-     *      TopJs.define('My.app.App', {
-     *          requires: [
-     *              'My.ux.CoolTip'
-     *          ]
-     *      });
+     *  
+     * TopJs.define('My.app.App', {
+     *     requires: [
+     *         'My.ux.CoolTip'
+     *     ]
+     * });
+     *      
      * ```
      * Overrides can also contain statics, inheritableStatics, or privates:
      * 
      * ```javascript
-     *      TopJs.define('My.app.BarMod', {
-     *          override: 'TopJs.foo.Bar',
-     *
-     *          statics: {
-     *              method: function (x) {
-     *                  return this.callParent([x * 2]); // call TopJs.foo.Bar.method
-     *              }
-     *          }
-     *      });
+     * TopJs.define('My.app.BarMod', {
+     *     override: 'TopJs.foo.Bar',
+     *     statics: {
+     *         method: function (x) {
+     *             return this.callParent([x * 2]); // call TopJs.foo.Bar.method
+     *         }
+     *     }
+     * });
+     * 
      *  ```
      * Starting in version 4.2.2, overrides can declare their `compatibility` based
      * on the framework version or on versions of other packages. For details on the
@@ -828,63 +817,64 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      *
      * The simplest use case is to test framework version for compatibility:
      * ```javascript
-     *      TopJs.define('App.overrides.grid.Panel', {
-     *          override: 'TopJs.grid.Panel',
-     *
-     *          compatibility: '4.2.2', // only if framework version is 4.2.2
-     *
-     *          //...
-     *      });
+     * 
+     * TopJs.define('App.overrides.grid.Panel', {
+     *      override: 'TopJs.grid.Panel',
+     *      compatibility: '4.2.2', // only if framework version is 4.2.2
+     *      //...
+     * });
+     * 
      * ```
      * An array is treated as an OR, so if any specs match, the override is
      * compatible.
+     * 
      * ```javascript
-     *      TopJs.define('App.overrides.some.Thing', {
-     *          override: 'Foo.some.Thing',
-     *
-     *          compatibility: [
-     *              '4.2.2',
-     *              'foo@1.0.1-1.0.2'
-     *          ],
-     *
-     *          //...
-     *      });
+     * 
+     * TopJs.define('App.overrides.some.Thing', {
+     *     override: 'Foo.some.Thing',
+     *     compatibility: [
+     *         '4.2.2',
+     *         'foo@1.0.1-1.0.2'
+     *     ],
+     *     //...
+     * });
+     * 
      * ```
      * To require that all specifications match, an object can be provided:
      * ```javascript
-     *      TopJs.define('App.overrides.some.Thing', {
-     *          override: 'Foo.some.Thing',
-     *
-     *          compatibility: {
-     *              and: [
-     *                  '4.2.2',
-     *                  'foo@1.0.1-1.0.2'
-     *              ]
-     *          },
-     *
-     *          //...
-     *      });
-     *  ```
+     * 
+     * TopJs.define('App.overrides.some.Thing', {
+     *     override: 'Foo.some.Thing',
+     *     compatibility: {
+     *         and: [
+     *             '4.2.2',
+     *             'foo@1.0.1-1.0.2'
+     *         ]
+     *     },
+     *     //...
+     * });
+     *      
+     * ```
      * Because the object form is just a recursive check, these can be nested:
      * ```javascript
-     *      TopJs.define('App.overrides.some.Thing', {
-     *          override: 'Foo.some.Thing',
-     *
-     *          compatibility: {
-     *              and: [
-     *                  '4.2.2',  // exactly version 4.2.2 of the framework *AND*
-     *                  {
-     *                      // either (or both) of these package specs:
-     *                      or: [
-     *                          'foo@1.0.1-1.0.2',
-     *                          'bar@3.0+'
-     *                      ]
-     *                  }
-     *              ]
-     *          },
-     *
-     *          //...
-     *      });
+     * 
+     * TopJs.define('App.overrides.some.Thing', {
+     *      override: 'Foo.some.Thing',
+     *      compatibility: {
+     *          and: [
+     *              '4.2.2',  // exactly version 4.2.2 of the framework *AND*
+     *              {
+     *                  // either (or both) of these package specs:
+     *                  or: [
+     *                      'foo@1.0.1-1.0.2',
+     *                      'bar@3.0+'
+     *                  ]
+     *              }
+     *          ]
+     *      },
+     *      //...
+     * });
+     *  
      *  ```
      *
      * @param {String} className The class name to create in string dot-namespaced format, for example:
@@ -896,20 +886,20 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      * @param {Object} data The key - value pairs of properties to apply to this class. Property names can be of any valid
      * strings, except those in the reserved listed below:
      *
-     *  - {@link TopJs.Class#cfg-alias alias}
-     *  - {@link TopJs.Class#cfg-alternateClassName alternateClassName}
-     *  - {@link TopJs.Class#cfg-cachedConfig cachedConfig}
-     *  - {@link TopJs.Class#cfg-config config}
-     *  - {@link TopJs.Class#cfg-extend extend}
-     *  - {@link TopJs.Class#cfg-inheritableStatics inheritableStatics}
-     *  - {@link TopJs.Class#cfg-mixins mixins}
-     *  - {@link TopJs.Class#cfg-override override}
-     *  - {@link TopJs.Class#cfg-privates privates}
-     *  - {@link TopJs.Class#cfg-requires requires}
-     *  - `self`
-     *  - {@link TopJs.Class#cfg-singleton singleton}
-     *  - {@link TopJs.Class#cfg-statics statics}
-     *  - {@link TopJs.Class#cfg-uses uses}
+     * - {@link TopJs.Class#cfg-alias alias}
+     * - {@link TopJs.Class#cfg-alternateClassName alternateClassName}
+     * - {@link TopJs.Class#cfg-cachedConfig cachedConfig}
+     * - {@link TopJs.Class#cfg-config config}
+     * - {@link TopJs.Class#cfg-extend extend}
+     * - {@link TopJs.Class#cfg-inheritableStatics inheritableStatics}
+     * - {@link TopJs.Class#cfg-mixins mixins}
+     * - {@link TopJs.Class#cfg-override override}
+     * - {@link TopJs.Class#cfg-privates privates}
+     * - {@link TopJs.Class#cfg-requires requires}
+     * - `self`
+     * - {@link TopJs.Class#cfg-singleton singleton}
+     * - {@link TopJs.Class#cfg-statics statics}
+     * - {@link TopJs.Class#cfg-uses uses}
      *
      * @param {Function} [createdFunc] Callback to execute after the class is created, the execution scope of which
      * (`this`) will be the newly created class itself.
@@ -934,15 +924,14 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      * times is required.  For example:
      * ```javascript
      *
-     *     // define a class
-     *     TopJs.define('Foo', {
+     * // define a class
+     * TopJs.define('Foo', {
      *        ...
-     *     });
-     *
-     *     // run test
-     *
-     *     // undefine the class
-     *     TopJs.undefine('Foo');
+     * });
+     * // run test
+     * // undefine the class
+     * TopJs.undefine('Foo');
+     * 
      * ```
      * @param {String} className The class name to undefine in string dot-namespaced format.
      * @private

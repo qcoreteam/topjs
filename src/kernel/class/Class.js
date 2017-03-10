@@ -17,17 +17,19 @@ let baseStaticMembers = Base.$_static_members_$;
  *
  * The configs of this class are intended to be used in `TopJs.define` calls to describe the class you
  * are declaring. For example:
- *
- *     TopJs.define('App.util.Thing', {
- *         extend: 'App.util.Other',
  * 
- *         alias: 'util.thing',
+ * ```javascript
  * 
- *         config: {
- *             foo: 42
- *         }
- *     });
- *
+ * TopJs.define('App.util.Thing', {
+ *     extend: 'App.util.Other',
+ *     alias: 'util.thing',
+ *     config: {
+ *         foo: 42
+ *     }
+ * });
+ * 
+ * ```
+ * 
  * TopJs.Class is the factory and **not** the superclass of everything. For the base class that **all**
  * classes inherit from, see {@link TopJs.Base}.
  */
@@ -36,9 +38,9 @@ let TopJsClass = TopJs.Class = function (Class, data, onCreated)
     if (typeof Class != "function") {
         onCreated = data;
         data = Class;
-        Class = null;
+        Class = null; 
     }
-    if (!data) {
+    if (!data) { 
         data = {};
     }
     Class = TopJsClass.create(Class, data);
@@ -234,13 +236,14 @@ TopJs.apply(TopJsClass, /** @lends TopJs.Class */{
      * Insert this pre-processor at a specific position in the stack, optionally relative to
      * any existing pre-processor. For example:
      * ```javascript
-     *     TopJs.Class.registerPreprocessor('debug', function(cls, data, fn) {
-     *         // Your code here
-     *
-     *         if (fn) {
-     *             fn.call(this, cls, data);
-     *         }
-     *     }).setDefaultPreprocessorPosition('debug', 'last');
+     * 
+     * TopJs.Class.registerPreprocessor('debug', function(cls, data, fn) {
+     *     // Your code here
+     *     if (fn) {
+     *         fn.call(this, cls, data);
+     *     }
+     * }).setDefaultPreprocessorPosition('debug', 'last');
+     * 
      * ```
      * @private
      * @param {String} name The pre-processor name. Note that it needs to be registered with
@@ -277,14 +280,16 @@ TopJs.apply(TopJsClass, /** @lends TopJs.Class */{
  * The parent class that this class extends. For example:
  *
  * ```javascript
- *     TopJs.define('Person', {
- *         say: function(text) { console.log(text); }
- *     });
+ * 
+ * TopJs.define('Person', {
+ *     say: function(text) { console.log(text); }
+ * });
  *
- *     TopJs.define('Developer', {
- *         extend: 'Person',
- *         say: function(text) { this.callParent(["print "+text]); }
- *     });
+ * TopJs.define('Developer', {
+ *     extend: 'Person',
+ *     say: function(text) { this.callParent(["print "+text]); }
+ * });
+ * 
  * ```
  */
 TopJsClass.registerPreprocessor('extend', function (Class, data, hooks)
@@ -328,29 +333,32 @@ TopJsClass.registerPreprocessor('extend', function (Class, data, hooks)
  * accidentally overriding framework methods in custom classes.
  *
  * ```javascript
- *     TopJs.define('Computer', {
- *         privates: {
- *             runFactory: function(brand) {
- *                 // internal only processing of brand passed to factory
- *                 this.factory(brand);
- *             }
- *         },
- *     
- *         factory: function (brand) {}
- *     });
+ * 
+ * TopJs.define('Computer', {
+ *     privates: {
+ *         runFactory: function(brand) {
+ *             // internal only processing of brand passed to factory
+ *             this.factory(brand);
+ *         }
+ *     },
+ *     factory: function (brand) {}
+ * });
+ * 
  *  ```
  * In order to override a method from a `privates` block, the overridden method must
  * also be placed in a `privates` block within the override class.
  *
  * ```javascript
- *     TopJs.define('Override.Computer', {
- *         override: 'Computer',
- *         privates: {
- *             runFactory: function() {
- *                 // overriding logic
- *             }
+ * 
+ * TopJs.define('Override.Computer', {
+ *     override: 'Computer',
+ *     privates: {
+ *         runFactory: function() {
+ *             // overriding logic
  *         }
- *     });
+ *     }
+ * });
+ *     
  * ```
  */
 TopJsClass.registerPreprocessor('privates', function (Class, data)
