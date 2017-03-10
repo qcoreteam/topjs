@@ -244,7 +244,7 @@ describe("TopJs.Class", function ()
                         return this.callParent() + 10;
                     }
                 });
-                let obj = new Cls;
+                let obj = new Cls();
                 assert.equal(obj.getAge(), 37);
             });
         });

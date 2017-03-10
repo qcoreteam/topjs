@@ -304,7 +304,7 @@ TopJs.Configurator.prototype = {
         let remaining = 0;
         let firstInstance = !initList;
         let cachedInitList;
-        values = this.needsFork ? TopJs.Object.fork(values) : Object.Object.chain(values);
+        values = this.needsFork ? TopJs.Object.fork(values) : TopJs.Object.chain(values);
         // Let apply/update methods know that the initConfig is currently running.
         instance.isConfiguring = true;
         if (firstInstance) {

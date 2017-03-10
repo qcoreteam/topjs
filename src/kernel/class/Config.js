@@ -157,7 +157,7 @@ TopJs.apply(TopJs.Config.prototype, /** @lends TopJs.Config.prototype */{
      */
     getInternalName (target)
     {
-        return target.$_config_prefixed_$ ? this.name.internal : this.name;
+        return target.$_config_prefixed_$ ? this.names.internal : this.name;
     },
 
     mergeNew (newValue, oldValue, target, mixinClass)
@@ -230,6 +230,7 @@ TopJs.apply(TopJs.Config.prototype, /** @lends TopJs.Config.prototype */{
         return function ()
         {
             let internalName = this.$_config_prefixed_$ ? prefixedName : name;
+            return this[internalName];
         };
     },
 

@@ -52,6 +52,7 @@ function make_constructor(className)
 {
     function constructor()
     {
+        return this.constructor.apply(this, arguments) || null;
     }
 
     //<debug>
