@@ -28,7 +28,7 @@ function get_config(name, peek)
             ret = this[getterName]();
         }
     } else {
-        retr = this.getCurrentConfig();
+        ret = this.getCurrentConfig();
     }
     return ret;
 }

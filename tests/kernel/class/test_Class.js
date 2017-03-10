@@ -622,7 +622,23 @@ describe("TopJs.Class", function ()
                 });
             });
             
-            
+            describe("getConfig", function()
+            {
+               it("should be able to get a config by name", function()
+               {
+                   let obj = new Cls();
+                   assert.equal(obj.getConfig('bar'), 2);
+               });
+               
+               it("should return all configs if no name is passed", function ()
+               {
+                   let obj = new Cls();
+                   assert.deepEqual(obj.getConfig(), {
+                       foo: 1,
+                       bar: 2
+                   });
+               });
+            });
         });
     });
 });

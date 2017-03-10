@@ -548,7 +548,7 @@ TopJs.Configurator.prototype = {
         let defaultConfig = instance.defaultConfig;
         let config = {};
         for (let name in defaultConfig) {
-            config[name] = instance[configPropMap[name].names.get];
+            config[name] = instance[configPropMap[name].names.get]();
         }
         return config;
     },
