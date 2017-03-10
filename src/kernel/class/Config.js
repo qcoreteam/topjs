@@ -268,7 +268,7 @@ TopJs.apply(TopJs.Config.prototype, /** @lends TopJs.Config.prototype */{
             let oldValue = this[internalName];
             // Remove the initGetter from the instance now that the value has been set.
             delete this[getName];
-            if (!this[applyName] || undefined != (value = this[applyName](value, oldValue))) {
+            if (!this[applyName] || undefined !== (value = this[applyName](value, oldValue))) {
                 // The old value might have been changed at this point
                 // (after the apply call chain) so it should be read again
                 if (value !== (oldValue = this[internalName])) {

@@ -310,7 +310,7 @@ TopJs.Configurator.prototype = {
         if (firstInstance) {
             // When called to configure the first instance of the class to which we are
             // bound we take a bit to plan for instance 2+.
-            this.initList = initList = {};
+            this.initList = initList = [];
             this.initListMap = initListMap = {};
             instance.isFirstInstance = true;
             for (let name in initMap) {
@@ -330,16 +330,20 @@ TopJs.Configurator.prototype = {
                             // need resetting. We have to defer the call to the setter so
                             // that all of the initGetters are set up first.
                             (cachedInitList || (cachedInitList = [])).push(cfg);
+                        } else {
+                            // Remember this config so that all instances (including this
+                            // one) can invoke the setter to properly initialize it.
+                            initList.push(cfg);
+                            initListMap[name] = true;
                         }
                         // Point all getters to the initGetters. By doing this here we
                         // avoid creating initGetters for configs that don't need them
                         // and we can easily pick up the cached fn to save the call.
                         instance[names.get] = cfg.initGetter || cfg.getInitGetter();
-                    } else {
-                        // Non-object configs w/o custom setter, applier or updater can
-                        // be simply stored on the prototype.
-                        prototype[cfg.getInternalName(prototype)] = value;
                     }
+                    // Non-object configs w/o custom setter, applier or updater can
+                    // be simply stored on the prototype.
+                    prototype[cfg.getInternalName(prototype)] = value;
                 } else if (isCached) {
                     prototype[cfg.getInternalName(prototype)] = undefined;
                 }
@@ -365,7 +369,7 @@ TopJs.Configurator.prototype = {
             for (let i = 0; i < ln; ++i) {
                 let cfg = cachedInitList[i];
                 let names = cfg.names;
-                getter = names.get;
+                let getter = names.get;
 
                 if (instance.hasOwnProperty(getter)) {
                     instance[names.set](values[cfg.name]);
@@ -501,7 +505,7 @@ TopJs.Configurator.prototype = {
                     --remaining;
                     // A proper "config" property so call the setter to set the value.
                     let names = cfg.names;
-                    getter = names.get;
+                    let getter = names.get;
 
                     // At this point the initGetter may have already been called and
                     // cleared if the getter was called from the applier or updater of a
@@ -522,7 +526,7 @@ TopJs.Configurator.prototype = {
         for (let i = 0, ln = initList.length; i < ln; ++i) {
             let cfg = initList[i];
             let names = cfg.names;
-            getter = names.get;
+            let getter = names.get;
 
             if (!cfg.lazy && instance.hasOwnProperty(getter)) {
                 // Since the instance still hasOwn the getter, that means we've set an initGetter

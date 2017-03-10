@@ -191,79 +191,98 @@ describe("TopJs.Class", function ()
         });
         describe("getter/setter creation", function ()
         {
-            it("should create getter if not exists", function ()
-            {
-                Cls = TopJs.define(null, {
-                    config: {
-                        address: 'address'
-                    }
-                });
-                assert.isDefined(Cls.prototype.getAddress);
-            });
+            // it("should create getter if not exists", function ()
+            // {
+            //     Cls = TopJs.define(null, {
+            //         config: {
+            //             address: 'address'
+            //         }
+            //     });
+            //     assert.isDefined(Cls.prototype.getAddress);
+            // });
+            //
+            // it("should NOT create getter if already exists", function ()
+            // {
+            //     Cls = TopJs.define(null, {
+            //         getAddress: func,
+            //         config: {
+            //             address: 'address'
+            //         }
+            //     });
+            //     assert.equal(Cls.prototype.getAddress, func);
+            // });
+            //
+            // it("should create setter if not exists", function ()
+            // {
+            //     Cls = TopJs.define(null, {
+            //         config: {
+            //             address: 'address'
+            //         }
+            //     });
+            //     assert.isDefined(Cls.prototype.setAddress);
+            // });
+            //
+            // it("should not create setter if alreay exists", function ()
+            // {
+            //     Cls = TopJs.define(null, {
+            //         config: {
+            //             address: 'address'
+            //         },
+            //         setAddress: func
+            //     });
+            //     assert.equal(Cls.prototype.setAddress, func);
+            // });
+            //
+            // it("should allow a custom getter to call the generated getter", function()
+            // {
+            //     Cls = TopJs.define(null, {
+            //         config: {
+            //             age: 27
+            //         },
+            //         constructor: defaultInitConfig,
+            //         getAge ()
+            //         {
+            //             return this.callParent() + 10;
+            //         }
+            //     });
+            //     let obj = new Cls();
+            //     assert.equal(obj.getAge(), 37);
+            // });
+            //
+            // it("should allow a custom setter to cal the generated setter", function()
+            // {
+            //     Cls = TopJs.define(null, {
+            //         config: {
+            //             age: 12
+            //         },
+            //         constructor: defaultInitConfig,
+            //         setAge (age)
+            //         {
+            //             return this.callParent(age);
+            //         }
+            //     });
+            //     let obj = new Cls();
+            //     obj.setAge(22);
+            //     assert.equal(obj.getAge(), 22);
+            // });
             
-            it("should NOT create getter if already exists", function ()
+            it("should not set the value if the applier returns undefined", function ()
             {
-                Cls = TopJs.define(null, {
-                    getAddress: func,
-                    config: {
-                        address: 'address'
-                    }
-                });
-                assert.equal(Cls.prototype.getAddress, func);
-            });
-            
-            it("should create setter if not exists", function ()
-            {
+                let called = false;
                 Cls = TopJs.define(null, {
                     config: {
-                        address: 'address'
-                    }
-                });
-                assert.isDefined(Cls.prototype.setAddress);
-            });
-            
-            it("should not create setter if alreay exists", function ()
-            {
-                Cls = TopJs.define(null, {
-                    config: {
-                        address: 'address'
-                    },
-                    setAddress: func
-                });
-                assert.equal(Cls.prototype.setAddress, func);
-            });
-            
-            it("should allow a custom getter to call the generated getter", function()
-            {
-                Cls = TopJs.define(null, {
-                    config: {
-                        age: 27
+                        name: "softboy"
                     },
                     constructor: defaultInitConfig,
-                    getAge ()
+                    applyName (name) 
                     {
-                        return this.callParent() + 10;
+                        return undefined;
                     }
                 });
+                
                 let obj = new Cls();
-                assert.equal(obj.getAge(), 37);
-            });
-            
-            it("should allow a custom setter to cal the generated setter", function()
-            {
-                Cls = TopJs.define(null, {
-                    config: {
-                        age: 12
-                    },
-                    constructor: defaultInitConfig,
-                    setAge (age)
-                    {
-                        return this.callParent(age);
-                    }
-                });
-                let obj = new Cls();
-                obj.setAge(22);
-                assert.equal(obj.getAge(), 22);
+                obj.setName("xiaoming");
+                assert.equal(obj.getName(), "softboy");
             });
         });
     });
