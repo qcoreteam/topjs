@@ -1,3 +1,4 @@
+"use strict";
 /*
  * TopJs Framework (http://www.topjs.org/)
  *

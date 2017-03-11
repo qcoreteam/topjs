@@ -1,3 +1,4 @@
+"use strict";
 /*
  * TopJs Framework (http://www.topjs.org/)
  *
@@ -5,7 +6,7 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
-"use strict";
+
 let dateObj = TopJs.Date = {};
 /**
  * @class TopJs.Date
