@@ -7,7 +7,7 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-import {is_object, in_array, rtrim, is_string, change_str_at, file_exist} from '../internal/Funcs';
+import {in_array, change_str_at} from '../internal/Funcs';
 import {sep as dir_separator, dirname} from 'path';
 import {stat, statSync} from 'fs';
 import path from "path"
@@ -16,6 +16,7 @@ require("./ClassManager");
 /**
  * 标准自动加载器
  * <font color="red">注意，这个类为底层自动加载类，一般只在入口文件进行实例化。</font>
+ * 
  * ```javascript
  *
  *    let loader = new StandardLoader({

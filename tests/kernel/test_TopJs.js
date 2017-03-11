@@ -108,7 +108,6 @@ describe("TopJs名称空间函数测试", function ()
                 prop1: "x",
                 prop2: "y"
             });
-
             assert.deepEqual(obj, {
                 prop1: "x",
                 prop2: "y"

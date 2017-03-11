@@ -15,48 +15,11 @@ import * as InternalFuncs from "./internal/Funcs"
  * @namespace TopJs
  */
 export let TopJs = global.TopJs = {};
-let emptyFn = function ()
-{
-};
-let privateFn = function ()
-{
-};
+let emptyFn = function () {};
+let privateFn = function () {};
 const objProto = Object.prototype;
 const toString = objProto.toString;
 const iterableRe = /\[object\s*(?:Array|Arguments|\w*Collection|\w*List)\]/;
-
-//设置几个特殊的标记，以便分辨这几类函数
-emptyFn.$nullFn$ = emptyFn.$emptyFn$ = privateFn.$privacy$ = true;
-emptyFn.$noClearOnDestroy$ = privateFn.$noClearOnDestroy$ = true;
-
-//这个函数主要在实例上实现调用父类覆盖方法
-//只要跨过当前一层就ok了
-function call_override_parent()
-{
-    let method = call_override_parent.caller.caller;
-    return method.$owner$.prototype[method.$name$].apply(this, arguments);
-}
-
-function add_instance_overrides(target, owner, overrides)
-{
-    for (let [name, value] of Object.entries(overrides)) {
-        if (typeof value === "function") {
-            //<debug>
-            if (owner.$className$) {
-                value.name = owner.$className$ + "#" + name;
-            }
-            //</debug>
-            value.$name$ = name;
-            value.$owner$ = owner;
-            if (target.hasOwnProperty(name)) {
-                value.$previous$ = target[name];//连接已经建立成功了，直接复用
-            } else {
-                value.$previous$ = call_override_parent;
-            }
-        }
-        target[name] = value;
-    }
-}
 
 /**
  * 返回当前时间戳
@@ -401,25 +364,10 @@ TopJs.apply(TopJs, /** @lends TopJs */{
      */
     override(target, overrides)
     {
-        if (target.$isClass$) {
-            target.override(overrides);
-        } else if (typeof target === "function") {
+        if (typeof target === "function") {
             TopJs.apply(target.prototype, overrides);
         } else {
-            let owner = target.self;
-            let privates;
-            if (owner && owner.$isClass$) {
-                // 由 TopJs.define's 类
-                privates = overrides.privates;
-                if (privates) {
-                    overrides = TopJs.apply({}, overrides);
-                    delete overrides.privates;
-                    add_instance_overrides(target, owner, privates);
-                }
-                add_instance_overrides(target, owner, overrides);
-            } else {
-                TopJs.apply(target, overrides);
-            }
+            TopJs.apply(target, overrides);
         }
         return target;
     },
@@ -515,4 +463,3 @@ TopJs.apply(TopJs, /** @lends TopJs */{
  *
  * @namespace TopJs.kernel
  */
-
