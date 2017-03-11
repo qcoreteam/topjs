@@ -5,12 +5,8 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
-const StandardLoader = require("../../../lib/Entry").StandardLoader;
+const TopJs = require("../../../lib/Index");
 let assert = require("chai").assert;
-let loader = new StandardLoader({
-    [StandardLoader.AUTO_REGISTER_TOPJS]: true
-});
-loader.register();
 
 describe("TopJs.Array", function ()
 {

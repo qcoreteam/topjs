@@ -7,40 +7,220 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-import {in_array, change_str_at} from '../internal/Funcs';
+import {in_array, change_str_at, rtrim, is_object} from '../internal/Funcs';
 import {sep as dir_separator, dirname} from 'path';
 import {stat, statSync} from 'fs';
 import path from "path"
-require("./ClassManager");
+const Namespace = require("./Namespace");
 
 /**
  * 标准自动加载器
- * <font color="red">注意，这个类为底层自动加载类，一般只在入口文件进行实例化。</font>
- * 
- * ```javascript
+ * <font color="red">注意，这个类为底层自动加载类。</font>
  *
- *    let loader = new StandardLoader({
- *       [StandardLoader.AUTO_REGISTER_TOPJS] : true
- *    });
- *    loader.register();
- *
- * ```
  * @class TopJs.Loader
  * @singleton
  */
 let Loader = TopJs.Loader = {};
-let ClassManager = TopJs.ClassManager;
 
 TopJs.apply(Loader, /** @lends TopJs.Loader */{
 
-    registerNamespace (namespace, directory)
+    /**
+     * @readonly
+     * @static
+     * @property {string} NS_SEPARATOR 名称空间分隔符
+     */
+    NS_SEPARATOR: ".",
+    /**
+     * @readonly
+     * @static
+     * @property {string} LOAD_NS 参数批量设置的时候名称空间项识别码常量
+     */
+    LOAD_NS: "namespaces",
+
+    /**
+     * @readonly
+     * @static
+     * @property {string} NAMESPACE_ACCESSOR_KEY 对象代理访问时候获取名称空间对象的特殊键名
+     */
+    NAMESPACE_ACCESSOR_KEY: "__NAMESPACE_ACCESSOR_KEY__",
+
+    /**
+     * @protected
+     * @property {Map} namespaces 名称空间到类的文件夹之间的映射
+     */
+    namespaces: new Map(),
+
+    /**
+     * @protected
+     * @property {Map} namespaceCache the namespaces lookup cache
+     */
+    namespaceCache: new Map(),
+
+    /**
+     * @protected
+     * @property {Map} classes
+     */
+    classes: new Map(),
+
+    /**
+     * 注册一个名称空间到对应文件夹的映射项
+     *
+     * @param {string} namespace
+     * @param {string} directory
+     * @returns {TopJs.Namespace}
+     */
+    registerNamespace(namespace, directory)
     {
-        return ClassManager.registerNamespace(namespace, directory);
+        let sep = Loader.NS_SEPARATOR;
+        namespace = rtrim(namespace, sep);
+        let parts = namespace.split(sep);
+        let nsObj;
+        if (this.namespaces.has(parts[0])) {
+            nsObj = this.namespaces.get(parts[0]);
+        } else {
+            nsObj = new Namespace(parts[0], null, null);
+            this.namespaces.set(parts[0], nsObj);
+        }
+        //子名称空间
+        for (let i = 1; i < parts.length; i++) {
+            let childNsObj = nsObj.getChildNamespace(parts[i]);
+            if (null === childNsObj) {
+                nsObj = new Namespace(parts[i], nsObj, null);
+            } else {
+                nsObj = childNsObj;
+            }
+        }
+        nsObj.setDirectory(this.normalizeDirectory(directory));
+        return nsObj;
     },
 
-    registerNamespaces (namespaces)
+    /**
+     * 一次性注册多个名称空间到文件目录的映射, `namespace`参数结构如下：
+     * ```javascript
+     * {
+     *    namespace1: dir1,
+     *    namespace2: dir2,
+     *    ...
+     * }
+     * ```
+     *
+     * @param {Object} namespaces 需要注册的名称空间类型
+     * @returns {TopJs.ClassLoader}
+     */
+    registerNamespaces(namespaces)
     {
-        ClassManager.registerNamespaces(namespaces);
+        if (!is_object(namespaces)) {
+            throw new Error('arg namespaces must be object');
+        }
+        for (let [namespace, direcotry] of Object.entries(namespaces)) {
+            this.registerNamespace(namespace, direcotry);
+        }
+        return this;
+    },
+
+    /**
+     * 通过名称空间名称，获取底层名称空间对象引用
+     *
+     * @param {Object} name 名称空间的名称
+     * @param {Boolean} autoCreate auto create namespace that does not exist
+     * @returns {TopJs.Namespace}
+     */
+    getNamespace(name, autoCreate = false)
+    {
+        if (this.namespaceCache.has(name)) {
+            return this.namespaceCache.get(name);
+        }
+        let ns = this.findNamespace(name, autoCreate);
+        if (null !== ns) {
+            this.namespaceCache.set(name, ns);
+        }
+        return ns;
+    },
+    
+    findNamespace (namespace, autoCreate = false)
+    {
+        let parts = namespace.split(Loader.NS_SEPARATOR);
+        let ns;
+        let partName;
+        let parentNs;
+        if (this.namespaces.has(parts[0])) {
+            ns = this.namespaces.get(parts[0]);
+        } else {
+            ns = new Namespace(parts[0], null, parts[0]);
+            TopJs.global[parts[0]] = ns;
+        }
+        for (let i = 1; i < parts.length; i++) {
+            partName = parts[i];
+            parentNs = ns;
+            ns = ns.getChildNamespace(partName);
+            if (null == ns && autoCreate) {
+                ns = new Namespace(partName, parentNs, parentNs.directory + dir_separator + filename);
+            } else if (null == ns) {
+                break;
+            }
+        }
+        return ns;
+    },
+
+    /**
+     * @param {String} namespace 名称空间的字符串描述
+     * @return {Namespace}
+     */
+    createNamespace (namespace)
+    {
+        let parts = namespace.split(Loader.NS_SEPARATOR);
+        let ns;
+        let partName;
+        let parentNs;
+        if (this.namespaces.has(parts[0])) {
+            ns = this.namespaces.get(parts[0]);
+        } else {
+            ns = new Namespace(parts[0], null, parts[0]);
+            TopJs.global[parts[0]] = ns;
+        }
+        for (let i = 1; i < parts.length; i++) {
+            partName = parts[i];
+            parentNs = ns;
+            ns = ns.getChildNamespace(partName);
+            if (null == ns) {
+                ns = new Namespace(partName, parentNs, parentNs.directory + dir_separator + filename);
+            }
+        }
+        return ns;
+    },
+
+    /**
+     * @param {String} fullClsName the class name
+     * @param {Object} cls The Class Object
+     * @return {TopJs.ClassLoader} this
+     */
+    registerToClassMap (fullClsName, cls)
+    {
+        Loader.classes.set(name, Loader.mountClsToNamespace(fullClsName, cls));
+        return this;
+    },
+
+    mountClsToNamespace (fullClassName, cls)
+    {
+        let index = fullClassName.lastIndexOf('.');
+        let targetScope = TopJs.global;
+        let ret;
+        if (index < 0) {
+            // mount at global scope
+            if (targetScope.hasOwnProperty(fullClassName)) {
+                //<debug>
+                TopJs.log.warn(`[TopJs.ClassLoader.mountClsToNamespace] class ${fullClassName} 
+                already exist at target scope`);
+                //</debug>
+                return targetScope[fullClassName];
+            }
+            ret = targetScope[fullClassName] = cls;
+        } else {
+            let clsName = fullClassName.substring(index + 1);
+            targetScope = this.getNamespace(fullClassName.substring(0, index));
+            ret = targetScope[clsName] = cls;
+        }
+        return ret;
     },
     
     require(fullClsName)
@@ -48,7 +228,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
         let parts = fullClsName.split(".");
         let clsName = parts.pop();
         let ns = parts.join(".");
-        let nsObject = ClassManager.createNamespace(ns);
+        let nsObject = ClassLoader.createNamespace(ns);
         try {
             let filename = path.resolve(nsObject.directory, `${clsName}.js`);
             let stats = statSync(filename);
@@ -63,6 +243,22 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
             }
             throw err;
         }
+    },
+
+    /**
+     * clear all about registered namespaces
+     */
+    unmountRegisteredNamespaces ()
+    {
+        let global = TopJs.global;
+        let namespaces = this.namespaces;
+        this.namespaces.forEach(function (cls, namespace) {
+            let parts = namespace.split(Loader.NS_SEPARATOR);
+            if ("TopJs" !== parts[0]) {
+                delete global[parts[0]];
+                namespaces.delete(parts[0]);
+            }
+        });
     },
     
     /**
@@ -112,8 +308,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
     }
 });
 
-/**
- * 加载指定的类
- * @method
- */
-TopJs.require = TopJs.Function.alias(Loader, 'require');
+TopJs.apply(TopJs, /** @lends TopJs */{
+    registerCls: TopJs.Function.alias(Loader, 'registerToClassMap'),
+    require: TopJs.Function.alias(Loader, 'require')
+});

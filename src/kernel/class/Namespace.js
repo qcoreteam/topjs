@@ -18,7 +18,7 @@
  * @param {string} [directory=null] 当前名称空间关联的文件系统路径
  */
 
-export default function Namespace(name = null, parent = null, directory = null)
+function Namespace(name = null, parent = null, directory = null)
 {
     this.name = name;
     this.parent = parent;
@@ -82,10 +82,10 @@ Object.assign(Namespace.prototype, /** @lends TopJs.Namespace.prototype */{
 
     setDirectory(directory)
     {
-        if (null !== this.directory) {
-            throw new Error(`the directory of namespace ："${this.name}" already setted.`);
+        if (directory !== this.directory) {
+            this.directory = directory;
         }
-        this.directory = directory;
+        return this;
     },
 
     /**
@@ -138,3 +138,5 @@ Object.assign(Namespace.prototype, /** @lends TopJs.Namespace.prototype */{
         }
     }
 });
+
+module.exports = Namespace;

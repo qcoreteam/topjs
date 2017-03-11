@@ -8,14 +8,8 @@
 
 let assert = require("chai").assert;
 
-const StandardLoader = require("../../lib/Entry").StandardLoader;
-before(function ()
-{
-    let loader = new StandardLoader({
-        [StandardLoader.AUTO_REGISTER_TOPJS]: true
-    });
-    loader.register();
-});
+const TopJs = require("../../lib/Index");
+
 describe("TopJs名称空间函数测试", function ()
 {
     describe("TopJs.global", function ()

@@ -7,12 +7,7 @@
  */
 let assert = require("chai").assert;
 
-const StandardLoader = require("../../../lib/Entry").StandardLoader;
-
-let loader = new StandardLoader({
-    [StandardLoader.AUTO_REGISTER_TOPJS]: true
-});
-loader.register();
+const TopJs = require("../../../lib/Index");
 
 describe("测试TopJs.Date", function ()
 {

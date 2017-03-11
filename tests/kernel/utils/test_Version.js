@@ -6,7 +6,7 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-const TopJs = require("../../../lib/Entry").TopJs;
+const TopJs = require("../../../lib/Index");
 let assert = require("chai").assert;
 describe("TopJs.Version", function ()
 {

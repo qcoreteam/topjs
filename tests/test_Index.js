@@ -7,14 +7,11 @@
  */
 let assert = require("chai").assert;
 
-const TopJs = require("../lib/Entry");
+const TopJs = require("../lib/Index");
 
-describe("Entry入口测试", function(){
-   it("测试暴露接口", function(){
-      let loader = new StandardLoader({
-         [StandardLoader.AUTO_REGISTER_TOPJS] : true
-      });
-      loader.register();
-      assert.isFunction(StandardLoader);
-   });
+describe("test TopJs index module", function(){
+    it("test loader class", function() {
+        assert.isNotNull(TopJs);
+        assert.isTrue(TopJs.hasOwnProperty('now'));
+    });
 });

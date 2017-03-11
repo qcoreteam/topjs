@@ -30,4 +30,5 @@ TopJs.global = global;
 TopJs.setVersion("0.0.1");
 //注册标准加载器
 TopJs.Loader.registerNamespace("TopJs", __dirname);
-module.exports.TopJs = TopJs;
+
+module.exports = TopJs;
