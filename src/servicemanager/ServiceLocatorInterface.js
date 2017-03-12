@@ -10,11 +10,13 @@
 TopJs.require("TopJs.psr.ContainerInterface");
 
 TopJs.namespace("TopJs.servicemanager");
-
-class ServiceLocatorInterface extends TopJs.psr.ContainerInterface
+/**
+ * @class TopJs.servicemanager.ServiceLocatorInterface
+ */
+class ServiceLocatorInterface
 {
     build (name, options = null)
     {}
 }
 
-TopJs.mountClsToNamespace("TopJs.servicemanager.ServiceLocatorInterface", ServiceLocatorInterface);
+TopJs.registerClass("TopJs.servicemanager.ServiceLocatorInterface", ServiceLocatorInterface);

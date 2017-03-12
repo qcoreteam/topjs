@@ -178,6 +178,24 @@ TopJs.apply(TopJs, /** @lends TopJs */ {
     },
 
     /**
+     * merge sourceMap into targetMap
+     * 
+     * @param {Map} targetMap the target map object
+     * @param {Map} sourceMap the source map object
+     * @param {Boolean} overwrite whether overwrite the target item
+     * @return {Map} the merged map object
+     */
+    mergeMap (targetMap, sourceMap, overwrite = false)
+    {
+        for (let [key, value] of sourceMap) {
+            if (!targetMap.has(key) || (targetMap.has(key) && overwrite)) {
+                targetMap.set(key, value);
+            }
+        }
+        return targetMap;
+    },
+
+    /**
      * 向控制台输出一条信息
      *
      * @method

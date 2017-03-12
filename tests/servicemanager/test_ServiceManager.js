@@ -14,5 +14,46 @@ let assert = require("chai").assert;
 
 describe("TopJs.servicemanager.ServiceManager", function ()
 {
-    let cls = "TopJs.servicemanager.ServiceManager";
+    function create_service_manager (config)
+    {
+        return new TopJs.servicemanager.ServiceManager(config);
+    }
+    
+    let serviceManager;
+    
+    describe("TopJs.servicemanager.ServiceManager.configure", function(){
+        
+        it("test configure invokable", function()
+        {
+            serviceManager = create_service_manager({
+                invokables: {
+                    "TopJs.servicemanager.factory.InvokableFactory": "TopJs.servicemanager.factory.InvokableFactory"
+                }
+            });
+            
+        });
+        
+        it("test configure invokable alias", function ()
+        {
+            serviceManager = create_service_manager({
+                invokables: {
+                    "invokeClsName": "TopJs.servicemanager.factory.InvokableFactory"
+                }
+            });
+        })
+    });
+    
+    describe("TopJs.servicemanager.ServiceManager.get", function(){
+        it("test shared by default", function ()
+        {
+            serviceManager = create_service_manager({
+                invokables: {
+                    "invokeClsName": "TopJs.servicemanager.factory.InvokableFactory"
+                }
+            });
+            let object1 = serviceManager.get("invokeClsName");
+            let object2 = serviceManager.get("invokeClsName");
+            assert.equal(object1, object2);
+        });
+    });
 });

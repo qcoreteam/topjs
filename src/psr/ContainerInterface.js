@@ -38,4 +38,4 @@ class ContainerInterface {
     {}
 }
 
-TopJs.mountClsToNamespace("TopJs.psr.ContainerInterface", ContainerInterface);
+TopJs.registerClass("TopJs.psr.ContainerInterface", ContainerInterface);

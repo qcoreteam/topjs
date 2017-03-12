@@ -299,7 +299,6 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
 TopJs.Loader.namespaces.set("TopJs", TopJs);
 
 TopJs.apply(TopJs, /** @lends TopJs */{
-    registerCls: TopJs.Function.alias(Loader, 'registerToClassMap'),
     require: TopJs.Function.alias(Loader, 'require'),
     mountToNamespace: TopJs.Function.alias(Loader, 'mountClsToNamespace'),
     
