@@ -11,6 +11,11 @@
  * 我们在这个里面初始化一些内部的类，挂载一些快捷函数到TopJs名称空间上面
  */
 import {sep as dir_separator, dirname} from "path";
+
+global["TOPJS_ROOT_DIR"] = __dirname;
+let TopJs = global.TopJs = {};
+TopJs.global = global;
+
 require("./kernel/TopJs");
 require("./kernel/Util");
 require("./kernel/lang/Error");
@@ -22,13 +27,8 @@ require("./kernel/lang/String");
 require("./kernel/lang/Date");
 require("./kernel/utils/Version");
 require("./kernel/class/Loader");
+require("./kernel/class/Class");
 
-let topJsLibDir = process.cwd() + dir_separator + "lib";
-
-TopJs.TOPJS_LIB_DIR = topJsLibDir;
-TopJs.global = global;
 TopJs.setVersion("0.0.1");
-//注册标准加载器
-TopJs.Loader.registerNamespace("TopJs", __dirname);
 
 module.exports = TopJs;

@@ -75,11 +75,13 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
         namespace = rtrim(namespace, sep);
         let parts = namespace.split(sep);
         let nsObj;
-        if (this.namespaces.has(parts[0])) {
+        let rootNamespace = parts[0];
+        if (this.namespaces.has(rootNamespace)) {
             nsObj = this.namespaces.get(parts[0]);
         } else {
-            nsObj = new Namespace(parts[0], null, null);
-            this.namespaces.set(parts[0], nsObj);
+            nsObj = new Namespace(rootNamspace, null, null);
+            this.namespaces.set(rootNamspace, nsObj);
+            TopJs.global[rootNamspace] = nsObj;
         }
         //子名称空间
         for (let i = 1; i < parts.length; i++) {
@@ -105,7 +107,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
      * ```
      *
      * @param {Object} namespaces 需要注册的名称空间类型
-     * @returns {TopJs.ClassLoader}
+     * @returns {TopJs.Loader}
      */
     registerNamespaces(namespaces)
     {
@@ -125,7 +127,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
      * @param {Boolean} autoCreate auto create namespace that does not exist
      * @returns {TopJs.Namespace}
      */
-    getNamespace(name, autoCreate = false)
+    getNamespace (name, autoCreate = false)
     {
         if (this.namespaceCache.has(name)) {
             return this.namespaceCache.get(name);
@@ -154,7 +156,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
             parentNs = ns;
             ns = ns.getChildNamespace(partName);
             if (null == ns && autoCreate) {
-                ns = new Namespace(partName, parentNs, parentNs.directory + dir_separator + filename);
+                ns = new Namespace(partName, parentNs, parentNs.directory + dir_separator + partName);
             } else if (null == ns) {
                 break;
             }
@@ -172,18 +174,21 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
         let ns;
         let partName;
         let parentNs;
-        if (this.namespaces.has(parts[0])) {
-            ns = this.namespaces.get(parts[0]);
+        let rootNamespace = parts[0];
+        if (this.namespaces.has(rootNamespace)) {
+            ns = this.namespaces.get(rootNamespace);
         } else {
-            ns = new Namespace(parts[0], null, parts[0]);
-            TopJs.global[parts[0]] = ns;
+            // TODO throw not exist error?
+            ns = new Namespace(rootNamespace, null, parts[0]);
+            TopJs.global[rootNamespace] = ns;
         }
         for (let i = 1; i < parts.length; i++) {
             partName = parts[i];
             parentNs = ns;
             ns = ns.getChildNamespace(partName);
             if (null == ns) {
-                ns = new Namespace(partName, parentNs, parentNs.directory + dir_separator + filename);
+                ns = new Namespace(partName, parentNs, parentNs.directory + partName + dir_separator);
+                parentNs[partName] = ns;
             }
         }
         return ns;
@@ -192,7 +197,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
     /**
      * @param {String} fullClsName the class name
      * @param {Object} cls The Class Object
-     * @return {TopJs.ClassLoader} this
+     * @return {TopJs.Loader} this
      */
     registerToClassMap (fullClsName, cls)
     {
@@ -228,7 +233,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
         let parts = fullClsName.split(".");
         let clsName = parts.pop();
         let ns = parts.join(".");
-        let nsObject = ClassLoader.createNamespace(ns);
+        let nsObject = Loader.createNamespace(ns);
         try {
             let filename = path.resolve(nsObject.directory, `${clsName}.js`);
             let stats = statSync(filename);
@@ -308,7 +313,23 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
     }
 });
 
+TopJs.Loader.namespaces.set("TopJs", TopJs);
+
 TopJs.apply(TopJs, /** @lends TopJs */{
     registerCls: TopJs.Function.alias(Loader, 'registerToClassMap'),
-    require: TopJs.Function.alias(Loader, 'require')
+    require: TopJs.Function.alias(Loader, 'require'),
+    mountToNamespace: TopJs.Function.alias(Loader, 'mountClsToNamespace'),
+    directory: TOPJS_ROOT_DIR + dir_separator,
+    getChildNamespace (name)
+    {
+        if (TopJs.hasOwnProperty(name)) {
+            return TopJs[name];
+        }
+        return null;
+    },
+    
+    setChildNamespace (name, targetNamespace)
+    {
+        this[name] = targetNamespace;
+    }
 });

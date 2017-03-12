@@ -24,7 +24,7 @@ function Namespace(name = null, parent = null, directory = null)
     this.parent = parent;
     this.directory = directory;
     if (this.parent) {
-        this.parent.setChild(name, this);
+        this.parent.setChildNamespace(name, this);
     }
 }
 
@@ -121,11 +121,11 @@ Object.assign(Namespace.prototype, /** @lends TopJs.Namespace.prototype */{
     /**
      * 给当前名称空间添加指定名称的名称空间对象
      *
-     * @param name 待添加的名称空间的名称
-     * @returns {null}
+     * @param {String} name 待添加的名称空间的名称
+     * @param {Namespace} ns the namespace object
      * @throws {Error} 当子名称空间名称中含有`.`字符的时候抛出
      */
-    setChild(name, ns)
+    setChildNamespace (name, ns)
     {
         if (-1 !== name.indexOf(".")) {
             throw new Error("child namespace name cannot contains '.'");
@@ -135,6 +135,7 @@ Object.assign(Namespace.prototype, /** @lends TopJs.Namespace.prototype */{
                 return;
             }
             this.children.set(name, ns);
+            this[name] = ns;
         }
     }
 });

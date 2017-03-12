@@ -6,7 +6,7 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-const StandardLoader = require("../../../lib/Entry");
+const StandardLoader = require("../../../lib/Index");
 let assert = require("chai").assert;
 
 describe("TopJs.ClassManager", function ()

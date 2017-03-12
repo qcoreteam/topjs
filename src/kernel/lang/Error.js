@@ -46,16 +46,16 @@ function to_string()
  * 例如
  * ```javascript
  * TopJs.define("TopJs.SomeCls", {
-     *      doSomething: function(option){
-     *          if (someCondition === false) {
-     *             TopJs.raise({
-     *                msg: "错误的操作!",
-     *                option: option, // 任意的常量对象
-     *                "error code": 100
-     *             });
-     *          }
-     *      }
-     * });
+ *      doSomething: function(option){
+ *          if (someCondition === false) {
+ *             TopJs.raise({
+ *                msg: "错误的操作!",
+ *                option: option, // 任意的常量对象
+ *                "error code": 100
+ *             });
+ *          }
+ *      }
+ * });
  * ```
  * 控制台将输出如下信息：
  *
@@ -73,11 +73,11 @@ function to_string()
  *
  * ```javascript
  * TopJs.Error.handle = function(err) {
-     *     if (err.someProperty == "NotReallyAnError") {
-     *         // maybe log something to the application here if applicable
-     *         return true;
-     *     }
-     * }
+ *     if (err.someProperty == "NotReallyAnError") {
+ *         // maybe log something to the application here if applicable
+ *         return true;
+ *     }
+ * }
  * ```
  *
  * @class TopJs.Error
@@ -104,10 +104,11 @@ TopJs.apply(TopJsError, /** @lends TopJs.Error */{
      * 处理。
      *
      * 简单的例子：
+     *
      * ```javascript
      * TopJs.Error.ignore = true;
-     * ```
      *
+     * ```
      * @property {Boolean} [ignore=false]
      */
     ignore: false,
@@ -188,20 +189,23 @@ TopJs.deprecated = function (suggestion)
  *
  * 简单用法:
  * ```javascript
+ * 
  * //简单的例子
+ * 
  * TopJs.raise("A simple string error message");
+ * 
  * // 复杂一点的例子
- * TopJs.define("TopJs.SomeCls", {
-     *      doSomething: function(option){
-     *          if (someCondition === false) {
-     *             TopJs.raise({
-     *                msg: "错误的操作!",
-     *                option: option, // 任意的常量对象
-     *                "error code": 100
-     *             });
-     *          }
-     *      }
-     * });
+ * class {
+ *     doSomething: function(option){
+ *          if (someCondition === false) {
+ *             TopJs.raise({
+ *                msg: "错误的操作!",
+ *                option: option, // 任意的常量对象
+ *                "error code": 100
+ *             });
+ *          }
+ *     }
+ * };
  *
  * ```
  *
@@ -210,15 +214,7 @@ TopJs.deprecated = function (suggestion)
  */
 TopJs.raise = function (error)
 {
-    let method = TopJs.raise;
     TopJs.Error.raise.call(TopJs.Error, error, function (error)
     {
-        let name;
-        if (!error.sourceMethod && (name = method.$_name_$)) {
-            error.sourceMethod = name;
-        }
-        if (!error.sourceClass && (name = method.$_owner_$) && (name = name.$_class_name_$)) {
-            error.sourceClass = name;
-        }
     });
 };

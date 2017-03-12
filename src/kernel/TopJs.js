@@ -15,7 +15,8 @@ import * as InternalFuncs from "./internal/Funcs"
 /**
  * @namespace TopJs
  */
-export let TopJs = global.TopJs = {};
+export let TopJs = global.TopJs || {};
+
 let emptyFn = function () {};
 let privateFn = function () {};
 const objProto = Object.prototype;
@@ -407,6 +408,23 @@ TopJs.apply(TopJs, /** @lends TopJs */{
             }
         }
         return clone || item;
+    },
+    
+    mixin (...mixins)
+    {
+        
+    },
+
+    /**
+     * when we define some thing in target namespace we can use this
+     * method to retrieve namespace object
+     *
+     * @param {String} name the namespace name
+     * @return {TopJs.Namespace}
+     */
+    namespace (name)
+    {
+        return TopJs.Loader.getNamespace(name, true);
     },
 
     /**
