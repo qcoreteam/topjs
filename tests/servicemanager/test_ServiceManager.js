@@ -14,5 +14,5 @@ let assert = require("chai").assert;
 
 describe("TopJs.servicemanager.ServiceManager", function ()
 {
-    
+    let cls = "TopJs.servicemanager.ServiceManager";
 });

@@ -14,4 +14,4 @@ class ServiceManager extends TopJs.Class
 
 }
 
-ServiceManager.mount("TopJs.servicemanager.ServiceManager");
+TopJs.registerClass("TopJs.servicemanager.ServiceManager", ServiceManager);

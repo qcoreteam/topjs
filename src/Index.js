@@ -28,6 +28,7 @@ require("./kernel/lang/Date");
 require("./kernel/utils/Version");
 require("./kernel/class/Loader");
 require("./kernel/class/Class");
+require("./kernel/class/ClassManager");
 
 TopJs.setVersion("0.0.1");
 

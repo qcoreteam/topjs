@@ -55,13 +55,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
      * @property {Map} namespaceCache the namespaces lookup cache
      */
     namespaceCache: new Map(),
-
-    /**
-     * @protected
-     * @property {Map} classes
-     */
-    classes: new Map(),
-
+    
     /**
      * 注册一个名称空间到对应文件夹的映射项
      *
@@ -193,18 +187,7 @@ TopJs.apply(Loader, /** @lends TopJs.Loader */{
         }
         return ns;
     },
-
-    /**
-     * @param {String} fullClsName the class name
-     * @param {Object} cls The Class Object
-     * @return {TopJs.Loader} this
-     */
-    registerToClassMap (fullClsName, cls)
-    {
-        Loader.classes.set(name, Loader.mountClsToNamespace(fullClsName, cls));
-        return this;
-    },
-
+    
     mountClsToNamespace (fullClassName, cls)
     {
         let index = fullClassName.lastIndexOf('.');
@@ -319,6 +302,7 @@ TopJs.apply(TopJs, /** @lends TopJs */{
     registerCls: TopJs.Function.alias(Loader, 'registerToClassMap'),
     require: TopJs.Function.alias(Loader, 'require'),
     mountToNamespace: TopJs.Function.alias(Loader, 'mountClsToNamespace'),
+    
     directory: TOPJS_ROOT_DIR + dir_separator,
     getChildNamespace (name)
     {
