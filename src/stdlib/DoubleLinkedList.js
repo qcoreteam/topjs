@@ -316,3 +316,4 @@ class DoubleLinkedList
 }
 
 TopJs.registerClass("TopJs.stdlib.DoubleLinkedList", DoubleLinkedList);
+module.exports = DoubleLinkedList;

@@ -240,5 +240,4 @@ class PriorityList
 }
 
 TopJs.registerClass("TopJs.stdlib.PriorityList", PriorityList);
-
 module.exports = PriorityList;
