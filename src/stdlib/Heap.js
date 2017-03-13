@@ -21,7 +21,7 @@ class Heap
      * @property {Symbol} MAX
      * @static
      */
-     static MAX = Symbol("TopJs.stdlib.Heap.MAX");
+     static MAX = 1;
 
      /**
      * Min heap flag
@@ -29,7 +29,7 @@ class Heap
      * @property {Symbol} MIN
      * @static
      */
-    static MIN = Symbol("TopJs.stdlib.Heap.MIN");
+    static MIN = -1;
     /**
      * Binary tree storage array
      *
@@ -45,15 +45,7 @@ class Heap
      * @private
      */
     type = Heap.MAX;
-
-    /**
-     * Iteration pointer
-     *
-     * @property {Number} key
-     * @private
-     */
-    key = 0;
-
+    
     /**
      * Get index of left child element in binary tree stored in array
      *
@@ -274,6 +266,30 @@ class Heap
     toArray ()
     {
         return this.tree;
+    }
+
+    [Symbol.iterator]()
+    {
+        let length = this.tree.length;
+        let tree = this.tree;
+        return {
+            current: 0,
+            next ()
+            {
+                if (this.current < length) {
+                    let item = [this.current, tree[this.current]];
+                    this.current++;
+                    return {
+                        value: item
+                    };
+                } else {
+                    return {
+                        value: undefined,
+                        done: true
+                    } ;
+                }
+            }
+        };
     }
 }
 
