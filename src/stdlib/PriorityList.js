@@ -72,6 +72,8 @@ class PriorityList
             this.count++;
             this.itemNames.push(name);
         }
+        priority = parseInt(priority);
+        priority = isNaN(priority) ? 0 : priority;
         this.sorted = false;
         this.items.set(name, {
             data: value,
