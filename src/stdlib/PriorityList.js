@@ -127,12 +127,12 @@ class PriorityList
      * Get a item by name 
      * 
      * @param {String} name
-     * @return {Object}
+     * @return {Object|null}
      */
     get(name)
     {
         if (!this.items.has(name)) {
-            return;
+            return null;
         }
         let target = this.items.get(name);
         return target.data;
@@ -209,6 +209,34 @@ class PriorityList
         });
         return items;
     }
+
+    [Symbol.iterator]() 
+    {
+        this.sort();
+        let itemNames = this.itemNames;
+        let items = this.items;
+        return {
+            current: 0,
+            next ()
+            {
+                if (this.current < itemNames.length) {
+                    let key = itemNames[this.current++];
+                    let item = items.get(key);
+                    return {
+                        value: [key, item.data],
+                        done: false
+                    };
+                } else {
+                    return {
+                        value: undefined,
+                        done: true
+                    } ;
+                }
+            }
+        };
+    }
 }
 
 TopJs.registerClass("TopJs.stdlib.PriorityList", PriorityList);
+
+module.exports = PriorityList;
