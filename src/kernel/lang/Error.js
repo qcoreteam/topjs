@@ -131,12 +131,12 @@ TopJs.apply(TopJsError, /** @lends TopJs.Error */{
         if (this.handle(error) !== true) {
             msg = to_string.call(error);
             //<debug>
-            TopJs.log({
-                msg: msg,
-                level: "error",
-                dump: error,
-                stack: true
-            });
+            // TopJs.log({
+            //     msg: msg,
+            //     level: "error",
+            //     dump: error,
+            //     stack: true
+            // });
             //</debug>
             throw new TopJs.Error(error);
         }

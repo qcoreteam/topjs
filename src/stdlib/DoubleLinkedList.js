@@ -61,18 +61,34 @@ class DoubleLinkedList
      * @param {Object} value The new value for the index.
      * @return {void}
      */
-    add (index, value)
+    insert (index, value)
     {
         if (index < 0 || index >= this.length) {
             TopJs.raise("Out of bounds");
         }
         let i = 0;
-        let current = this.head;
-        while (i < index) {
-            current = current.next;
-            i++;
+        let target;
+        if (0 === index) {
+            let node = {
+                value: value,
+                prev: null,
+                next: this.head
+            };
+            this.head.prev = node;
+            this.head = node;
+        } else {
+            let current = this.head;
+            while (i < index) {
+                current = current.next;
+                i++;
+            }
+            target = current.prev;
+            target.next = {
+                value: value,
+                prev: target,
+                next: target.next
+            };
         }
-        current.value = value;
     }
 
     /**
