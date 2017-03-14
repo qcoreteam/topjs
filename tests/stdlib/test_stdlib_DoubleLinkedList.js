@@ -180,4 +180,18 @@ describe("TopJs.stdlib.DoubleLinkedList", function()
         list.prev();
         assert.equal(list.current(), 2);
     });
+
+    it("TopJs.stdlib.DoubleLinkedList.iterator", function ()
+    {
+        list.push(1);
+        list.push(2);
+        list.push(3);
+        list.push(4);
+        list.push(5);
+        let orders = [];
+        for (let [key, value] of list) {
+            orders.push(value);
+        }
+        assert.deepEqual(orders, [1, 2, 3, 4, 5]);
+    });
 });

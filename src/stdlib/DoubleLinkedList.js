@@ -318,7 +318,7 @@ class DoubleLinkedList
                     this.current = this.current.next;
                     this.key++;
                     return {
-                        value: [key, current]
+                        value: [key, current.value]
                     };
                 } else {
                     return {
