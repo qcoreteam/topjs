@@ -7,14 +7,14 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 TopJs.namespace("TopJs.stdlib");
-
+let Heap = TopJs.require("TopJs.stdlib.Heap");
 /**
  * @class TopJs.stdlib.MinHeap
  * @author https://github.com/vovazolotoy/TypeScript-STL
  */
-class MinHeap
+class MinHeap extends Heap
 {
-    
+    type = Heap.MIN;
 }
 
 TopJs.registerClass("TopJs.stdlib.MinHeap", MinHeap);
