@@ -17,6 +17,7 @@ let TopJs = global.TopJs = {};
 TopJs.global = global;
 
 require("./kernel/TopJs");
+require("./kernel/utils/Sprintf");
 require("./kernel/Util");
 require("./kernel/lang/Error");
 require("./kernel/lang/Array");

@@ -46,6 +46,14 @@ class Heap
      */
     type = Heap.MAX;
     
+    constructor (type)
+    {
+        if (type != Heap.MAX && type != Heap.MIN) {
+            type = Heap.MAX;
+        }
+        this.type = type;
+    }
+    
     /**
      * Get index of left child element in binary tree stored in array
      *
