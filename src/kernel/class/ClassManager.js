@@ -9,7 +9,7 @@
 
 let ClsManager = TopJs.ClassManager = {};
 
-TopJs.apply(ClsManager, {
+TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
     /**
      * @protected
      * @property {Map} classes
@@ -32,9 +32,21 @@ TopJs.apply(ClsManager, {
     instanceByName (clsName)
     {
         
+    },
+
+    /**
+     * check whether class exist by full qualified class name
+     * 
+     * @param {String} fullClsName
+     * @return {boolean}
+     */
+    classExists (fullClsName)
+    {
+        return this.classes.has(fullClsName);
     }
 });
 
-TopJs.apply(TopJs, {
-    registerClass: TopJs.Function.alias(ClsManager, 'registerClass')
+TopJs.apply(TopJs, /** @lends TopJs */ {
+    registerClass: TopJs.Function.alias(ClsManager, 'registerClass'),
+    classExists: TopJs.Function.alias(ClsManager, 'classExists')
 });

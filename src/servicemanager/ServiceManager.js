@@ -17,7 +17,13 @@ TopJs.require("TopJs.servicemanager.ServiceLocatorInterface");
 class ServiceManager extends TopJs.Class
 {
     /**
-     *
+     * @property {TopJs.servicemanager.Factory.AbstractFactoryInterface[]} abstractFactories
+     */
+    abstractFactories = [];
+    
+    /**
+     * Whether or not changes may be made to this instance.
+     * 
      * @property {Boolean}
      */
     allowOverride = false;
@@ -54,6 +60,16 @@ class ServiceManager extends TopJs.Class
      * @property {Object} shared
      */
     shared = {};
+
+    /**
+     * @property {String[][]|TopJs.servicemanager.Factory.DelegatorFactoryInterface[][]} delegators
+     */
+    delegators = {};
+
+    /**
+     * @property {TopJs.servicemanager.Initializer.InitializerInterface[]} initializers
+     */
+    initializers = [];
 
     /**
      * Should the services be shared by default?
@@ -108,7 +124,40 @@ class ServiceManager extends TopJs.Class
         }
         return object;
     }
-    
+
+    /**
+     * Create a new instance with an already resolved name
+     *
+     * This is a highly performance sensitive method, do not modify if you have not benchmarked it carefully
+     *
+     * @param {String} resolvedName
+     * @param {null|array} options
+     * @return mixed
+     * @throws TopJs.Error
+     */
+    doCreate (resolvedName, options = null)
+    {
+        let object;
+        try {
+           if (!this.delegators.hasOwnProperty(resolvedName)) {
+               // Let's create the service by fetching the factory
+               let factory = this.getFactory(resolvedName);
+               object = factory(this.creationContext, resolvedName, options);
+           } else {
+               object = this.createDelegatorFromName(resolvedName, options);
+           }
+        } catch (ex) {
+            TopJs.raise(TopJs.sprintf(
+                'Service with name "%s" could not be created. Reason: %s',
+                resolvedName, ex.message));
+        }
+        this.initializers.forEach(function (initializer)
+        {
+            initializer.init(this.creationContext, object);
+        });
+        return object;
+    }
+
     has (name)
     {
         
@@ -154,13 +203,11 @@ class ServiceManager extends TopJs.Class
         if (config.hasOwnProperty("factories") && !TopJs.isEmpty(config.factories)) {
             this.factories = TopJs.applyIf(config.factories, this.factories);
         }
+        if (config.hasOwnProperty("delegators")) {
+            this.delegators = TopJs.Object.merge(this.delegators, config.hasOwnProperty("delegators"));
+        }
     }
-
-    doCreate ()
-    {
-        
-    }
-
+    
     static createAliasesForInvokables (invokables)
     {
         let aliases = {};
@@ -181,7 +228,42 @@ class ServiceManager extends TopJs.Class
         }
         return factories;
     }
-    
+
+    /**
+     * Get a factory for the given service name
+     *
+     * @param {String} name
+     * @return callable
+     * @throws TopJs.Error
+     */
+    getFactory (name)
+    {
+        let factory = this.factories.hasOwnProperty(name) ? this.factories[name] : null;
+        let lazyLoaded = false;
+        if (TopJs.isString(factory) && TopJs.classExists(factory)) {
+            factory = TopJs.ClassManager.instanceByName(factory);
+            lazyLoaded = true;
+        }
+        if (factory && (TopJs.isFunction(factory) || 
+            (factory.hasOwnProperty(factory) && TopJs.isFunction(factory.invoke)))) {
+            if (lazyLoaded) {
+                this.factories[name] = factory;
+            }
+            return factory;
+        }
+        // Check abstract factories
+        let length = this.abstractFactories.length;
+        for (let i = 0; i < length; i++) {
+            let abstractFactory = this.abstractFactories[i];
+            if (abstractFactory.canCareate(this.creationContext, name)) {
+                return abstractFactory;
+            }
+        }
+        TopJs.raise(TopJs.sprintf(
+            'Unable to resolve service "%s" to a factory; are you certain you provided it during configuration?',
+            name
+        ));
+    }
 }
 
 ServiceManager.implements(TopJs.servicemanager.ServiceLocatorInterface);
