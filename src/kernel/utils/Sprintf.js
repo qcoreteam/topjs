@@ -44,7 +44,7 @@ function sprintf (key, ...args)
 
 function format (parseTree, args)
 {
-    let cursor = 1;
+    let cursor = 0;
     let treeLength = parseTree.length;
     let nodeType = '';
     let arg;
@@ -68,12 +68,12 @@ function format (parseTree, args)
                 }
             } else if (match[1]) {
                 // positional argument (explicit)
-                arg = args[match[1]];
+                arg = args[parseInt(match[1]) - 1];
             } else {
                 // positional argument (implicit)
                 arg = args[cursor++];
             }
-            if (regex.not_type.test(match[8]) && regex.not_primitive.test(match[8]) && get_type(arg) !== 'function') {
+            if (regex.not_type.test(match[8]) && regex.not_primitive.test(match[8]) && get_type(arg) == 'function') {
                 arg = arg();
             }
             if (regex.numeric_arg.test(match[8]) && (get_type(arg) != 'number' && isNaN(arg))) {

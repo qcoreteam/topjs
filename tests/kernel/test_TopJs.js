@@ -1623,4 +1623,106 @@ describe("TopJs名称空间函数测试", function ()
             assert.equal(dest.obj, source.obj);
         });
     });
+    
+    describe("TopJs.sprintf", function ()
+    {
+        let pi = 3.141592653589793;
+        it("should return formated strings for simple placeholders", function() {
+            assert.equal("%", TopJs.sprintf("%%"));
+            assert.equal("10", TopJs.sprintf("%b", 2));
+            assert.equal("A", TopJs.sprintf("%c", 65));
+            assert.equal("2", TopJs.sprintf("%d", 2));
+            assert.equal("2", TopJs.sprintf("%i", 2));
+            assert.equal("2", TopJs.sprintf("%d", "2"));
+            assert.equal("2", TopJs.sprintf("%i", "2"));
+            assert.equal('{"foo":"bar"}', TopJs.sprintf("%j", {foo: "bar"}));
+            assert.equal('["foo","bar"]', TopJs.sprintf("%j", ["foo", "bar"]));
+            assert.equal("2e+0",  TopJs.sprintf("%e", 2));
+            assert.equal("2", TopJs.sprintf("%u", 2));
+            assert.equal("4294967294", TopJs.sprintf("%u", -2));
+            assert.equal("2.2", TopJs.sprintf("%f", 2.2));
+            assert.equal("3.141592653589793", TopJs.sprintf("%g", pi));
+            assert.equal("10", TopJs.sprintf("%o", 8));
+            assert.equal("%s", TopJs.sprintf("%s", "%s"));
+            assert.equal("ff", TopJs.sprintf("%x", 255));
+            assert.equal("FF", TopJs.sprintf("%X", 255));
+            assert.equal("Polly wants a cracker", TopJs.sprintf("%2$s %3$s a %1$s", "cracker", "Polly", "wants"));
+            assert.equal("Hello world!", TopJs.sprintf("Hello %(who)s!", {"who": "world"}));
+            assert.equal("true", TopJs.sprintf("%t", true));
+            assert.equal("t", TopJs.sprintf("%.1t", true));
+            assert.equal("true", TopJs.sprintf("%t", "true"));
+            assert.equal("true", TopJs.sprintf("%t", 1));
+            assert.equal("false", TopJs.sprintf("%t", false));
+            assert.equal("f", TopJs.sprintf("%.1t", false));
+            assert.equal("false", TopJs.sprintf("%t", ""));
+            assert.equal("false", TopJs.sprintf("%t", 0));
+
+            assert.equal('undefined', TopJs.sprintf('%T', undefined));
+            assert.equal('null', TopJs.sprintf('%T', null));
+            assert.equal('boolean', TopJs.sprintf('%T', true));
+            assert.equal('number', TopJs.sprintf('%T', 42));
+            assert.equal('string', TopJs.sprintf('%T', "This is a string"));
+            assert.equal('function', TopJs.sprintf('%T', Math.log));
+            assert.equal('array', TopJs.sprintf('%T', [1, 2, 3]));
+            assert.equal('object', TopJs.sprintf('%T', {foo: 'bar'}));
+            assert.equal('regexp', TopJs.sprintf('%T', /<("[^"]*"|'[^']*'|[^'">])*>/));
+
+            assert.equal('true', TopJs.sprintf('%v', true));
+            assert.equal('42', TopJs.sprintf('%v', 42));
+            assert.equal('This is a string', TopJs.sprintf('%v', "This is a string"));
+            assert.equal('1,2,3', TopJs.sprintf('%v', [1, 2, 3]));
+            assert.equal('[object Object]', TopJs.sprintf('%v', {foo: 'bar'}));
+            assert.equal('/<("[^"]*"|\'[^\']*\'|[^\'">])*>/', TopJs.sprintf('%v', /<("[^"]*"|'[^']*'|[^'">])*>/));
+        });
+
+        it("should return formated strings for complex placeholders", function() {
+            // sign
+            assert.equal("2", TopJs.sprintf("%d", 2));
+            assert.equal("-2", TopJs.sprintf("%d", -2));
+            assert.equal("+2", TopJs.sprintf("%+d", 2));
+            assert.equal("-2", TopJs.sprintf("%+d", -2));
+            assert.equal("2", TopJs.sprintf("%i", 2));
+            assert.equal("-2", TopJs.sprintf("%i", -2));
+            assert.equal("+2", TopJs.sprintf("%+i", 2));
+            assert.equal("-2", TopJs.sprintf("%+i", -2));
+            assert.equal("2.2", TopJs.sprintf("%f", 2.2));
+            assert.equal("-2.2", TopJs.sprintf("%f", -2.2));
+            assert.equal("+2.2", TopJs.sprintf("%+f", 2.2));
+            assert.equal("-2.2", TopJs.sprintf("%+f", -2.2));
+            assert.equal("-2.3", TopJs.sprintf("%+.1f", -2.34));
+            assert.equal("-0.0", TopJs.sprintf("%+.1f", -0.01));
+            assert.equal("3.14159", TopJs.sprintf("%.6g", pi));
+            assert.equal("3.14", TopJs.sprintf("%.3g", pi));
+            assert.equal("3", TopJs.sprintf("%.1g", pi));
+            assert.equal("-000000123", TopJs.sprintf("%+010d", -123));
+            assert.equal("______-123", TopJs.sprintf("%+'_10d", -123));
+            assert.equal("-234.34 123.2", TopJs.sprintf("%f %f", -234.34, 123.2));
+
+            // padding
+            assert.equal("-0002", TopJs.sprintf("%05d", -2));
+            assert.equal("-0002", TopJs.sprintf("%05i", -2));
+            assert.equal("    <", TopJs.sprintf("%5s", "<"));
+            assert.equal("0000<", TopJs.sprintf("%05s", "<"));
+            assert.equal("____<", TopJs.sprintf("%'_5s", "<"));
+            assert.equal(">    ", TopJs.sprintf("%-5s", ">"));
+            assert.equal(">0000", TopJs.sprintf("%0-5s", ">"));
+            assert.equal(">____", TopJs.sprintf("%'_-5s", ">"));
+            assert.equal("xxxxxx", TopJs.sprintf("%5s", "xxxxxx"));
+            assert.equal("1234", TopJs.sprintf("%02u", 1234));
+            assert.equal(" -10.235", TopJs.sprintf("%8.3f", -10.23456));
+            assert.equal("-12.34 xxx", TopJs.sprintf("%f %s", -12.34, "xxx"));
+            assert.equal('{\n  "foo": "bar"\n}', TopJs.sprintf("%2j", {foo: "bar"}));
+            assert.equal('[\n  "foo",\n  "bar"\n]', TopJs.sprintf("%2j", ["foo", "bar"]));
+
+            // precision
+            assert.equal("2.3",  TopJs.sprintf("%.1f", 2.345));
+            assert.equal("xxxxx",  TopJs.sprintf("%5.5s", "xxxxxx"));
+            assert.equal("    x",  TopJs.sprintf("%5.1s", "xxxxxx"));
+        });
+
+        it("should return formated strings for callbacks", function() {
+            assert.equal("foobar", TopJs.sprintf("%s", function() { return "foobar" }));
+            assert.equal(Date.now(), TopJs.sprintf("%s", Date.now)); // should pass...
+        });
+    });
 });
