@@ -8,8 +8,6 @@
  */
 TopJs.namespace("TopJs.stdlib");
 
-let PriorityQueue = TopJs.require("TopJs.stdlib.PriorityQueue");
-
 /**
  * @class TopJs.stdlib.FastPriorityQueue
  * @classdesc
@@ -21,16 +19,15 @@ let PriorityQueue = TopJs.require("TopJs.stdlib.PriorityQueue");
  * the elements. This behaviour can be used in mixed scenarios with high
  * performance boost.
  */
-class FastPriorityQueue 
-{
-    static EXTR_DATA = PriorityQueue.EXTR_DATA;
-    static EXTR_PRIORITY = PriorityQueue.EXTR_PRIORITY;
-    static EXTR_BOTH = PriorityQueue.EXTR_BOTH;
+class FastPriorityQueue {
+    static EXTRA_BOTH = Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_BOTH");
+    static EXTRA_PRIORITY = Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_PRIORITY");
+    static EXTRA_DATA = Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_DATA");
 
     /**
      * @property {Symbol} extractFlag
      */
-    extractFlag = FastPriorityQueue.EXTR_BOTH;
+    extractFlag = FastPriorityQueue.EXTRA_BOTH;
 
     /**
      * Elements of the queue, divided by priorities
@@ -81,6 +78,15 @@ class FastPriorityQueue
      */
     subIndex = 0;
 
+    constructor(type = FastPriorityQueue.EXTRA_BOTH)
+    {
+        if (FastPriorityQueue.EXTRA_BOTH == type ||
+            FastPriorityQueue.EXTRA_DATA == type ||
+            FastPriorityQueue.EXTRA_PRIORITY == type) {
+            this.extractFlag = type;
+        }
+    }
+
     /**
      * Insert an element in the queue with a specified priority
      *
@@ -89,7 +95,7 @@ class FastPriorityQueue
      */
     insert(value, priority)
     {
-        if (!TopJs.isInteger(priority)) {
+        if (!TopJs.isNumber(priority)) {
             TopJs.raise("The priority must be an Number");
         }
         if (!this.values.has(priority)) {
@@ -98,8 +104,8 @@ class FastPriorityQueue
         let priorityArray = this.values.get(priority);
         priorityArray.push(value);
         if (!this.priorities.has(priority)) {
-            this.priorities[priority] = priority;
-            this.maxPriority = Number.max(priority, this.maxPriority);
+            this.priorities.set(priority, priority);
+            this.maxPriority = Math.max(priority, this.maxPriority);
         }
         this.length++;
     }
@@ -111,9 +117,9 @@ class FastPriorityQueue
      */
     setExtractFlag(flag)
     {
-        if (FastPriorityQueue.EXTR_BOTH == flag ||
-            FastPriorityQueue.EXTR_DATA == flag ||
-            FastPriorityQueue.EXTR_PRIORITY == flag) {
+        if (FastPriorityQueue.EXTRA_BOTH == flag ||
+            FastPriorityQueue.EXTRA_DATA == flag ||
+            FastPriorityQueue.EXTRA_PRIORITY == flag) {
             this.extractFlag = flag;
         } else {
             TopJs.raise("The extract flag specified is not valid");
@@ -136,18 +142,18 @@ class FastPriorityQueue
         if (!datum) {
             this.priorities.delete(this.maxPriority);
             this.values.delete(this.maxPriority);
-            this.maxPriority = (0 === this.priorities.size()) ? 0 : this.getMaxPriority(this.priorities);
+            this.maxPriority = (0 === this.priorities.size) ? 0 : this.getMaxPriority(this.priorities);
             this.subIndex = -1;
+            return this.extract();
         }
         ++this.index;
-        ++this.subIndex;
         --this.length;
         switch (this.extractFlag) {
             case FastPriorityQueue.EXTRA_DATA:
                 return datum;
-            case FastPriorityQueue.EXTR_PRIORITY:
+            case FastPriorityQueue.EXTRA_PRIORITY:
                 return this.maxPriority;
-            case FastPriorityQueue.EXTR_BOTH:
+            case FastPriorityQueue.EXTRA_BOTH:
                 return [datum, this.maxPriority];
         }
     }
@@ -159,7 +165,17 @@ class FastPriorityQueue
      */
     empty()
     {
-        return this.values.empty();
+        return this.values.size === 0;
+    }
+
+    /**
+     * Get the total number of elements in the queue
+     * 
+     * @return {Number}
+     */
+    count ()
+    {
+        return this.length;
     }
 
     /**
@@ -176,6 +192,38 @@ class FastPriorityQueue
             }
         }
         return false;
+    }
+
+    /**
+     * Remove an item from the queue
+     *
+     * This is different than {@link FastPriorityQueue.extract()}; its purpose is to dequeue an
+     * item.
+     *
+     * Note: this removes the first item matching the provided item found. If
+     * the same item has been added multiple times, it will not remove other
+     * instances.
+     *
+     * @param {Object} datum
+     * @return {Boolean} False if the item was not found, true otherwise.
+     */
+    remove(datum)
+    {
+        this.rewind();
+        while (this.valid()) {
+            let cycleValues = this.values.get(this.maxPriority);
+            let cycleLength = cycleValues.length;
+            for (let index = 0; index < cycleLength; index++) {
+                if (datum == cycleValues[index]) {
+                    TopJs.Array.removeAt(cycleValues, index);
+                    --this.length;
+                    return true;
+                }
+            }
+            this.subPriorities.delete(this.maxPriority);
+            this.maxPriority = (0 === this.subPriorities) ? 0 : this.getMaxPriority(this.subPriorities);
+            ++this.index;
+        }
     }
 
     /**
@@ -204,8 +252,17 @@ class FastPriorityQueue
      */
     rewind()
     {
-        this.subPriorities = this.priorities;
-        this.maxPriority = (0 === this.priorities.size()) ? 0 : this.getMaxPriority(this.priorities);
+        let me = this;
+        if (this.subPriorities) {
+            this.subPriorities.clear();
+        } else {
+            this.subPriorities = new Map();
+        }
+        this.priorities.forEach(function (value, key)
+        {
+            me.subPriorities.set(key, value);
+        });
+        this.maxPriority = (0 === this.priorities.size) ? 0 : this.getMaxPriority(this.priorities);
         this.index = 0;
     }
 
@@ -236,6 +293,20 @@ class FastPriorityQueue
         return max;
     }
 
+    /**
+     * create an order array
+     *
+     * @return {Array}
+     */
+    toArray()
+    {
+        let arr = [];
+        for (let [index, data] of this) {
+            arr.push(data);
+        }
+        return arr;
+    }
+
     [Symbol.iterator]()
     {
         let me = this;
@@ -243,39 +314,37 @@ class FastPriorityQueue
         return {
             maxPriorityValuesIndex: 0,
             maxPriority: me.maxPriority,
+            subPriorities: me.subPriorities,
             index: me.index,
-            subIndex: me.subIndex,
             next ()
             {
+                if (!me.values.has(this.maxPriority)) {
+                    return {
+                        value: undefined,
+                        done: true
+                    };
+                }
                 let datum = me.values.get(this.maxPriority)[this.maxPriorityValuesIndex++];
                 let retValue;
                 switch (me.extractFlag) {
                     case FastPriorityQueue.EXTRA_DATA:
-                        retValue = [this.index, datum];
+                        retValue = [this.index++, datum];
                         break;
-                    case FastPriorityQueue.EXTR_PRIORITY:
-                        retValue = [this.index, this.maxPriority];
+                    case FastPriorityQueue.EXTRA_PRIORITY:
+                        retValue = [this.index++, this.maxPriority];
                         break;
-                    case FastPriorityQueue.EXTR_BOTH:
-                        retValue = [this.index, [datum, this.maxPriority]];
+                    case FastPriorityQueue.EXTRA_BOTH:
+                        retValue = [this.index++, [datum, this.maxPriority]];
                         break;
                 }
                 if (this.maxPriorityValuesIndex === me.values.get(this.maxPriority).length) {
-                    me.subPriorities.delete(this.maxPriority);
+                    this.subPriorities.delete(this.maxPriority);
                     this.maxPriorityValuesIndex = 0;
-                    this.maxPriority = (0 === me.subPriorities.size()) ? 0 : me.getMaxPriority(me.subPriorities);
+                    this.maxPriority = (0 === me.subPriorities.size) ? 0 : me.getMaxPriority(me.subPriorities);
                 }
-                ++this.index;
-                if (me.values.has(this.maxPriority)) {
-                    return {
-                        value: retValue,
-                        done: false
-                    };
-                }
-
                 return {
-                    value: undefined,
-                    done: true
+                    value: retValue,
+                    done: false
                 };
             }
         };
