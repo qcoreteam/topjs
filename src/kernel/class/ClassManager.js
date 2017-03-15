@@ -43,10 +43,16 @@ TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
     classExists (fullClsName)
     {
         return this.classes.has(fullClsName);
+    },
+    
+    implements (Class, interfaces)
+    {
+        
     }
 });
 
 TopJs.apply(TopJs, /** @lends TopJs */ {
     registerClass: TopJs.Function.alias(ClsManager, 'registerClass'),
-    classExists: TopJs.Function.alias(ClsManager, 'classExists')
+    classExists: TopJs.Function.alias(ClsManager, 'classExists'),
+    implements: TopJs.Function.alias(ClsManager, 'implements')
 });
