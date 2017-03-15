@@ -170,10 +170,10 @@ class FastPriorityQueue {
 
     /**
      * Get the total number of elements in the queue
-     * 
+     *
      * @return {Number}
      */
-    count ()
+    count()
     {
         return this.length;
     }
