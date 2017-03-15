@@ -75,7 +75,7 @@ class Heap
      */
     parent (n)
     {
-        return Math.floor(n / 2);
+        return Math.floor((n - 1) / 2);
     }
 
     /**
@@ -105,7 +105,7 @@ class Heap
             if (this.compare(this.tree[i], this.tree[parent]) * this.type > 0) {
                 this.swap(i, parent);
                 i = parent;
-            } else{
+            } else {
                 break;
             }
         }
@@ -149,7 +149,7 @@ class Heap
      *
      * @return any The value of the extracted node.
      */
-    extra ()
+    extract ()
     {
         if (this.tree.length === 0) {
             TopJs.raise("Can't extract from an empty data structure");
@@ -200,6 +200,16 @@ class Heap
     }
 
     /**
+     * return true is heap is empty
+     * 
+     * @return {Boolean}
+     */
+    empty ()
+    {
+        return (this.tree.length === 0);
+    }
+
+    /**
      * Compare elements in order to place them correctly in the heap while sifting up.
      *
      * @method compare
@@ -212,7 +222,7 @@ class Heap
     {
         if (left > right) {
             return 1;
-        } else if (first == second) {
+        } else if (left == right) {
             return 0;
         } else {
             return -1;
