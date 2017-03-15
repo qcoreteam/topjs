@@ -298,7 +298,8 @@ class Heap
                     let item = [this.current, tree[this.current]];
                     this.current++;
                     return {
-                        value: item
+                        value: item,
+                        done: false
                     };
                 } else {
                     return {
