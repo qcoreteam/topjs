@@ -9,7 +9,7 @@
 
 TopJs.namespace("TopJs.namespace");
 
-let DoubleLinkedList = TopJs.require("TopJs.stdlib.Queue");
+let DoubleLinkedList = TopJs.require("TopJs.stdlib.DoubleLinkedList");
 
 /**
  * @class TopJs.stdlib.Stack
