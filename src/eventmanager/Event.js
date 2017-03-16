@@ -8,7 +8,7 @@
  */
 TopJs.namespace('TopJs.eventmanager');
 
-let EventInterface = require("TopJs.eventmanager.EventInterface");
+let EventInterface = TopJs.require("TopJs.eventmanager.EventInterface");
 
 class Event {
     /**

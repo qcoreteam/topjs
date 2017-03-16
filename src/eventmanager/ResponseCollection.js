@@ -8,7 +8,7 @@
  */
 TopJs.namespace('TopJs.eventmanager');
 
-let Stack = require("TopJs.stdlib.Stack");
+let Stack = TopJs.require("TopJs.stdlib.Stack");
 
 /**
  * @class TopJs.eventmanager.ResponseCollection
