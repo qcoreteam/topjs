@@ -8,10 +8,15 @@
  */
 TopJs.namespace('TopJs.eventmanager');
 
-class EventInterface
+/**
+ * @class TopJs.eventmanager.AbstractListenerAggregate
+ * 
+ * Abstract aggregate listener
+ */
+class AbstractListenerAggregate
 {
-
+    listeners = [];
 }
 
-TopJs.registerClass("TopJs.eventmanager.EventInterface", EventInterface);
-module.exports = EventInterface;
+TopJs.registerClass("TopJs.eventmanager.AbstractListenerAggregate", AbstractListenerAggregate);
+module.exports = AbstractListenerAggregate;

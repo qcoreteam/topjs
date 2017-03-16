@@ -136,7 +136,6 @@ TopJs.apply(TopJs, /** @lends TopJs */{
     /**
      * 快速判断传入的对象是否在Object字面类型
      *
-     * @private
      * @memberOf TopJs
      * @param {Object} value 等待测试的值
      * @return {Boolean}
