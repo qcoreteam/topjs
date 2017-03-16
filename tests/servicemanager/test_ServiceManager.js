@@ -11,6 +11,22 @@ const TopJs = require("../../lib/Index");
 TopJs.require("TopJs.servicemanager.ServiceManager");
 
 let assert = require("chai").assert;
+class A
+{
+
+}
+class B extends A
+{
+    
+}
+class C extends B
+{
+    
+}
+class D extends C
+{
+    
+}
 
 describe("TopJs.servicemanager.ServiceManager", function ()
 {
@@ -46,14 +62,16 @@ describe("TopJs.servicemanager.ServiceManager", function ()
     describe("TopJs.servicemanager.ServiceManager.get", function(){
         it("test shared by default", function ()
         {
-            serviceManager = create_service_manager({
-                invokables: {
-                    "invokeClsName": "TopJs.servicemanager.factory.InvokableFactory"
-                }
-            });
-            let object1 = serviceManager.get("invokeClsName");
-            let object2 = serviceManager.get("invokeClsName");
-            assert.equal(object1, object2);
+            // serviceManager = create_service_manager({
+            //     invokables: {
+            //         "invokeClsName": "TopJs.servicemanager.factory.InvokableFactory"
+            //     }
+            // });
+            // let object1 = serviceManager.get("invokeClsName");
+            // let object2 = serviceManager.get("invokeClsName");
+            // assert.equal(object1, object2);
+            // console.log(Object.getPrototypeOf(D));
+            // console.log(new D instanceof A);
         });
     });
 });

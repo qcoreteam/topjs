@@ -26,14 +26,15 @@ TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
         if (!this.classes.has(fullClsName)) {
             ClsManager.classes.set(fullClsName, TopJs.Loader.mountClsToNamespace(fullClsName, cls));
             cls.$_class_name_$ = fullClsName;
-            this.setupClass(cls);
+            cls.prototype.self = cls;
+            this.mixin(cls, TopJs.Class);
         }
         return this;
     },
 
     instanceByName(clsName)
     {
-        
+
     },
 
     /**
@@ -49,11 +50,11 @@ TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
 
     /**
      * register interfaces for class
-     * 
+     *
      * @param {Object} Class
-     * @param {Array} interfaces
+     * @param {...Array} interfaces
      */
-    implements(Class, interfaces)
+    implements(Class, ...interfaces)
     {
         if (!Class.hasOwnProperty("$_interfaces_$")) {
             Class.$_interfaces_$ = [];
@@ -67,7 +68,7 @@ TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
 
     /**
      * get the name of clsObject
-     * 
+     *
      * @param {Class} clsObject
      * @return {String}
      */
@@ -81,45 +82,97 @@ TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
 
     /**
      * whether clsObject implement interfaceObject
-     * 
-     * @param {Object} clsObject
-     * @param {Object} interfaceObject
+     *
+     * @param {Object} classObject
+     * @param {Object} interfaceClass
      * @return {boolean}
      */
-    implementInterface(clsObject, interfaceObject)
+    implementInterface(classObject, interfaceClass)
     {
-        if (!clsObject.hasOwnProperty("$_interfaces_$")) {
+        if (!classObject.hasOwnProperty("$_interfaces_$")) {
             return false;
         }
-        return clsObject.$_interfaces_$.includes(interfaceObject);
+        if (classObject.$_interfaces_$.includes(interfaceClass)) {
+            return true;
+        }
+        for (let currentInterfaceClass of classObject.$_interfaces_$) {
+            if ((new currentInterfaceClass) instanceof interfaceClass) {
+                classObject.$_interfaces_$.push(interfaceClass);
+                return true;
+            }
+        }
+        return false;
+    },
+    
+    mixin(targetClass, mixinClass)
+    {
+        let mixin = mixinClass.prototype;
+        let prototype = targetClass.prototype;
+        if (mixin.onClassMixedIn && TopJs.isFunction(mixin.onClassMixedIn)) {
+            mixin.onClassMixedIn.call(mixinClass, this);
+        }
+        for (let key in mixin) {
+            if (prototype[key] === undefined) {
+                prototype[key] = mixin[key];
+            }
+        }
+
+        if (mixin.afterClassMixedIn && TopJs.isFunction(mixin.afterClassMixedIn)) {
+            mixin.afterClassMixedIn.call(mixinClass, this);
+        }
+        return targetClass;
     },
 
     /**
-     * @private
+     * Add / override static properties of target class.
+     *
+     * ```javascript
+     *
+     * TopJs.ClassManager.addStatics(targetClass, {
+     *    someProperty: 'someValue',      // targetClass.someProperty = 'someValue'
+     *         method1: function() { ... },    // targetClass.method1 = function() { ... };
+     *         method2: function() { ... }     // targetClass.method2 = function() { ... };
+     * });
+     *
+     * ```
+     * @param {TopJs.Class} targetClass
+     * @param {Object} members
+     * @return {TopJs.Class} targetClass
+     * @static
      */
-    setupClass(cls)
+    addStatics(targetClass, members)
     {
-        TopJs.apply(cls.prototype, {
-            self: cls,
-            getClassName()
-            {
-                return this.self.$_class_name_$;
-            },
-            
-            instanceOf(targetClass)
-            {
-                if (this instanceof targetClass) {
-                    return true;
-                }
-                return this.self.$_interfaces_$.includes(targetClass);
-            }
-        });
-        TopJs.apply(cls, {
-            getClassName()
-            {
-                return this.$_class_name_$;
-            }
-        });
+        return this.addMembers(targetClass, members, true);
+    },
+
+    /**
+     * Add methods / properties to the prototype of this class.
+     *
+     * ```javascript
+     * class targetClass
+     * {}
+     *
+     * TopJs.ClassManager.addMembers(targetClass, {
+     *    meow: function() {
+     *       console.log('Meowww...');
+     *    }
+     * });
+     * let kitty = new targetClass();
+     * kitty.meow();
+     *
+     * ```
+     * @param {TopJs.Class} targetClass the target class object
+     * @param {Object} members The members to add to this class.
+     * @param {Boolean} [isStatic=false] Pass `true` if the members are static.
+     * only has meaning in debug mode and only for methods.
+     */
+    addMembers(targetClass, members, isStatic)
+    {
+        let target = isStatic ? targetClass : targetClass.prototype;
+        for (let name in members) {
+            target[name] = members[name];
+        }
+        return targetClass;
     }
 });
 
