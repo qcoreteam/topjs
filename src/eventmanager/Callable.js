@@ -8,6 +8,9 @@
  */
 TopJs.namespace('TopJs.eventmanager');
 
+/**
+ * @class TopJs.eventmanager.Callable
+ */
 class Callable
 {
     CALLABLE_TYPE_NORMAL = Symbol("TopJs.eventmanager.Callable.CALLABLE_TYPE_NORMAL");
