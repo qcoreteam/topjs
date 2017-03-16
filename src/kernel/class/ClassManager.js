@@ -21,33 +21,105 @@ TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
      * @param {Object} cls The Class Object
      * @return {TopJs.Loader} this
      */
-    registerClass (fullClsName, cls)
+    registerClass(fullClsName, cls)
     {
         if (!this.classes.has(fullClsName)) {
             ClsManager.classes.set(fullClsName, TopJs.Loader.mountClsToNamespace(fullClsName, cls));
+            cls.$_class_name_$ = fullClsName;
+            this.setupClass(cls);
         }
         return this;
     },
-    
-    instanceByName (clsName)
+
+    instanceByName(clsName)
     {
         
     },
 
     /**
      * check whether class exist by full qualified class name
-     * 
+     *
      * @param {String} fullClsName
      * @return {boolean}
      */
-    classExists (fullClsName)
+    classExists(fullClsName)
     {
         return this.classes.has(fullClsName);
     },
-    
-    implements (Class, interfaces)
+
+    /**
+     * register interfaces for class
+     * 
+     * @param {Object} Class
+     * @param {Array} interfaces
+     */
+    implements(Class, interfaces)
     {
-        
+        if (!Class.hasOwnProperty("$_interfaces_$")) {
+            Class.$_interfaces_$ = [];
+        }
+        for (let i = 0; i < interfaces.length; i++) {
+            if (!Class.$_interfaces_$.includes(interfaces[i])) {
+                Class.$_interfaces_$.push(interfaces[i]);
+            }
+        }
+    },
+
+    /**
+     * get the name of clsObject
+     * 
+     * @param {Class} clsObject
+     * @return {String}
+     */
+    getClassName(clsObject)
+    {
+        if (clsObject.hasOwnProperty("$_class_name_$")) {
+            return clsObject.$_class_name_$;
+        }
+        return "";
+    },
+
+    /**
+     * whether clsObject implement interfaceObject
+     * 
+     * @param {Object} clsObject
+     * @param {Object} interfaceObject
+     * @return {boolean}
+     */
+    implementInterface(clsObject, interfaceObject)
+    {
+        if (!clsObject.hasOwnProperty("$_interfaces_$")) {
+            return false;
+        }
+        return clsObject.$_interfaces_$.includes(interfaceObject);
+    },
+
+    /**
+     * @private
+     */
+    setupClass(cls)
+    {
+        TopJs.apply(cls.prototype, {
+            self: cls,
+            getClassName()
+            {
+                return this.self.$_class_name_$;
+            },
+            
+            instanceOf(targetClass)
+            {
+                if (this instanceof targetClass) {
+                    return true;
+                }
+                return this.self.$_interfaces_$.includes(targetClass);
+            }
+        });
+        TopJs.apply(cls, {
+            getClassName()
+            {
+                return this.$_class_name_$;
+            }
+        });
     }
 });
 
