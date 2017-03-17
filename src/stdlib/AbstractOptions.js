@@ -6,3 +6,12 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+TopJs.namespace("TopJs.stdlib");
+
+class AbstractOptions
+{
+    
+}
+
+TopJs.registerClass("TopJs.stdlib.AbstractOptions", AbstractOptions);
+module.exports = AbstractOptions;
