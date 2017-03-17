@@ -297,7 +297,7 @@ TopJs.apply(TopJsObj, /** @lends TopJs.Object */{
                     matchedName = name.match(nameRe);
                     //<debug>
                     if (!matchedName) {
-                        throw new Error(`[TopJs.Object.fromQueryString] 查询字符串格式有错误，解析错误部分"${part}"`);
+                        throw new Error(`[TopJs.Object.fromQueryString] query string format error : "${part}"`);
                     }
                     //</debug>
                     name = matchedName[0];
