@@ -179,5 +179,12 @@ TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
 TopJs.apply(TopJs, /** @lends TopJs */ {
     registerClass: TopJs.Function.alias(ClsManager, 'registerClass'),
     classExists: TopJs.Function.alias(ClsManager, 'classExists'),
+    
+    /**
+     * register interfaces for class
+     *
+     * @param {Object} Class
+     * @param {...Array} interfaces
+     */
     implements: TopJs.Function.alias(ClsManager, 'implements')
 });
