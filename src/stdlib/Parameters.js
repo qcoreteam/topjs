@@ -8,6 +8,8 @@
  */
 TopJs.namespace("TopJs.stdlib");
 
+let ParametersInterface = TopJs.require("TopJs.stdlib.ParametersInterface");
+
 class Parameters {
     /**
      * @private
@@ -126,4 +128,5 @@ class Parameters {
 }
 
 TopJs.registerClass("TopJs.stdlib.Parameters", Parameters);
+TopJs.implements(Parameters, ParametersInterface);
 module.exports = Parameters;
