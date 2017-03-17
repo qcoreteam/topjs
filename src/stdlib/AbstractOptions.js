@@ -69,6 +69,9 @@ let abstractOptionsHandler = {
     }
 };
 
+/**
+ * @class TopJs.stdlib.AbstractOptions
+ */
 class AbstractOptions
 {
     /**
