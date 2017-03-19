@@ -16,8 +16,12 @@ let Heap = TopJs.require("TopJs.stdlib.Heap");
  */
 class MaxHeap extends Heap
 {
-    type = Heap.MAx;
+    constructor()
+    {
+        super(Heap.MAX)
+    }
 }
+
 
 TopJs.registerClass("TopJs.stdlib.MaxHeap", MaxHeap);
 module.exports = MaxHeap;

@@ -6,25 +6,27 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+/**
+ * @namespace TopJs.code
+ */
 TopJs.namespace("TopJs.code");
 
 /**
  * @class TopJs.code.NameInformation
  */
-class NameInformation
-{
-    /**
-     * @property {String} namespace
-     */
-    namespace = null;
-
-    /**
-     * @property {Map} uses
-     */
-    uses = new Map();
-    
+class NameInformation {
     constructor(namespace = null, uses = [])
     {
+        /**
+         * @property {String} namespace
+         */
+        this.namespace = null;
+
+        /**
+         * @property {Map} uses
+         */
+        this.uses = new Map();
+        
         if (namespace) {
             this.setNamespace(namespace);
         }
@@ -32,7 +34,7 @@ class NameInformation
             this.setUses(uses);
         }
     }
-    
+
     setNamespace(namespace)
     {
         this.namespace = namespace;
@@ -83,7 +85,7 @@ class NameInformation
         }
         return this;
     }
-    
+
     /**
      * @param {String} use the fullclass name
      * @param {String} as the class alias name
@@ -112,7 +114,6 @@ class NameInformation
         });
         return uses;
     }
-    
 }
 
 TopJs.registerClass("TopJs.code.NameInfomation", NameInformation);

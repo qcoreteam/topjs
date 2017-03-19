@@ -12,7 +12,6 @@ let PriorityList = TopJs.require("TopJs.stdlib.PriorityList");
 
 let assert = require("chai").assert;
 
-
 describe("TopJs.stdlib.PriorityList", function()
 {
     let list;
@@ -26,7 +25,7 @@ describe("TopJs.stdlib.PriorityList", function()
     {
         it("test normal insert", function ()
         {
-            list.insert("foo", {}, 0);
+             list.insert("foo", {}, 0);
             assert.equal(list.getCount(), 1);
             for (let [key, value] of list) {
                 assert.equal(key, "foo");
@@ -56,13 +55,13 @@ describe("TopJs.stdlib.PriorityList", function()
             list.remove("foo");
             assert.equal(list.getCount(), 1);
         });
-        
+
         it("removing non existent route route does not yield error", function ()
         {
             list.remove("not exist");
         });
     });
-    
+
     it("TopJs.stdlib.PriorityList.clear", function()
     {
         list.insert("foo", {}, 0);
@@ -71,7 +70,7 @@ describe("TopJs.stdlib.PriorityList", function()
         list.clear();
         assert.equal(list.getCount(), 0);
     });
-    
+
     it("TopJs.stdlib.PriorityList.get", function ()
     {
         let obj = {};
@@ -79,7 +78,7 @@ describe("TopJs.stdlib.PriorityList", function()
         assert.equal(list.get("foo"), obj);
         assert.isNull(list.get("bar"))
     });
-    
+
     describe("priority about", function()
     {
         it("TopJs.stdlib.PriorityList.LIFOOnly", function ()
@@ -93,7 +92,7 @@ describe("TopJs.stdlib.PriorityList", function()
             }
             assert.deepEqual(orders, [ 'baz', 'foo', 'bar' ]);
         });
-        
+
         it("LIFO with priority", function ()
         {
             list.insert("foo", {}, 0);
@@ -105,7 +104,7 @@ describe("TopJs.stdlib.PriorityList", function()
             }
             assert.deepEqual(orders, [ 'baz', 'bar', 'foo' ]);
         });
-        
+
         it("FIFO with priority", function ()
         {
             list.setIsLifoFlag(false);
@@ -118,7 +117,7 @@ describe("TopJs.stdlib.PriorityList", function()
             }
             assert.deepEqual(orders, [ 'baz', 'foo', 'bar' ]);
         });
-        
+
         it("FIFO only", function ()
         {
             list.setIsLifoFlag(false);
@@ -133,7 +132,7 @@ describe("TopJs.stdlib.PriorityList", function()
             }
             assert.deepEqual(orders, [ 'foo', 'bar', 'baz', 'aaa', 'bbb' ]);
         });
-        
+
         it("Priority with negative and null", function ()
         {
             list.insert("foo", {}, null);
@@ -146,7 +145,7 @@ describe("TopJs.stdlib.PriorityList", function()
             assert.deepEqual(orders, [ 'bar', 'foo', 'baz' ]);
         });
     });
-    
+
     it("TopJs.stdlib.PriorityList.toArray", function ()
     {
         list.insert("foo", "foo_value", null);
@@ -154,7 +153,7 @@ describe("TopJs.stdlib.PriorityList", function()
         list.insert("baz", "baz_value", -1);
         assert.deepEqual(list.toArray(), [ 'bar_value', 'foo_value', 'baz_value' ]);
     });
-    
+
     it("boolean values must valid", function ()
     {
         list.insert("null", null, null);

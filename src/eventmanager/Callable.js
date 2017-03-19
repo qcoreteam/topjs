@@ -11,21 +11,18 @@ TopJs.namespace('TopJs.eventmanager');
 /**
  * @class TopJs.eventmanager.Callable
  */
-class Callable
-{
-    CALLABLE_TYPE_NORMAL = Symbol("TopJs.eventmanager.Callable.CALLABLE_TYPE_NORMAL");
-    CALLABLE_TYPE_METHOD = Symbol("TopJs.eventmanager.Callable.CALLABLE_TYPE_METHOD");
-    /**
-     * @property {Array} callableData
-     */
-    callableData = [];
-    /**
-     * @property {Symbol} callableType
-     */
-    callableType = Callable.CALLABLE_TYPE_NORMAL;
+class Callable {
     
-    constructor (callable, object)
+    constructor(callable, object)
     {
+        /**
+         * @property {Symbol} callableType
+         */
+        this.callableType = Callable.CALLABLE_TYPE_NORMAL;
+        /**
+         * @property {Array} callableData
+         */
+        this.callableData = [];
         if (TopJs.isFunction(callable)) {
             throw new TypeError(
                 TopJs.sprintf("callable arg must callable, %s received", (typeof callable))
@@ -44,15 +41,20 @@ class Callable
 
     /**
      * call internal callable function or class method with args
-     * 
+     *
      * @param args
      * @return {mixed}
      */
     call(...args)
     {
-        
+
     }
 }
+
+TopJs.apply(Callable,  /** @lends TopJs.eventmanager.Callable */{
+    CALLABLE_TYPE_NORMAL: Symbol("TopJs.eventmanager.Callable.CALLABLE_TYPE_NORMAL"),
+    CALLABLE_TYPE_METHOD: Symbol("TopJs.eventmanager.Callable.CALLABLE_TYPE_METHOD")
+});
 
 TopJs.registerClass("TopJs.eventmanager.Callable", Callable);
 

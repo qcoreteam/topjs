@@ -15,7 +15,10 @@ let Heap = TopJs.require("TopJs.stdlib.Heap");
  */
 class MinHeap extends Heap
 {
-    type = Heap.MIN;
+    constructor()
+    {
+        super(Heap.MIN);
+    }
 }
 
 TopJs.registerClass("TopJs.stdlib.MinHeap", MinHeap);

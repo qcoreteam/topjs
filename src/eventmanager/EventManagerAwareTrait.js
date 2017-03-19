@@ -25,11 +25,13 @@ let EventManager = TopJs.require("TopJs.eventmanager.EventManager");
  */
 class EventManagerAwareTrait
 {
-    /**
-     * @property {TopJs.eventmanager.EventManagerInterface} events
-     */
-    events = null;
-
+    constructor()
+    {
+        /**
+         * @property {TopJs.eventmanager.EventManagerInterface} events
+         */
+        this.events = null;
+    }
     /**
      * Set the event manager instance used by this context.
      *

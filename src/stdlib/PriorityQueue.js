@@ -13,27 +13,21 @@ let Heap = TopJs.require("TopJs.stdlib.Heap");
 /**
  * @class TopJs.stdlib.PriorityQueue
  * @author https://github.com/vovazolotoy/TypeScript-STL
- * @classdesc 
+ * @classdesc
  * The PriorityQueue class provides the main functionality of an prioritized queue,
  * implemented using a max heap.
  */
-class PriorityQueue extends Heap 
-{
-    static EXTR_BOTH = Symbol("TopJs.stdlib.PriorityQueue.EXTR_BOTH");
-    static EXTR_PRIORITY = Symbol("TopJs.stdlib.PriorityQueue.EXTR_PRIORITY");
-    static EXTR_DATA = Symbol("TopJs.stdlib.PriorityQueue.EXTR_DATA");
-
-    /**
-     * extract data flag
-     *
-     * @type {Symbol}
-     */
-    extractFlag = PriorityQueue.EXTR_DATA;
-
+class PriorityQueue extends Heap {
     constructor()
     {
         super();
         this.type = Heap.MAX;
+        /**
+         * extract data flag
+         *
+         * @property {Symbol} extractFlag
+         */
+        this.extractFlag = PriorityQueue.EXTR_DATA;
     }
 
     /**
@@ -156,13 +150,17 @@ class PriorityQueue extends Heap
     }
 }
 
+TopJs.apply(PriorityQueue, {
+    EXTR_BOTH: Symbol("TopJs.stdlib.PriorityQueue.EXTR_BOTH"),
+    EXTR_PRIORITY: Symbol("TopJs.stdlib.PriorityQueue.EXTR_PRIORITY"),
+    EXTR_DATA: Symbol("TopJs.stdlib.PriorityQueue.EXTR_DATA")
+});
+
+
 /**
  * @private
  */
 class PriorityQueueNode {
-    value = null;
-    priority = null;
-
     /**
      * Constructor
      *

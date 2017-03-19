@@ -12,18 +12,17 @@ let ParametersInterface = TopJs.require("TopJs.stdlib.ParametersInterface");
 
 class Parameters {
     /**
-     * @private
-     * @property {Map} data
-     */
-    data = new Map();
-    
-    /**
      * Constructor
      *
      * @param {Object} values
      */
     constructor(values = null)
     {
+        /**
+         * @private
+         * @property {Map} data
+         */
+        this.data = new Map();
         if (null != values && TopJs.isSimpleObject(values)) {
             this.fromLiteralObject(values);
         }

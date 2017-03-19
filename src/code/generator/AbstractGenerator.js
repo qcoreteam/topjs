@@ -6,37 +6,33 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+/**
+ * @namespace TopJs.code.generator
+ */
 TopJs.namespace("TopJs.code.generator");
 let GeneratorInterface = TopJs.require("TopJs.code.GeneratorInterface");
 
 class AbstractGenerator {
     /**
-     * Line feed to use in place of os.EOL
-     * @static
-     * @property {String} LINE_FEED
-     */
-    static LINE_FEED = "\n";
-
-    /**
-     * @property {Boolean} isSourceDirty
-     */
-    _isSourceDirty = true;
-
-    /**
-     * @property {Number|String} 4 spaces by default
-     */
-    indentation = '    ';
-
-    /**
-     * @type {String} sourceContent
-     */
-    sourceContent = null;
-
-    /**
      * @param {Object} options
      */
     constructor(options = null)
     {
+        /**
+         * @property {Boolean} isSourceDirty
+         */
+        this._isSourceDirty = true;
+
+        /**
+         * @property {Number|String} 4 spaces by default
+         */
+        this.indentation = '    ';
+
+        /**
+         * @property {String} sourceContent
+         */
+        this.sourceContent = null;
+        
         if (options) {
             this.setOptions(options);
         }
@@ -120,6 +116,15 @@ class AbstractGenerator {
         return this;
     }
 }
+
+TopJs.apply(AbstractGenerator, {
+    /**
+     * Line feed to use in place of os.EOL
+     * @static
+     * @property {String} LINE_FEED
+     */
+    LINE_FEED: "\n"
+});
 
 TopJs.registerClass("TopJs.code.AbstractGenerator", AbstractGenerator);
 TopJs.implements(AbstractGenerator, GeneratorInterface);

@@ -11,28 +11,28 @@ TopJs.namespace('TopJs.eventmanager');
 let EventInterface = TopJs.require("TopJs.eventmanager.EventInterface");
 
 class Event {
-    /**
-     * @property {String} Event name
-     */
-    name;
-
-    /**
-     * @property {String|Object} The event target
-     */
-    target;
-
-    /**
-     * @property {Map} The event parameters
-     */
-    params = new Map();
-
-    /**
-     * @property {Boolean} stopPropagationFlag
-     */
-    stopPropagationFlag = false;
-
     constructor(name = null, target = null, params = null)
     {
+        /**
+         * @property {String} Event name
+         */
+        this.name = '';
+
+        /**
+         * @property {String|Object} The event target
+         */
+        this.target = null;
+
+        /**
+         * @property {Map} The event parameters
+         */
+        this.params = new Map();
+
+        /**
+         * @property {Boolean} stopPropagationFlag
+         */
+        this.stopPropagationFlag = false;
+        
         if (null !== name) {
             this.setName(name);
         }
@@ -91,7 +91,8 @@ class Event {
             }
         } else if (params instanceof Map) {
             let me = this;
-            params.forEach(function (value, key){
+            params.forEach(function (value, key)
+            {
                 me.params.set(key, value);
             });
         }
@@ -100,7 +101,7 @@ class Event {
 
     /**
      * Get all parameters
-     * 
+     *
      * @return {Map}
      */
     getParams()
@@ -143,7 +144,7 @@ class Event {
      * @param {Object} target
      * @return {TopJs.eventmanager.Event}
      */
-    setTarget(target) 
+    setTarget(target)
     {
         this.target = target;
         return this;
@@ -156,7 +157,7 @@ class Event {
      * @param {Object} value
      * @return {TopJs.eventmanager.Event}
      */
-    setParam(name, value) 
+    setParam(name, value)
     {
         this.params.set(name, value);
         return this;

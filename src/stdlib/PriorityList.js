@@ -12,53 +12,51 @@ TopJs.namespace("TopJs.stdlib");
 /**
  * @class TopJs.stdlib.PriorityList
  */
-class PriorityList
-{
-    static EXTRA_DATA     = 0x00000001;
-    static EXTRA_PRIORITY = 0x00000002;
-    static EXTRA_BOTH     = 0x00000003;
+class PriorityList {
 
-    /**
-     * Internal list of all items.
-     *
-     * @property {Map} items
-     */
-    items = new Map();
+    constructor()
+    {
+        /**
+         * Internal list of all items.
+         *
+         * @property {Map} items
+         */
+        this.items = new Map();
 
-    /**
-     * Internal use for sort 
-     * 
-     * @property {Array} itemNames
-     */
-    itemNames = [];
+        /**
+         * Internal use for sort
+         *
+         * @property {Array} itemNames
+         */
+        this.itemNames = [];
 
-    /**
-     * Serial assigned to items to preserve LIFO.
-     *
-     * @property {Number} serial
-     */
-    serial = 0;
+        /**
+         * Serial assigned to items to preserve LIFO.
+         *
+         * @property {Number} serial
+         */
+        this.serial = 0;
 
-    /**
-     * Serial order mode
-     * @property {Number} isLifoFlag
-     */
-    isLifoFlag = 1;
+        /**
+         * Serial order mode
+         * @property {Number} isLifoFlag
+         */
+        this.isLifoFlag = 1;
 
-    /**
-     * Internal counter to avoid usage of count().
-     *
-     * @property {Number} count
-     */
-    count = 0;
+        /**
+         * Internal counter to avoid usage of count().
+         *
+         * @property {Number} count
+         */
+        this.count = 0;
 
-    /**
-     * Whether the list was already sorted.
-     *
-     * @property {Boolean} sorted
-     */
-    sorted = false;
-
+        /**
+         * Whether the list was already sorted.
+         *
+         * @property {Boolean} sorted
+         */
+        this.sorted = false;
+    }
     /**
      * Insert a new item.
      *
@@ -84,7 +82,7 @@ class PriorityList
 
     /**
      * change target item priority
-     * 
+     *
      * @param {String} name the item name
      * @param {Number} priority the priority
      * @return {TopJs.stdlib.PriorityList}
@@ -101,7 +99,7 @@ class PriorityList
 
     /**
      * delete item
-     * 
+     *
      * @param {String} name the name of target item to be delete
      * @return {TopJs.stdlib.PriorityList}
      */
@@ -126,8 +124,8 @@ class PriorityList
     }
 
     /**
-     * Get a item by name 
-     * 
+     * Get a item by name
+     *
      * @param {String} name
      * @return {Object|null}
      */
@@ -145,7 +143,8 @@ class PriorityList
         if (!this.sorted) {
             let items = this.items;
             let isLifoFlag = this.isLifoFlag;
-            TopJs.Array.sort(this.itemNames, function(leftName, rightName) {
+            TopJs.Array.sort(this.itemNames, function (leftName, rightName)
+            {
                 let left = items.get(leftName);
                 let right = items.get(rightName);
                 return (left.priority === right.priority)
@@ -158,7 +157,7 @@ class PriorityList
 
     /**
      * Get/Set serial order mode
-     * 
+     *
      * @param {Boolean|null} flag
      * @return {Boolean}
      */
@@ -176,7 +175,7 @@ class PriorityList
 
     /**
      * get the items count
-     * 
+     *
      * @return {Number}
      */
     getCount()
@@ -186,9 +185,9 @@ class PriorityList
 
     /**
      * Return list as array
-     * 
+     *
      * @param {Number} flag
-     * @return {Array} 
+     * @return {Array}
      */
     toArray(flag = PriorityList.EXTRA_DATA)
     {
@@ -201,7 +200,8 @@ class PriorityList
             return items;
         }
         let itemMap = this.items;
-        this.itemNames.forEach(function(name){
+        this.itemNames.forEach(function (name)
+        {
             let item = itemMap.get(name);
             if (flag == PriorityList.EXTRA_PRIORITY) {
                 items.push(item.priority);
@@ -212,7 +212,7 @@ class PriorityList
         return items;
     }
 
-    [Symbol.iterator]() 
+    [Symbol.iterator]()
     {
         this.sort();
         let itemNames = this.itemNames;
@@ -232,12 +232,18 @@ class PriorityList
                     return {
                         value: undefined,
                         done: true
-                    } ;
+                    };
                 }
             }
         };
     }
 }
+
+TopJs.apply(PriorityList, {
+    EXTRA_DATA: 0x00000001,
+    EXTRA_PRIORITY: 0x00000002,
+    EXTRA_BOTH: 0x00000003
+});
 
 TopJs.registerClass("TopJs.stdlib.PriorityList", PriorityList);
 module.exports = PriorityList;

@@ -6,16 +6,21 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+/**
+ * @namespace TopJs.eventmanager
+ */
 TopJs.namespace('TopJs.eventmanager');
 
 /**
  * @class TopJs.eventmanager.AbstractListenerAggregate
- * 
+ *
  * Abstract aggregate listener
  */
-class AbstractListenerAggregate
-{
-    listeners = [];
+class AbstractListenerAggregate {
+    constructor()
+    {
+        this.listeners = [];
+    }
 }
 
 TopJs.registerClass("TopJs.eventmanager.AbstractListenerAggregate", AbstractListenerAggregate);

@@ -12,18 +12,21 @@ let MessageInterface = TopJs.require("TopJs.stdlib.MessageInterface");
 
 let toString = Object.prototype.toString;
 
-class Message
-{
-    /**
-     * @property {String} metadata
-     */
-    metadata = new Map();
-    
-    /**
-     * @private
-     * @property {String} content
-     */
-    content = '';
+class Message {
+
+    constructor()
+    {
+        /**
+         * @property {String} metadata
+         */
+        this.metadata = new Map();
+
+        /**
+         * @private
+         * @property {String} content
+         */
+        this.content = '';
+    }
 
     /**
      * Set message metadata

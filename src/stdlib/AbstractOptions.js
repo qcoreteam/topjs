@@ -75,21 +75,20 @@ let abstractOptionsHandler = {
 class AbstractOptions
 {
     /**
-     * We use the prefix to avoid collisions with properties in
-     * user-implementations.
-     *
-     * @private
-     * @property {Boolean} $_strict_mode_$
-     */
-    $_strict_mode_$ = true;
-
-    /**
      * Constructor
      *
      * @param {Object} options
      */
     constructor(options)
     {
+        /**
+         * We use the prefix to avoid collisions with properties in
+         * user-implementations.
+         *
+         * @private
+         * @property {Boolean} $_strict_mode_$
+         */
+        this.$_strict_mode_$ = true;
         if (null != options) {
             this.setFromLiteralObject(options);
         }

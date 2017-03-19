@@ -20,66 +20,62 @@ TopJs.namespace("TopJs.stdlib");
  * performance boost.
  */
 class FastPriorityQueue {
-    static EXTRA_BOTH = Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_BOTH");
-    static EXTRA_PRIORITY = Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_PRIORITY");
-    static EXTRA_DATA = Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_DATA");
-
-    /**
-     * @property {Symbol} extractFlag
-     */
-    extractFlag = FastPriorityQueue.EXTRA_BOTH;
-
-    /**
-     * Elements of the queue, divided by priorities
-     *
-     * @property {Map} values
-     */
-    values = new Map();
-
-    /**
-     * Map of priorities
-     *
-     * @property {Map} priorities
-     */
-    priorities = new Map();
-
-    /**
-     * Map of priorities used for the iteration
-     *
-     * @property {Map} priorities
-     */
-    subPriorities = new Map();
-
-    /**
-     * Max priority
-     *
-     * @property {Number} maxPriority
-     */
-    maxPriority = 0;
-
-    /**
-     * Total number of elements in the queue
-     *
-     * @property {Number} length
-     */
-    length = 0;
-
-    /**
-     * Index of the current element in the queue
-     *
-     * @property {Number} index
-     */
-    index = 0;
-
-    /**
-     * Sub index of the current element in the same priority level
-     *
-     * @property {Number} subIndex
-     */
-    subIndex = 0;
-
     constructor(type = FastPriorityQueue.EXTRA_BOTH)
     {
+        /**
+         * @property {Symbol} extractFlag
+         */
+        this.extractFlag = FastPriorityQueue.EXTRA_BOTH;
+
+        /**
+         * Elements of the queue, divided by priorities
+         *
+         * @property {Map} values
+         */
+        this.values = new Map();
+
+        /**
+         * Map of priorities
+         *
+         * @property {Map} priorities
+         */
+        this.priorities = new Map();
+
+        /**
+         * Map of priorities used for the iteration
+         *
+         * @property {Map} priorities
+         */
+        this.subPriorities = new Map();
+
+        /**
+         * Max priority
+         *
+         * @property {Number} maxPriority
+         */
+        this.maxPriority = 0;
+
+        /**
+         * Total number of elements in the queue
+         *
+         * @property {Number} length
+         */
+        this.length = 0;
+
+        /**
+         * Index of the current element in the queue
+         *
+         * @property {Number} index
+         */
+        this.index = 0;
+
+        /**
+         * Sub index of the current element in the same priority level
+         *
+         * @property {Number} subIndex
+         */
+        this.subIndex = 0;
+        
         if (FastPriorityQueue.EXTRA_BOTH == type ||
             FastPriorityQueue.EXTRA_DATA == type ||
             FastPriorityQueue.EXTRA_PRIORITY == type) {
@@ -350,6 +346,12 @@ class FastPriorityQueue {
         };
     }
 }
+
+TopJs.apply(FastPriorityQueue, {
+    EXTRA_BOTH: Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_BOTH"),
+    EXTRA_PRIORITY: Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_PRIORITY"),
+    EXTRA_DATA: Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_DATA")
+});
 
 TopJs.registerClass("TopJs.stdlib.FastPriorityQueue", FastPriorityQueue);
 module.exports = FastPriorityQueue;

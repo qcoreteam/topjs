@@ -12,48 +12,7 @@ TopJs.namespace("TopJs.stdlib");
  * @class TopJs.stdlib.DoubleLinkedList
  * @author https://github.com/vovazolotoy/TypeScript-STL
  */
-class DoubleLinkedList
-{
-    /**
-     * Count of elements in list
-     *
-     * @property {Number} length
-     * @private
-     */
-    length = 0;
-
-    /**
-     * Iteration pointer
-     *
-     * @property {Number} _key
-     * @private
-     */
-    _key = 0;
-
-    /**
-     * Reference to head(first) element in list
-     *
-     * @property {Object} head
-     * @private
-     */
-    head = null;
-
-    /**
-     * Reference to tail(last) element in list
-     *
-     * @property {Object} tail
-     * @private
-     */
-    tail = null;
-    
-    /**
-     * Reference to iterated element in list
-     *
-     * @property {Object} _current
-     * @private
-     */
-    _current = null;
-
+class DoubleLinkedList {
     /**
      * Insert a new value at the specified index
      *
@@ -61,7 +20,7 @@ class DoubleLinkedList
      * @param {Object} value The new value for the index.
      * @return {void}
      */
-    insert (index, value)
+    insert(index, value)
     {
         if (index < 0 || index >= this.length) {
             TopJs.raise("Out of bounds");
@@ -96,7 +55,7 @@ class DoubleLinkedList
      *
      * @return {Object} any The value of the popped node.
      */
-    pop ()
+    pop()
     {
         if (0 == this.length) {
             // TODO really need throws?
@@ -120,7 +79,7 @@ class DoubleLinkedList
      *
      * @return {Object} any The value of the shifted node.
      */
-    shift ()
+    shift()
     {
         if (0 == this.length) {
             // TODO really need throws?
@@ -142,7 +101,7 @@ class DoubleLinkedList
      * @param {Object} value The value to push.
      * @return {void}
      */
-    push (value)
+    push(value)
     {
         let node = {
             value: value,
@@ -164,7 +123,7 @@ class DoubleLinkedList
      * @param {Object} value The value to unshift.
      * @return {void}
      */
-    unshift (value)
+    unshift(value)
     {
         let node = {
             value: value,
@@ -185,7 +144,7 @@ class DoubleLinkedList
      *
      * @return {Object|null} any The value of the last node.
      */
-    top ()
+    top()
     {
         if (this.tail) {
             return this.tail.value;
@@ -199,7 +158,7 @@ class DoubleLinkedList
      *
      * @return {Object|null} any  The value of the first node.
      */
-    bottom ()
+    bottom()
     {
         if (this.head) {
             return this.head.value;
@@ -209,17 +168,17 @@ class DoubleLinkedList
 
     /**
      * Counts the number of elements in the doubly linked list
-     * 
+     *
      * @return {Number}
      */
-    count ()
+    count()
     {
         return this.length;
     }
 
     /**
      * Checks whether the doubly linked list is empty
-     * 
+     *
      * @return {Boolean} whether the doubly linked list is empty.
      */
     isEmpty()
@@ -229,10 +188,10 @@ class DoubleLinkedList
 
     /**
      * Rewind iterator back to the start
-     * 
+     *
      * @return {void}
      */
-    rewind ()
+    rewind()
     {
         this.key = 0;
         this._current = this.head;
@@ -241,7 +200,7 @@ class DoubleLinkedList
     /**
      * Return {Object|null} current list entry
      */
-    current ()
+    current()
     {
         if (this._current) {
             return this._current.value;
@@ -251,10 +210,10 @@ class DoubleLinkedList
 
     /**
      * Return current node index
-     * 
+     *
      * @return {Number} he current node index.
      */
-    key ()
+    key()
     {
         return this._key;
     }
@@ -262,7 +221,7 @@ class DoubleLinkedList
     /**
      * Move to next entry
      */
-    next ()
+    next()
     {
         this._current = this._current.next;
         this._key++;
@@ -271,7 +230,7 @@ class DoubleLinkedList
     /**
      * Move to previous entry
      */
-    prev ()
+    prev()
     {
         this._current = this._current.prev;
         this._key--;
@@ -279,20 +238,20 @@ class DoubleLinkedList
 
     /**
      * Check whether the doubly linked list contains more nodes
-     *  
+     *
      * @return {Boolean} true if the doubly linked list contains any more nodes, false otherwise.
      */
-    valid ()
+    valid()
     {
         return (this._key >= 0 && this._key < this.length);
     }
 
     /**
      * Export the list to array
-     * 
+     *
      * @return {Array} The exported array
      */
-    toArray ()
+    toArray()
     {
         let list = [];
         let current = this.head;
@@ -302,7 +261,7 @@ class DoubleLinkedList
         }
         return list;
     }
-    
+
     [Symbol.iterator]()
     {
         let me = this;
@@ -324,12 +283,54 @@ class DoubleLinkedList
                     return {
                         value: undefined,
                         done: true
-                    } ;
+                    };
                 }
             }
         };
     }
 }
+
+TopJs.apply(DoubleLinkedList.prototype, {
+    /**
+     * Count of elements in list
+     *
+     * @property {Number} length
+     * @private
+     */
+    length: 0,
+
+    /**
+     * Iteration pointer
+     *
+     * @property {Number} _key
+     * @private
+     */
+    _key: 0,
+
+    /**
+     * Reference to head(first) element in list
+     *
+     * @property {Object} head
+     * @private
+     */
+    head: null,
+
+    /**
+     * Reference to tail(last) element in list
+     *
+     * @property {Object} tail
+     * @private
+     */
+    tail: null,
+
+    /**
+     * Reference to iterated element in list
+     *
+     * @property {Object} _current
+     * @private
+     */
+    _current: null
+});
 
 TopJs.registerClass("TopJs.stdlib.DoubleLinkedList", DoubleLinkedList);
 module.exports = DoubleLinkedList;

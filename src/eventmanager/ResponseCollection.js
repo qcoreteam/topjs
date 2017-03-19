@@ -18,12 +18,16 @@ let Stack = TopJs.require("TopJs.stdlib.Stack");
  */
 class ResponseCollection extends Stack
 {
-    /**
-     * @property {Boolean} _stopped
-     * @private
-     */
-    _stopped = false;
-
+    constructor()
+    {
+        super();
+        /**
+         * @property {Boolean} _stopped
+         * @private
+         */
+        this._stopped = false;
+    }
+    
     /**
      * Did the last response provided trigger a short circuit of the stack?
      * 

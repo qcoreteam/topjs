@@ -14,85 +14,83 @@ TopJs.require("TopJs.servicemanager.ServiceLocatorInterface");
 /**
  * @class TopJs.servicemanager.ServiceManager
  */
-class ServiceManager extends TopJs.Class
-{
-    /**
-     * @property {TopJs.servicemanager.Factory.AbstractFactoryInterface[]} abstractFactories
-     */
-    abstractFactories = [];
-    
-    /**
-     * Whether or not changes may be made to this instance.
-     * 
-     * @property {Boolean}
-     */
-    allowOverride = false;
-
-    /**
-     * @property {TopJs.servicemanager.ServiceLocatorInterface} creationContext
-     */
-    creationContext = null;
-
-    /**
-     *  A list of already loaded services (this act as a local cache)
-     *
-     * @property {Object} services
-     */
-    services = {};
-
-    /**
-     * A list of factories (either as string name or callable)
-     * 
-     * @property {Object} factories
-     */
-    factories = {};
-    
-    /**
-     * the alias to real class name map
-     * 
-     * @property {Map} resolvedAliases
-     */
-    resolvedAliases = new Map();
-
-    /**
-     * Enable/disable shared instances by service name.
-     *
-     * @property {Object} shared
-     */
-    shared = {};
-
-    /**
-     * @property {String[][]|TopJs.servicemanager.Factory.DelegatorFactoryInterface[][]} delegators
-     */
-    delegators = {};
-
-    /**
-     * @property {TopJs.servicemanager.Initializer.InitializerInterface[]} initializers
-     */
-    initializers = [];
-
-    /**
-     * Should the services be shared by default?
-     *
-     * @property {Boolean} sharedByDefault
-     */
-    sharedByDefault = true;
-
-    /**
-     * Service manager was already configured?
-     *
-     * @property {Boolean} configured
-     */
-    configured = false;
-    
-    constructor (config = {})
+class ServiceManager extends TopJs.Class {
+    constructor(config = {})
     {
         super();
+        /**
+         * @property {TopJs.servicemanager.Factory.AbstractFactoryInterface[]} abstractFactories
+         */
+        this.abstractFactories = [];
+
+        /**
+         * Whether or not changes may be made to this instance.
+         *
+         * @property {Boolean}
+         */
+        this.allowOverride = false;
+
+        /**
+         * @property {TopJs.servicemanager.ServiceLocatorInterface} creationContext
+         */
+        this.creationContext = null;
+
+        /**
+         *  A list of already loaded services (this act as a local cache)
+         *
+         * @property {Object} services
+         */
+        this.services = {};
+
+        /**
+         * A list of factories (either as string name or callable)
+         *
+         * @property {Object} factories
+         */
+        this.factories = {};
+
+        /**
+         * the alias to real class name map
+         *
+         * @property {Map} resolvedAliases
+         */
+        this.resolvedAliases = new Map();
+
+        /**
+         * Enable/disable shared instances by service name.
+         *
+         * @property {Object} shared
+         */
+        this.shared = {};
+
+        /**
+         * @property {String[][]|TopJs.servicemanager.Factory.DelegatorFactoryInterface[][]} delegators
+         */
+        this.delegators = {};
+
+        /**
+         * @property {TopJs.servicemanager.Initializer.InitializerInterface[]} initializers
+         */
+        this.initializers = [];
+
+        /**
+         * Should the services be shared by default?
+         *
+         * @property {Boolean} sharedByDefault
+         */
+        this.sharedByDefault = true;
+
+        /**
+         * Service manager was already configured?
+         *
+         * @property {Boolean} configured
+         */
+        this.configured = false;
         this.creationContext = this;
         this.configure(config);
     }
-    
-    get (name)
+
+    get(name)
     {
         let requestedName = name;
         // We start by checking if we have cached the requested service (this
@@ -117,9 +115,9 @@ class ServiceManager extends TopJs.Class
             this.services[name] = object;
         }
         // Also do so for aliases; this allows sharing based on service name used.
-        if (requestedName !== name && 
+        if (requestedName !== name &&
             ((this.sharedByDefault && !this.shared.hasOwnProperty(requestedName)) ||
-             (this.shared.hasOwnProperty(requestedName) && this.shared[requestedName]))) {
+            (this.shared.hasOwnProperty(requestedName) && this.shared[requestedName]))) {
             this.services[requestedName] = object;
         }
         return object;
@@ -135,17 +133,17 @@ class ServiceManager extends TopJs.Class
      * @return mixed
      * @throws TopJs.Error
      */
-    doCreate (resolvedName, options = null)
+    doCreate(resolvedName, options = null)
     {
         let object;
         try {
-           if (!this.delegators.hasOwnProperty(resolvedName)) {
-               // Let's create the service by fetching the factory
-               let factory = this.getFactory(resolvedName);
-               object = factory(this.creationContext, resolvedName, options);
-           } else {
-               object = this.createDelegatorFromName(resolvedName, options);
-           }
+            if (!this.delegators.hasOwnProperty(resolvedName)) {
+                // Let's create the service by fetching the factory
+                let factory = this.getFactory(resolvedName);
+                object = factory(this.creationContext, resolvedName, options);
+            } else {
+                object = this.createDelegatorFromName(resolvedName, options);
+            }
         } catch (ex) {
             TopJs.raise(TopJs.sprintf(
                 'Service with name "%s" could not be created. Reason: %s',
@@ -158,9 +156,9 @@ class ServiceManager extends TopJs.Class
         return object;
     }
 
-    has (name)
+    has(name)
     {
-        
+
     }
 
     /**
@@ -169,7 +167,7 @@ class ServiceManager extends TopJs.Class
      * @param {Boolean} flag
      * @return {TopJs.servicemanager.ServiceManager}
      */
-    setAllowOverride (flag)
+    setAllowOverride(flag)
     {
         this.allowOverride = !!flag;
         return this;
@@ -180,12 +178,12 @@ class ServiceManager extends TopJs.Class
      *
      * @return {Boolean}
      */
-    getAllowOverride ()
+    getAllowOverride()
     {
         return this.allowOverride;
     }
 
-    configure (config)
+    configure(config)
     {
         if (config.hasOwnProperty("services") && !TopJs.isEmpty(config.services)) {
             this.services = TopJs.applyIf(config.services, this.services);
@@ -194,7 +192,7 @@ class ServiceManager extends TopJs.Class
             let aliases = ServiceManager.createAliasesForInvokables(config.invokables);
             let factories = ServiceManager.createFactoriesForInvokables(config.invokables);
             if (!TopJs.isEmpty(aliases)) {
-                config.aliases = config.hasOwnProperty("aliases") ? 
+                config.aliases = config.hasOwnProperty("aliases") ?
                     TopJs.apply(config.aliases, aliases) : aliases;
             }
             config.factories = config.hasOwnProperty("factories") ?
@@ -207,8 +205,8 @@ class ServiceManager extends TopJs.Class
             this.delegators = TopJs.Object.merge(this.delegators, config.hasOwnProperty("delegators"));
         }
     }
-    
-    static createAliasesForInvokables (invokables)
+
+    static createAliasesForInvokables(invokables)
     {
         let aliases = {};
         for (let [name, clsName] of Object.entries(invokables)) {
@@ -220,7 +218,7 @@ class ServiceManager extends TopJs.Class
         return aliases;
     }
 
-    static createFactoriesForInvokables (invokables)
+    static createFactoriesForInvokables(invokables)
     {
         let factories = {};
         for (let [name, clsName] of Object.entries(invokables)) {
@@ -236,7 +234,7 @@ class ServiceManager extends TopJs.Class
      * @return callable
      * @throws TopJs.Error
      */
-    getFactory (name)
+    getFactory(name)
     {
         let factory = this.factories.hasOwnProperty(name) ? this.factories[name] : null;
         let lazyLoaded = false;
@@ -244,7 +242,7 @@ class ServiceManager extends TopJs.Class
             factory = TopJs.ClassManager.instanceByName(factory);
             lazyLoaded = true;
         }
-        if (factory && (TopJs.isFunction(factory) || 
+        if (factory && (TopJs.isFunction(factory) ||
             (factory.hasOwnProperty(factory) && TopJs.isFunction(factory.invoke)))) {
             if (lazyLoaded) {
                 this.factories[name] = factory;
@@ -265,6 +263,7 @@ class ServiceManager extends TopJs.Class
         ));
     }
 }
+
 
 ServiceManager.implements(TopJs.servicemanager.ServiceLocatorInterface);
 

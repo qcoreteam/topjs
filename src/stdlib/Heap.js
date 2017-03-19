@@ -13,47 +13,23 @@ TopJs.namespace("TopJs.stdlib");
  * @class TopJs.stdlib.Heap
  * @author https://github.com/vovazolotoy/TypeScript-STL
  */
-class Heap
-{
-    /**
-     * Max heap flag
-     *
-     * @property {Symbol} MAX
-     * @static
-     */
-     static MAX = 1;
-
-     /**
-     * Min heap flag
-     *
-     * @property {Symbol} MIN
-     * @static
-     */
-    static MIN = -1;
-    /**
-     * Binary tree storage array
-     *
-     * @property {Array} tree
-     * @private
-     */
-    tree = [];
-
-    /**
-     * Heap type
-     *
-     * @property {Number} type
-     * @private
-     */
-    type = Heap.MAX;
-    
-    constructor (type)
+class Heap {
+    constructor(type)
     {
+        /**
+         * Binary tree storage array
+         *
+         * @property {Array} tree
+         * @private
+         */
+        this.tree = [];
+            
         if (type != Heap.MAX && type != Heap.MIN) {
             type = Heap.MAX;
         }
         this.type = type;
     }
-    
+
     /**
      * Get index of left child element in binary tree stored in array
      *
@@ -61,7 +37,7 @@ class Heap
      * @return {Number}
      * @private
      */
-    child (n)
+    child(n)
     {
         return 2 * n + 1;
     }
@@ -73,19 +49,19 @@ class Heap
      * @return {Number}
      * @private
      */
-    parent (n)
+    parent(n)
     {
         return Math.floor((n - 1) / 2);
     }
 
     /**
      * Swap 2 elements in binary tree
-     * 
+     *
      * @param {Number} left
      * @param {Number} right
      * @private
      */
-    swap (left, right)
+    swap(left, right)
     {
         let swap = this.tree[left];
         this.tree[left] = this.tree[right];
@@ -98,7 +74,7 @@ class Heap
      * @param {Number} i
      * @private
      */
-    siftUp (i)
+    siftUp(i)
     {
         while (i > 0) {
             let parent = this.parent(i);
@@ -117,14 +93,14 @@ class Heap
      * @param {Number} i
      * @private
      */
-    siftDown (i)
+    siftDown(i)
     {
         while (i < this.tree.length) {
             let left = this.child(i);
             let right = left + 1;
             if ((left < this.tree.length) && (right < this.tree.length) &&
-                (this.compare(this.tree[i], this.tree[left]) * this.type < 0||
-                 this.compare(this.tree[i], this.tree[right]) * this.type < 0)) {
+                (this.compare(this.tree[i], this.tree[left]) * this.type < 0 ||
+                this.compare(this.tree[i], this.tree[right]) * this.type < 0)) {
                 // there is 2 children and one of them must be swapped
                 // get correct element to sift down
                 let sift = left;
@@ -149,7 +125,7 @@ class Heap
      *
      * @return any The value of the extracted node.
      */
-    extract ()
+    extract()
     {
         if (this.tree.length === 0) {
             TopJs.raise("Can't extract from an empty data structure");
@@ -170,7 +146,7 @@ class Heap
      * @param {Object} value The value to insert.
      * @return {void}
      */
-    insert (value)
+    insert(value)
     {
         this.tree.push(value);
         this.siftUp(this.tree.length - 1);
@@ -181,7 +157,7 @@ class Heap
      *
      * @return any The value of the node on the top.
      */
-    top ()
+    top()
     {
         if (this.tree.length === 0) {
             TopJs.raise("Can't peek at an empty heap");
@@ -191,20 +167,20 @@ class Heap
 
     /**
      * Counts the number of elements in the heap
-     * 
+     *
      * @return {Number} the number of elements in the heap.
      */
-    count ()
+    count()
     {
         return this.tree.length;
     }
 
     /**
      * return true is heap is empty
-     * 
+     *
      * @return {Boolean}
      */
-    empty ()
+    empty()
     {
         return (this.tree.length === 0);
     }
@@ -218,7 +194,7 @@ class Heap
      * @return number Result of the comparison, positive integer if first is greater than second, 0 if they are equal, negative integer otherwise.
      * Having multiple elements with the same value in a Heap is not recommended. They will end up in an arbitrary relative position.
      */
-    compare (left, right)
+    compare(left, right)
     {
         if (left > right) {
             return 1;
@@ -238,7 +214,7 @@ class Heap
      * @return String
      * @private
      */
-    displayNode (node, prefix, last)
+    displayNode(node, prefix, last)
     {
         if (prefix === void 0) {
             prefix = '';
@@ -252,7 +228,7 @@ class Heap
         let right = left + 1;
         if (last) {
             line += (prefix ? '└─' : '  ');
-        }  else {
+        } else {
             line += '├─';
         }
         line += this.tree[node];
@@ -265,23 +241,23 @@ class Heap
         }
         return line;
     }
-    
+
     /**
      * Serializes the heap to string
      *
      * @return string   The serialized string.
      */
-    toString ()
+    toString()
     {
         return this.displayNode(0);
     }
-        
+
     /**
      * Serializes the heap to array
-     * 
+     *
      * @return {Array}
      */
-    toArray ()
+    toArray()
     {
         return this.tree;
     }
@@ -305,12 +281,30 @@ class Heap
                     return {
                         value: undefined,
                         done: true
-                    } ;
+                    };
                 }
             }
         };
     }
 }
+
+TopJs.apply(Heap, {
+    /**
+     * Max heap flag
+     *
+     * @property {Symbol} MAX
+     * @static
+     */
+    MAX: 1,
+
+    /**
+     * Min heap flag
+     *
+     * @property {Symbol} MIN
+     * @static
+     */
+    MIN: -1
+});
 
 TopJs.registerClass("TopJs.stdlib.Heap", Heap);
 module.exports = Heap;
