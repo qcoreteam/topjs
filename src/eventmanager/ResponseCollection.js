@@ -6,31 +6,35 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+/**
+ * @namespace TopJs.eventmanager
+ */
 TopJs.namespace('TopJs.eventmanager');
 
 let Stack = TopJs.require("TopJs.stdlib.Stack");
 
 /**
- * @class TopJs.eventmanager.ResponseCollection
+ * @alias TopJs.eventmanager.ResponseCollection
  * @classdesc
- * 
+ *
  * Collection of signal handler return values
  */
-class ResponseCollection extends Stack
-{
+class ResponseCollection {
     constructor()
     {
-        super();
+
         /**
          * @property {Boolean} _stopped
          * @private
          */
         this._stopped = false;
     }
-    
+
     /**
      * Did the last response provided trigger a short circuit of the stack?
-     * 
+     *
+     * @memberOf TopJs.eventmanager.ResponseCollection
+     * @instance
      * @return {Boolean}
      */
     stopped()

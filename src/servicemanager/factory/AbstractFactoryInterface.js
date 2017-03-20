@@ -9,7 +9,7 @@
 TopJs.namespace("TopJs.servicemanager.factory");
 
 /**
- * @class TopJs.servicemanager.factory.AbstractFactoryInterface
+ * @alias TopJs.servicemanager.factory.AbstractFactoryInterface
  * @classdesc
  *
  * Interface for an abstract factory.

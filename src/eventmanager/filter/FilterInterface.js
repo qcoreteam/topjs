@@ -9,7 +9,7 @@
 TopJs.namespace('TopJs.eventmanager.filter');
 
 /**
- * @class TopJs.eventmanager.FilterInterface
+ * @alias TopJs.eventmanager.FilterInterface
  * @classdesc
  *
  *  Interface for intercepting filter chains

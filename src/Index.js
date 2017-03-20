@@ -32,5 +32,29 @@ require("./kernel/class/Class");
 require("./kernel/class/ClassManager");
 
 TopJs.setVersion("0.0.1");
-
 module.exports = TopJs;
+
+/**
+ * @namespace TopJs.code
+ */
+/**
+ * @namespace TopJs.code.generator
+ */
+/**
+ * @namespace TopJs.servicemanager
+ */
+/**
+ * @namespace TopJs.servicemanager.initializer
+ */
+/**
+ * @namespace TopJs.servicemanager.factory
+ */
+/**
+ * @namespace TopJs.psr
+ */
+/**
+ * @namespace TopJs.eventmanager
+ */
+/**
+ * @namespace TopJs.eventmanager.filter
+ */

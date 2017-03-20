@@ -6,10 +6,14 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
+/**
+ * @namespace TopJs.eventmanager
+ */
 TopJs.namespace("TopJs.eventmanager");
 
 /**
- * @class TopJs.eventmanager.EventManagerAwareInterface
+ * @alias TopJs.eventmanager.EventManagerAwareInterface
+ * 
  * @classdesc
  * 
  * Interface to automate setter injection for an EventManager instance

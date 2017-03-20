@@ -9,7 +9,7 @@
 TopJs.namespace('TopJs.eventmanager');
 
 /**
- * @class TopJs.eventmanager.Callable
+ * @alias TopJs.eventmanager.Callable
  */
 class Callable {
     

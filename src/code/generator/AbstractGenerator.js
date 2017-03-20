@@ -6,12 +6,12 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
-/**
- * @namespace TopJs.code.generator
- */
 TopJs.namespace("TopJs.code.generator");
 let GeneratorInterface = TopJs.require("TopJs.code.GeneratorInterface");
 
+/**
+ * @alias TopJs.code.generator.AbstractGenerator
+ */
 class AbstractGenerator {
     /**
      * @param {Object} options
@@ -126,6 +126,6 @@ TopJs.apply(AbstractGenerator, {
     LINE_FEED: "\n"
 });
 
-TopJs.registerClass("TopJs.code.AbstractGenerator", AbstractGenerator);
+TopJs.registerClass("TopJs.code.generator.AbstractGenerator", AbstractGenerator);
 TopJs.implements(AbstractGenerator, GeneratorInterface);
 module.exports = AbstractGenerator;

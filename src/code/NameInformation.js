@@ -6,13 +6,11 @@
  * @copyright Copyright (c) 2016-2017 QCoreTeam (http://www.qcoreteam.org)
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
-/**
- * @namespace TopJs.code
- */
 TopJs.namespace("TopJs.code");
 
 /**
  * @class TopJs.code.NameInformation
+ * @constructor
  */
 class NameInformation {
     constructor(namespace = null, uses = [])

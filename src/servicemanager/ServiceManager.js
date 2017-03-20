@@ -7,12 +7,12 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-const serviceMgrNs = TopJs.namespace("TopJs.servicemanager");
+TopJs.namespace("TopJs.servicemanager");
 
 TopJs.require("TopJs.servicemanager.ServiceLocatorInterface");
 
 /**
- * @class TopJs.servicemanager.ServiceManager
+ * @alias TopJs.servicemanager.ServiceManager
  */
 class ServiceManager extends TopJs.Class {
     constructor(config = {})
@@ -265,6 +265,6 @@ class ServiceManager extends TopJs.Class {
 }
 
 
-ServiceManager.implements(TopJs.servicemanager.ServiceLocatorInterface);
+TopJs.implements(ServiceManager, TopJs.servicemanager.ServiceLocatorInterface);
 
 TopJs.registerClass("TopJs.servicemanager.ServiceManager", ServiceManager);

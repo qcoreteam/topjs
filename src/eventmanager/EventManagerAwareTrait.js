@@ -11,7 +11,7 @@ TopJs.namespace("TopJs.eventmanager");
 let EventManager = TopJs.require("TopJs.eventmanager.EventManager");
 
 /**
- * @class TopJs.eventmanager.EventManagerAwareInterface
+ * @alias TopJs.eventmanager.EventManagerAwareTrait
  * @classdesc
  *
  * A trait for objects that provide events.

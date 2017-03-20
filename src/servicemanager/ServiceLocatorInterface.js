@@ -8,10 +8,10 @@
  */
 
 TopJs.require("TopJs.psr.ContainerInterface");
-
 TopJs.namespace("TopJs.servicemanager");
 /**
- * @class TopJs.servicemanager.ServiceLocatorInterface
+ * @requires TopJs.psr.ContainerInterface
+ * @alias TopJs.servicemanager.ServiceLocatorInterface
  */
 class ServiceLocatorInterface
 {

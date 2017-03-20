@@ -11,7 +11,7 @@ TopJs.namespace("TopJs.servicemanager.factory");
 let FactoryInterface = require("TopJs.servicemanager.factory.FactoryInterface");
 
 /**
- * @class TopJs.servicemanager.factory.InvokableFactory
+ * @alias TopJs.servicemanager.factory.InvokableFactory
  * @classdesc
  * 
  * Factory for instantiating classes with no dependencies or which accept a single array.

@@ -4,6 +4,7 @@
     "template": "node_modules/jsdoc-theme-topjs",
     "encoding": "utf8",
     "destination": "./dist/apidocs/",
-    "recurse": true                
+    "recurse": true,
+    "readme": "./README.md"
   }
 }

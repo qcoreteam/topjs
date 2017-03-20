@@ -10,7 +10,7 @@
 TopJs.namespace("TopJs.psr");
 
 /**
- * @class TopJs.psr.ContainerInterface
+ * @alias TopJs.psr.ContainerInterface
  * @classdesc
  * Describes the interface of a container that exposes methods to read its entries.
  */

@@ -10,7 +10,7 @@
 TopJs.namespace("TopJs.eventmanager");
 
 /**
- * @class TopJs.eventmanager.EventsCapableInterface
+ * @alias TopJs.eventmanager.EventsCapableInterface
  * @classdesc
  * 
  * Interface indicating that an object composes an EventManagerInterface instance.

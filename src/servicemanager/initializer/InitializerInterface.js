@@ -10,7 +10,7 @@
 TopJs.namespace("TopJs.servicemanager.initializer");
 
 /**
- * @class TopJs.servicemanager.initializer.InitializerInterface
+ * @alias TopJs.servicemanager.initializer.InitializerInterface
  * @classdesc
  *
  * Interface for an initializer

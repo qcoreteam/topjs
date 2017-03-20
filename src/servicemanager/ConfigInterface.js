@@ -7,12 +7,16 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
-const serviceMgrNs = TopJs.namespace("TopJs.servicemanager");
+TopJs.namespace("TopJs.servicemanager");
 
+/**
+ * @alias TopJs.servicemanager.ConfigInterface
+ */
 class ConfigInterface
 {
     configureServiceManager (serviceManager)
     {}
 }
 
-TopJs.mountClsToNamespace("TopJs.servicemanager.ConfigInterface", ConfigInterface);
+TopJs.registerClass("TopJs.servicemanager.ConfigInterface", ConfigInterface);
+module.exports = ConfigInterface;

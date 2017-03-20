@@ -10,7 +10,7 @@
 TopJs.namespace("TopJs.servicemanager.factory");
 
 /**
- * @class TopJs.servicemanager.factory.DelegatorFactoryInterface
+ * @alias TopJs.servicemanager.factory.DelegatorFactoryInterface
  * @classdesc
  *
  * Delegator factory interface.

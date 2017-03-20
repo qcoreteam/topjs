@@ -12,7 +12,7 @@
 TopJs.namespace('TopJs.eventmanager');
 
 /**
- * @class TopJs.eventmanager.AbstractListenerAggregate
+ * @alias TopJs.eventmanager.AbstractListenerAggregate
  *
  * Abstract aggregate listener
  */
