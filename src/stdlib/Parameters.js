@@ -10,6 +10,9 @@ TopJs.namespace("TopJs.stdlib");
 
 let ParametersInterface = TopJs.require("TopJs.stdlib.ParametersInterface");
 
+/**
+ * @alias TopJs.stdlib.Parameters
+ */
 class Parameters {
     /**
      * Constructor

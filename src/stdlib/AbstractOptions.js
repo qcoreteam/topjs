@@ -70,7 +70,7 @@ let abstractOptionsHandler = {
 };
 
 /**
- * @class TopJs.stdlib.AbstractOptions
+ * @alias TopJs.stdlib.AbstractOptions
  */
 class AbstractOptions
 {

@@ -10,7 +10,7 @@
 TopJs.namespace("TopJs.stdlib");
 
 /**
- * @class TopJs.stdlib.PriorityList
+ * @alias TopJs.stdlib.PriorityList
  */
 class PriorityList {
 
@@ -240,8 +240,25 @@ class PriorityList {
 }
 
 TopJs.apply(PriorityList, {
+    /**
+     * when extra priority data, you can use this flag to extra both priority and value
+     * @memberOf TopJs.stdlib.PriorityList
+     * @property {Symbol} EXTRA_DATA
+     */
     EXTRA_DATA: 0x00000001,
+    
+    /**
+     * when extra priority data, you can use this flag to extra priority data
+     * @memberOf TopJs.stdlib.PriorityList
+     * @property {Symbol} EXTRA_PRIORITY
+     */
     EXTRA_PRIORITY: 0x00000002,
+    
+    /**
+     * when extra priority data, you can use this flag to extra value data
+     * @memberOf TopJs.stdlib.PriorityList
+     * @property {Symbol} EXTRA_BOTH
+     */
     EXTRA_BOTH: 0x00000003
 });
 

@@ -11,8 +11,6 @@
  */
 TopJs.namespace('TopJs.eventmanager');
 
-let Stack = TopJs.require("TopJs.stdlib.Stack");
-
 /**
  * @alias TopJs.eventmanager.ResponseCollection
  * @classdesc
@@ -40,6 +38,7 @@ class ResponseCollection {
     stopped()
     {
         return this._stopped;
+
     }
 
     /**
@@ -98,5 +97,4 @@ class ResponseCollection {
 }
 
 TopJs.registerClass("TopJs.eventmanager.ResponseCollection", ResponseCollection);
-
 module.exports = ResponseCollection;

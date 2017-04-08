@@ -8,6 +8,9 @@
  */
 TopJs.namespace("TopJs.stdlib");
 
+/**
+ * @alias TopJs.stdlib.MessageInterface
+ */
 class MessageInterface
 {
     /**

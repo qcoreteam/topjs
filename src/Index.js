@@ -58,3 +58,6 @@ module.exports = TopJs;
 /**
  * @namespace TopJs.eventmanager.filter
  */
+/**
+ * @namespace TopJs.stdlib
+ */

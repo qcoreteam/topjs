@@ -1840,30 +1840,30 @@ TopJs.apply(dateObj, /** @lends TopJs.Date */{
         let est;
         let diff = max.getTime() - min.getTime();
         switch (unit) {
-            case dateObj.MILLI:
-                return diff;
-            case dateObj.SECOND:
-                return Math.floor(diff / 1000);
-            case dateObj.MINUTE:
-                return Math.floor(diff / 60000);
-            case dateObj.HOUR:
-                return Math.floor(diff / 3600000);
-            case dateObj.DAY:
-                return Math.floor(diff / 86400000);
-            case 'w':
-                return Math.floor(diff / 604800000);
-            case dateObj.MONTH:
-                est = (max.getFullYear() * 12 + max.getMonth()) - (min.getFullYear() * 12 + min.getMonth());
-                if (dateObj.add(min, unit, est) > max) {
-                    return est - 1;
-                }
-                return est;
-            case dateObj.YEAR:
-                est = max.getFullYear() - min.getFullYear();
-                if (dateObj.add(min, unit, est) > max) {
-                    return est - 1;
-                }
-                return est;
+        case dateObj.MILLI:
+            return diff;
+        case dateObj.SECOND:
+            return Math.floor(diff / 1000);
+        case dateObj.MINUTE:
+            return Math.floor(diff / 60000);
+        case dateObj.HOUR:
+            return Math.floor(diff / 3600000);
+        case dateObj.DAY:
+            return Math.floor(diff / 86400000);
+        case 'w':
+            return Math.floor(diff / 604800000);
+        case dateObj.MONTH:
+            est = (max.getFullYear() * 12 + max.getMonth()) - (min.getFullYear() * 12 + min.getMonth());
+            if (dateObj.add(min, unit, est) > max) {
+                return est - 1;
+            }
+            return est;
+        case dateObj.YEAR:
+            est = max.getFullYear() - min.getFullYear();
+            if (dateObj.add(min, unit, est) > max) {
+                return est - 1;
+            }
+            return est;
         }
     }
 });

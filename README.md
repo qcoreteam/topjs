@@ -1,7 +1,4 @@
-# topJS
-<div align="center">
-   <img width=710px src="https://raw.githubusercontent.com/qcoreteam/TopJs/master/assets/images/topjs2.png">
-</div>
+<img width=710px src="https://raw.githubusercontent.com/qcoreteam/TopJs/master/assets/images/topjs2.png">
 
 ## Introduce
 nodejs版的zend framework框架

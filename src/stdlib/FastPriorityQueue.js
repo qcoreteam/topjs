@@ -9,12 +9,13 @@
 TopJs.namespace("TopJs.stdlib");
 
 /**
- * @class TopJs.stdlib.FastPriorityQueue
+ * @alias TopJs.stdlib.FastPriorityQueue
  * @classdesc
  *
  * This is an efficient implementation of an integer priority queue in PHP
  *
- * This class acts like a queue with insert() and extract(), removing the
+ * This class acts like a queue with {@link TopJs.stdlib.FastPriorityQueue#insert} and 
+ * {@link TopJs.stdlib.FastPriorityQueue#extract}, removing the
  * elements from the queue and it also acts like an Iterator without removing
  * the elements. This behaviour can be used in mixed scenarios with high
  * performance boost.
@@ -348,8 +349,23 @@ class FastPriorityQueue {
 }
 
 TopJs.apply(FastPriorityQueue, {
+    /**
+     * when extra priority data, you can use this flag to extra both priority and value
+     * @memberOf TopJs.stdlib.FastPriorityQueue
+     * @property {Symbol} EXTRA_BOTH
+     */
     EXTRA_BOTH: Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_BOTH"),
+    /**
+     * when extra priority data, you can use this flag to extra priority data
+     * @memberOf TopJs.stdlib.FastPriorityQueue
+     * @property {Symbol} EXTRA_PRIORITY
+     */
     EXTRA_PRIORITY: Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_PRIORITY"),
+    /**
+     * when extra priority data, you can use this flag to extra value data
+     * @memberOf TopJs.stdlib.FastPriorityQueue
+     * @property {Symbol} EXTRA_DATA
+     */
     EXTRA_DATA: Symbol("TopJs.stdlib.FastPriorityQueue.EXTR_DATA")
 });
 

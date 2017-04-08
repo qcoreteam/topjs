@@ -10,8 +10,10 @@ TopJs.namespace("TopJs.stdlib");
 let Heap = TopJs.require("TopJs.stdlib.Heap");
 
 /**
- * @class TopJs.stdlib.MinHeap
+ * @alias TopJs.stdlib.MinHeap
  * @author https://github.com/vovazolotoy/TypeScript-STL
+ * @classdesc
+ * same interface as {@link TopJs.stdlib.Heap}
  */
 class MinHeap extends Heap
 {

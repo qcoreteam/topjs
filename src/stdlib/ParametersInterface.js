@@ -9,6 +9,9 @@
 
 TopJs.namespace("TopJs.stdlib");
 
+/**
+ * @alias TopJs.stdlib.ParametersInterface
+ */
 class ParametersInterface {
     /**
      * Constructor

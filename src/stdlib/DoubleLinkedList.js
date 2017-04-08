@@ -9,7 +9,7 @@
 TopJs.namespace("TopJs.stdlib");
 
 /**
- * @class TopJs.stdlib.DoubleLinkedList
+ * @alias TopJs.stdlib.DoubleLinkedList
  * @author https://github.com/vovazolotoy/TypeScript-STL
  */
 class DoubleLinkedList {
@@ -290,7 +290,7 @@ class DoubleLinkedList {
     }
 }
 
-TopJs.apply(DoubleLinkedList.prototype, {
+TopJs.apply(DoubleLinkedList.prototype, /** @lends TopJs.stdlib.DoubleLinkedList.prototype */{
     /**
      * Count of elements in list
      *

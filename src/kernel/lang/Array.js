@@ -776,6 +776,7 @@ TopJs.apply(TopJsArray, /** @lends TopJs.Array */{
      */
     numericSortFn(a, b)
     {
-        return a - b
+        return a - b;
     }
 });
+

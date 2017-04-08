@@ -121,6 +121,7 @@ TopJs.apply(AbstractGenerator, {
     /**
      * Line feed to use in place of os.EOL
      * @static
+     * @memberOf TopJs.code.generator.AbstractGenerator
      * @property {String} LINE_FEED
      */
     LINE_FEED: "\n"

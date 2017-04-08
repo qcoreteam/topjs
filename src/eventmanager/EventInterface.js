@@ -10,7 +10,7 @@ TopJs.namespace('TopJs.eventmanager');
 
 class EventInterface
 {
-
+    
 }
 
 TopJs.registerClass("TopJs.eventmanager.EventInterface", EventInterface);

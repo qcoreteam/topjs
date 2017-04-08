@@ -38,7 +38,7 @@ class EventManagerInterface extends SharedEventsCapableInterface {
     trigger(eventName, target = null, argv = null)
     {
     }
-
+   
     /**
      * Create and trigger an event, applying a callback to each listener result.
      *
@@ -61,6 +61,7 @@ class EventManagerInterface extends SharedEventsCapableInterface {
      * @param {Object} argv
      * @return {TopJs.eventmanager.ResponseCollection}
      */
+    
     triggerUntil(callback, eventName, target = null, argv = null)
     {
     }

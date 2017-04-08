@@ -12,6 +12,9 @@ let MessageInterface = TopJs.require("TopJs.stdlib.MessageInterface");
 
 let toString = Object.prototype.toString;
 
+/**
+ * @alias TopJs.stdlib.Message
+ */
 class Message {
 
     constructor()

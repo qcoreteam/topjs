@@ -11,6 +11,9 @@ TopJs.namespace("TopJs.stdlib");
 
 let DoubleLinkedList = TopJs.require("TopJs.stdlib.Queue");
 
+/**
+ * @alias TopJs.stdlib.Queue
+ */
 class Queue extends DoubleLinkedList
 {
     /**

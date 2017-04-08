@@ -10,7 +10,7 @@
 TopJs.namespace("TopJs.stdlib");
 
 /**
- * @class TopJs.stdlib.Heap
+ * @alias TopJs.stdlib.Heap
  * @author https://github.com/vovazolotoy/TypeScript-STL
  */
 class Heap {
@@ -188,7 +188,6 @@ class Heap {
     /**
      * Compare elements in order to place them correctly in the heap while sifting up.
      *
-     * @method compare
      * @param {Number} left The value of the first node being compared.
      * @param {Number} right The value of the second node being compared.
      * @return number Result of the comparison, positive integer if first is greater than second, 0 if they are equal, negative integer otherwise.
@@ -291,7 +290,8 @@ class Heap {
 TopJs.apply(Heap, {
     /**
      * Max heap flag
-     *
+     * 
+     * @memberOf TopJs.stdlib.Heap
      * @property {Symbol} MAX
      * @static
      */
@@ -300,6 +300,7 @@ TopJs.apply(Heap, {
     /**
      * Min heap flag
      *
+     * @memberOf TopJs.stdlib.Heap
      * @property {Symbol} MIN
      * @static
      */

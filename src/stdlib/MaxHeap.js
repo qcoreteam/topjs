@@ -11,8 +11,11 @@ TopJs.namespace("TopJs.stdlib");
 let Heap = TopJs.require("TopJs.stdlib.Heap");
 
 /**
- * @class TopJs.stdlib.MaxHeap
+ * @alias TopJs.stdlib.MaxHeap
  * @author https://github.com/vovazolotoy/TypeScript-STL
+ * @classdesc
+ * 
+ * same interface as {@link TopJs.stdlib.Heap}
  */
 class MaxHeap extends Heap
 {
@@ -21,7 +24,6 @@ class MaxHeap extends Heap
         super(Heap.MAX)
     }
 }
-
 
 TopJs.registerClass("TopJs.stdlib.MaxHeap", MaxHeap);
 module.exports = MaxHeap;

@@ -12,7 +12,7 @@ TopJs.namespace("TopJs.namespace");
 let DoubleLinkedList = TopJs.require("TopJs.stdlib.DoubleLinkedList");
 
 /**
- * @class TopJs.stdlib.Stack
+ * @alias TopJs.stdlib.Stack
  * @author https://github.com/vovazolotoy/TypeScript-STL
  */
 class Stack extends DoubleLinkedList
