@@ -7,6 +7,9 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
+/**
+ * @class TopJs.Class
+ */
 let Class = TopJs.Class = function () {};
 
 TopJs.apply(Class, /** @lends TopJs.Class */ {

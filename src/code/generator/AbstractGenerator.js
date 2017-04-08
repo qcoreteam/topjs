@@ -73,8 +73,7 @@ class AbstractGenerator {
     {
         return this.indentation;
     }
-
-
+    
     /**
      * @param {String} sourceContent
      * @return {TopJs.code.generator.AbstractGenerator}

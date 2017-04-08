@@ -7,7 +7,11 @@
  * @license   http://www.topjs.org/license/new-bsd New BSD License
  */
 
+/**
+ * @class TopJs.ClassManager
+ */
 let ClsManager = TopJs.ClassManager = {};
+
 
 TopJs.apply(ClsManager, /** @lends TopJs.ClassManager */{
     /**
