@@ -9,7 +9,7 @@
 TopJs.namespace("TopJs.code");
 
 /**
- * @class TopJs.code.NameInformation
+ * @alias TopJs.code.NameInformation
  * @constructor
  */
 class NameInformation {
